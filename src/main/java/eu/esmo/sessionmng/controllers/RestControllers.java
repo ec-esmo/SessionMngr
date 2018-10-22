@@ -5,7 +5,13 @@
  */
 package eu.esmo.sessionmng.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.esmo.sessionmng.model.service.SessionService;
 import io.swagger.annotations.ApiOperation;
+import java.util.UUID;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,12 +24,17 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class RestControllers {
+    
+    @Autowired
+    private SessionService sessionServ;
 
     @RequestMapping(value = "/startSession", method = RequestMethod.POST)
     @ApiOperation(value = "Sets up an internal session temporary storage and returns its identifier", response = String.class)
     public @ResponseBody
     String startSession() {
-        return "sessionId";
+        UUID sessionId = UUID.randomUUID();
+        sessionServ.makeNewSession(sessionId.toString());
+        return sessionId.toString();
     }
 
     @RequestMapping(value = "/endSession", method = RequestMethod.DELETE)
@@ -41,8 +52,14 @@ public class RestControllers {
     @RequestMapping(value = "/getSessionData", method = RequestMethod.GET)
     @ApiOperation(value = "A variable Or the whole session object  is retrieved")
     public @ResponseBody
-    String getSessionData(@RequestParam String sessionId, @RequestParam(required = false) String variableName) {
-        return "dataObject";
+    String getSessionData(@RequestParam String sessionId, @RequestParam(required = false) String variableName) throws JsonProcessingException {
+        
+        if(StringUtils.isEmpty(variableName)){
+            ObjectMapper objectMapper = new ObjectMapper();
+            return  objectMapper.writeValueAsString( sessionServ.findBySessionId(sessionId));
+        }else{
+            return sessionServ.getValueByVariableAndId(sessionId, variableName);
+        }
     }
 
     @RequestMapping(value = "/generateToken", method = RequestMethod.GET)

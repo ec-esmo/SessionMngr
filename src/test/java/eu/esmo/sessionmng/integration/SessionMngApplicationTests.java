@@ -1,4 +1,4 @@
-package eu.esmo.sessionmng;
+package eu.esmo.sessionmng.integration;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

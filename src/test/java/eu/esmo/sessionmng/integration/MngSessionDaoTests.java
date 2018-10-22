@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package eu.esmo.sessionmng;
+package eu.esmo.sessionmng.integration;
 
 import javax.transaction.Transactional;
 import org.junit.runner.RunWith;
