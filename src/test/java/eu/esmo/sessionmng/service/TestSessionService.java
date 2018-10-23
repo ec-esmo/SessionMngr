@@ -27,7 +27,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @author nikos
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-public class SessionServiceTests {
+public class TestSessionService {
 
     private SessionService sessionServ;
     private final String VALID_SESSION = "valid";
@@ -37,23 +37,23 @@ public class SessionServiceTests {
 
     @Before
     public void before() {
-        sessionServ = new SessionServiceImpl();
+        sessionServ = new SessionServiceImpl(sessionRepo);
+
         Set<SessionVariable> variables = new HashSet();
         SessionVariable v1 = new SessionVariable("var1", "val1");
         SessionVariable v2 = new SessionVariable("var2", "val2");
         variables.add(v2);
         variables.add(v1);
         MngrSession validSession = new MngrSession("sessionId", variables);
-        
+
         when(sessionRepo.findBySessionId(VALID_SESSION)).thenReturn(validSession);
-        when(sessionRepo.getValueByVariableAndId("sessionID", "var1")).thenReturn("val1");
-        
+        when(sessionRepo.getValueByVariableAndId("sessionId", "var1")).thenReturn("val1");
+
     }
 
     @Test
     public void testUpdateSessionVariable() throws ChangeSetPersister.NotFoundException {
         assertEquals(sessionServ.getValueByVariableAndId("sessionId", "var1"), "val1");
-
     }
 
     public void testFindBySessionId() {

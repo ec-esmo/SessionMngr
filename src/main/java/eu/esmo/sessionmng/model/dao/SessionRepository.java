@@ -20,6 +20,9 @@ public interface SessionRepository extends JpaRepository<MngrSession, Long> {
     @Override
     public List<MngrSession> findAll();
 
+    
+    public void deleteBySessionId(String sessionId);
+    
     public MngrSession findBySessionId(String sessionId);
 
     @Query("SELECT v.value FROM MngrSession s JOIN s.variable v where s.sessionId = :sessionId and v.name = :name")

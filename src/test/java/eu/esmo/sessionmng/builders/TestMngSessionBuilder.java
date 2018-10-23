@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package testBuilders;
+package eu.esmo.sessionmng.builders;
 
 import eu.esmo.sessionmng.builders.MngrSessionBuilder;
 import eu.esmo.sessionmng.model.TO.MngrSessionTO;
@@ -44,4 +44,14 @@ public class TestMngSessionBuilder {
     
     }
 
+    
+     @Test
+    public void testBuildTOFromVariable(){
+        MngrSessionTO to = MngrSessionBuilder.buildMngrSessionFromVariable("sessionId","name1","val1");
+        assertEquals(to.getSessionId(),"sessionId");
+        assertEquals(to.getSessionVariables().get("name1"),"val1");
+        assertEquals(to.getSessionVariables().get("name2"),null);
+    
+    }
+    
 }

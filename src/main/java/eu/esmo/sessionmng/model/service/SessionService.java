@@ -24,6 +24,10 @@ public interface SessionService {
 
     public void save(MngrSession session);
     
+    public void delete(MngrSession session);
+    
+    public void delete(String sessionId);
+    
     public void makeNewSession(String sessionId);
 
     public void updateSessionVariable(String sessionId, String variableName, String newValue) throws NotFoundException;

@@ -26,5 +26,15 @@ public class MngrSessionBuilder {
         sessionTO.setSessionVariables(variables);
         return sessionTO;
     }
+    
+     public static MngrSessionTO buildMngrSessionFromVariable(String sessionId, String variableName, String variableValue) {
+        MngrSessionTO sessionTO = new MngrSessionTO();
+        sessionTO.setSessionId(sessionId);
+        Map<String,String> variables = new HashMap();
+        variables.put(variableName,variableValue);
+        sessionTO.setSessionVariables(variables);
+        return sessionTO;
+    }
+    
 
 }

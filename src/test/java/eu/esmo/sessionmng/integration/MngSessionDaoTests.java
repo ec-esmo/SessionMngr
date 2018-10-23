@@ -11,7 +11,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import eu.esmo.sessionmng.model.dao.SessionRepository;
 import eu.esmo.sessionmng.model.dmo.MngrSession;
 import eu.esmo.sessionmng.model.dmo.SessionVariable;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.annotation.Resource;
 import org.assertj.core.util.Arrays;
@@ -99,6 +103,27 @@ public class MngSessionDaoTests {
         String received = sessionRepo.getValueByVariableAndId(UUID1, VARIABLE_NAME);
         System.out.println("Received the value :: " + received);
         assertEquals(received, VALUE1);
+    }
+    
+    
+    @Test
+    public void testDeleteSession() {
+        MngrSession session = new MngrSession();
+        sessionRepo.save(session);
+        SessionVariable var = new SessionVariable("var1", "value1");
+        Set set = new HashSet<>(Arrays.asList(new SessionVariable[]{var}));
+        session = new MngrSession("ID1", set);
+        sessionRepo.save(session);
+        
+        Map<String,String> variableMap = new HashMap();
+        sessionRepo.findBySessionId("ID1").getVariable().stream().forEach(v -> {
+            variableMap.put(v.getName(), v.getValue());
+        });
+        assertEquals( variableMap.get("var1"),"value1");
+        
+        sessionRepo.deleteBySessionId(session.getSessionId());
+        
+        assertEquals(sessionRepo.findBySessionId("ID1"),null);
     }
     
     

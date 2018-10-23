@@ -5,7 +5,6 @@
  */
 package eu.esmo.sessionmng.model.TO;
 
-import java.util.List;
 import java.util.Map;
 
 /**

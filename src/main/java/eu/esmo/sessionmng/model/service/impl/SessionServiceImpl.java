@@ -22,17 +22,20 @@ import java.util.Optional;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 @Transactional
 @Service
-public class SessionServiceImpl implements SessionService{
+public class SessionServiceImpl implements SessionService {
 
-    @Autowired
+//    @Autowired
     private SessionRepository sessionRepo;
 
-    
+    @Autowired
+    public SessionServiceImpl(SessionRepository sessionRepo) {
+        this.sessionRepo = sessionRepo;
+    }
+
     @Override
     public List<MngrSession> findAll() {
         return sessionRepo.findAll();
@@ -40,11 +43,11 @@ public class SessionServiceImpl implements SessionService{
 
     @Override
     public MngrSessionTO findBySessionId(String sessionId) {
-        return  MngrSessionBuilder.buildMngrSession(sessionRepo.findBySessionId(sessionId));
+        return MngrSessionBuilder.buildMngrSession(sessionRepo.findBySessionId(sessionId));
     }
 
     @Override
-    public String getValueByVariableAndId(@Param("sessionId") String sessionId, @Param("variable") String variable) {
+    public String getValueByVariableAndId(String sessionId, String variable) {
         return sessionRepo.getValueByVariableAndId(sessionId, variable);
     }
 
@@ -90,6 +93,17 @@ public class SessionServiceImpl implements SessionService{
     public void makeNewSession(String sessionId) {
         MngrSession session = new MngrSession(sessionId, new HashSet());
         this.save(session);
+    }
+
+    @Override
+    @Transactional
+    public void delete(MngrSession session) {
+        this.sessionRepo.deleteBySessionId(session.getSessionId());
+    }
+
+    @Override
+    public void delete(String sessionId) {
+        this.sessionRepo.deleteBySessionId(sessionId);
     }
 
 }
