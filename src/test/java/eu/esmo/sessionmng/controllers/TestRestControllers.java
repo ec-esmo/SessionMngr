@@ -8,7 +8,10 @@ package eu.esmo.sessionmng.controllers;
 import eu.esmo.sessionmng.SessionMngApplication;
 import eu.esmo.sessionmng.controllers.TestRestControllers.TestConfig;
 import eu.esmo.sessionmng.model.TO.MngrSessionTO;
+import eu.esmo.sessionmng.model.service.JwtService;
+import eu.esmo.sessionmng.model.service.ParameterService;
 import eu.esmo.sessionmng.model.service.SessionService;
+import eu.esmo.sessionmng.pojo.ResponseCode;
 import java.util.HashMap;
 import java.util.Map;
 import static org.hamcrest.Matchers.is;
@@ -43,6 +46,12 @@ public class TestRestControllers {
 
     @MockBean
     private SessionService sessionServ;
+    
+    @MockBean
+    private ParameterService paramServ;
+
+    @MockBean
+    private JwtService jwtServ;
 
     @Configuration
     static class TestConfig {
@@ -63,8 +72,9 @@ public class TestRestControllers {
         when(sessionServ.findBySessionId("somesession")).thenReturn(session);
         mvc.perform(get("/getSessionData?sessionId=somesession"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.sessionId", is("somesession")))
-                .andExpect(jsonPath("$.sessionVariables.var1", is("val1")));
+                .andExpect(jsonPath("$.code", is("OK")))
+                .andExpect(jsonPath("$.sessionData.sessionId", is("somesession")))
+                .andExpect(jsonPath("$.sessionData.sessionVariables.var1", is("val1")));
     }
 
     @Test
@@ -73,9 +83,10 @@ public class TestRestControllers {
 
         mvc.perform(get("/getSessionData?sessionId=somesession&variableName=var1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.sessionId", is("somesession")))
-                .andExpect(jsonPath("$.sessionVariables.var1", is("val1")))
-                .andExpect(jsonPath("$.sessionVariables.var2").doesNotExist());
+                .andExpect(jsonPath("$.code",is("OK")))
+                .andExpect(jsonPath("$.sessionData.sessionId", is("somesession")))
+                .andExpect(jsonPath("$.sessionData.sessionVariables.var1", is("val1")))
+                .andExpect(jsonPath("$.sessionData.sessionVariables.var2").doesNotExist());
     }
 
     @Test
@@ -84,9 +95,10 @@ public class TestRestControllers {
 
         mvc.perform(get("/getSessionData?sessionId=somesession&variableName=var1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.sessionId", is("somesession")))
-                .andExpect(jsonPath("$.sessionVariables.var1", nullValue()))
-                .andExpect(jsonPath("$.sessionVariables.var2").doesNotExist());
+                .andExpect(jsonPath("$.code", is("OK")))
+                .andExpect(jsonPath("$.sessionData.sessionId", is("somesession")))
+                .andExpect(jsonPath("$.sessionData.sessionVariables.var1", nullValue()))
+                .andExpect(jsonPath("$.sessionData.sessionVariables.var2").doesNotExist());
     }
 
 //    @Test

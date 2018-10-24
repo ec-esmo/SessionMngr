@@ -13,6 +13,9 @@
                 <exec.args>-Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath eu.esmo.sessionmng.SessionMngApplication</exec.args>
                 <exec.executable>java</exec.executable>
                 <jpda.listen>true</jpda.listen>
+                <Env.SIGNING_SECRET>QjG+wP1CbAH2z4PWlWIDkxP4oRlgK2vos5/jXFfeBw8=</Env.SIGNING_SECRET>
+                <Env.ASYNC_SIGNATURE>false</Env.ASYNC_SIGNATURE>
+                <Env.EXPIRES>5</Env.EXPIRES>
             </properties>
         </action>
     </actions>

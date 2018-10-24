@@ -5,17 +5,17 @@
  */
 package eu.esmo.sessionmng.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.esmo.sessionmng.builders.MngrSessionBuilder;
 import eu.esmo.sessionmng.model.TO.MngrSessionTO;
+import eu.esmo.sessionmng.model.service.JwtService;
+import eu.esmo.sessionmng.model.service.ParameterService;
 import eu.esmo.sessionmng.model.service.SessionService;
+import eu.esmo.sessionmng.pojo.ResponseCode;
+import eu.esmo.sessionmng.pojo.SessionMngrResponse;
 import io.swagger.annotations.ApiOperation;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 import org.slf4j.Logger;
-
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister;
@@ -34,67 +34,78 @@ import org.springframework.web.bind.annotation.RestController;
 public class RestControllers {
 
     private final static Logger LOG = LoggerFactory.getLogger(RestControllers.class);
-    
-    
+
     @Autowired
     private SessionService sessionServ;
+
+    @Autowired
+    private JwtService jwtServ;
+
+    @Autowired
+    private ParameterService paramServ;
 
     @RequestMapping(value = "/startSession", method = RequestMethod.POST)
     @ApiOperation(value = "Sets up an internal session temporary storage and returns its identifier", response = String.class)
     public @ResponseBody
-    String startSession() {
+    SessionMngrResponse startSession() {
         UUID sessionId = UUID.randomUUID();
         sessionServ.makeNewSession(sessionId.toString());
         LOG.debug("created new session with Id:: " + sessionId.toString());
-        return sessionId.toString();
+        return new SessionMngrResponse(ResponseCode.NEW, new MngrSessionTO(sessionId.toString(), new HashMap()), null, null);
     }
 
     @RequestMapping(value = "/endSession", method = RequestMethod.DELETE)
     @ApiOperation(value = "Terminates a session and deletes all the stored data")
-    public void endSession(@RequestParam String sessionId) {
+    public SessionMngrResponse endSession(@RequestParam String sessionId) {
         LOG.debug("Asked to delete session:: " + sessionId);
         sessionServ.delete(sessionId);
+        return new SessionMngrResponse(ResponseCode.OK, null, null, null);
     }
 
     @RequestMapping(value = "/updateSessionData", method = RequestMethod.POST)
     @ApiOperation(value = "Passed data is stored in a session variable overwriting the previous value")
-    public void updateSessionData(@RequestParam String sessionId, @RequestParam String variableName, @RequestParam String dataObject) {
-
+    public SessionMngrResponse updateSessionData(@RequestParam String sessionId, @RequestParam String variableName, @RequestParam String dataObject) {
         try {
             LOG.debug("Attempting to update variable " + variableName + " of session  " + sessionId + " with value  " + dataObject);
             sessionServ.updateSessionVariable(sessionId, variableName, dataObject);
+            return new SessionMngrResponse(ResponseCode.ERROR, null, null, null);
         } catch (ChangeSetPersister.NotFoundException ex) {
             LOG.error("failed to update variable " + variableName + " NOT Found", ex.getMessage());
+            return new SessionMngrResponse(ResponseCode.ERROR, null, null, "failed to update variable " + variableName + " NOT Found");
         }
-
     }
 
     @RequestMapping(value = "/getSessionData", method = RequestMethod.GET)
     @ApiOperation(value = "A variable Or the whole session object  is retrieved")
     public @ResponseBody
-    MngrSessionTO getSessionData(@RequestParam String sessionId, @RequestParam(required = false) String variableName) {
+    SessionMngrResponse getSessionData(@RequestParam String sessionId, @RequestParam(required = false) String variableName) {
 
-        LOG.debug("requested from sessionId:: " + sessionId.toString() + " and for variable  " + variableName);
-
+        LOG.debug("requested from sessionId:: " + sessionId + " and for variable  " + variableName);
         if (StringUtils.isEmpty(variableName)) {
-            return sessionServ.findBySessionId(sessionId);
+            return new SessionMngrResponse(ResponseCode.OK, sessionServ.findBySessionId(sessionId), null, null);
         } else {
-            return MngrSessionBuilder.buildMngrSessionFromVariable(sessionId, variableName, sessionServ.getValueByVariableAndId(sessionId, variableName));
+            return new SessionMngrResponse(ResponseCode.OK, MngrSessionBuilder.buildMngrSessionFromVariable(sessionId, variableName, sessionServ.getValueByVariableAndId(sessionId, variableName)),
+                    null, null);
         }
     }
 
     @RequestMapping(value = "/generateToken", method = RequestMethod.GET)
-    @ApiOperation(value = "Generates a signed token, containing the session ID and the data on the payload.")
-    public String generateToken(@RequestParam String sessionId, @RequestParam(required = false) String data) {
-
-        return "jwt token";
+    @ApiOperation(value = "Generates a signed token, containing the Session data on the payload, and optioanlly  additional data passed by the data parameter")
+    public SessionMngrResponse generateToken(@RequestParam String sessionId, @RequestParam(required = false) String data) {
+        MngrSessionTO payload = sessionServ.findBySessionId(sessionId);
+        try {
+            String jwt = jwtServ.makeJwt(payload, data, paramServ.getProperty("ISSUER"), Long.valueOf(paramServ.getProperty("EXPIRES")));
+            return new SessionMngrResponse(ResponseCode.NEW, null, jwt, null);
+        } catch (Exception e) {
+            LOG.error(e.getMessage());
+            return new SessionMngrResponse(ResponseCode.ERROR, null, null, "error making jwt");
+        }
     }
 
     @RequestMapping(value = "/validateToken", method = RequestMethod.GET)
     @ApiOperation(value = "The passed security token’s signature will be validated, as well as the validity as well as other validation measures")
-    public String validateToken(@RequestParam String token) {
-
-        return "jwt payload";
+    public SessionMngrResponse validateToken(@RequestParam String token) {
+        return jwtServ.validateJwt(token);
     }
 
 }

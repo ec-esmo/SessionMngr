@@ -5,9 +5,11 @@
  */
 package eu.esmo.sessionmng.integration;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.esmo.sessionmng.SessionMngApplication;
 import eu.esmo.sessionmng.model.TO.MngrSessionTO;
 import eu.esmo.sessionmng.model.service.SessionService;
+import eu.esmo.sessionmng.pojo.SessionMngrResponse;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
@@ -41,11 +43,13 @@ public class TestRestControllersIntegrated {
         MvcResult result = mvc.perform(post("/startSession"))
                 .andExpect(status().isOk())
                 .andReturn();
-        
-        MngrSessionTO createdSession = sessionServ.findBySessionId(result.getResponse().getContentAsString());
+
+        ObjectMapper mapper = new ObjectMapper();
+        SessionMngrResponse resp = mapper.readValue(result.getResponse().getContentAsString(), SessionMngrResponse.class);
+
+        MngrSessionTO createdSession = sessionServ.findBySessionId(resp.getSessionData().getSessionId());
         assertNotNull(createdSession);
-        assertEquals(createdSession.getSessionId(),result.getResponse().getContentAsString());
-        assertEquals(createdSession.getSessionVariables().size(),0);
+        assertEquals(result.getResponse().getContentAsString(), "{\"code\":\"NEW\",\"sessionData\":{\"sessionId\":\"" + resp.getSessionData().getSessionId() + "\",\"sessionVariables\":{}},\"additionalData\":null,\"error\":null}");
 
     }
 
