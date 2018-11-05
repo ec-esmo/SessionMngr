@@ -45,14 +45,16 @@ public class JwtServiceImpl implements JwtService {
     }
 
     @Override
-    public String makeJwt(MngrSessionTO payload, String data, String issuer, Long minutesToExpire) throws NullPointerException, JsonProcessingException, UnsupportedEncodingException, KeyStoreException, NoSuchAlgorithmException, NoSuchAlgorithmException, UnrecoverableKeyException {
+    public String makeJwt(String payload, String data, String issuer, String sender, String receiver, Long minutesToExpire) throws NullPointerException, JsonProcessingException, UnsupportedEncodingException, KeyStoreException, NoSuchAlgorithmException, NoSuchAlgorithmException, UnrecoverableKeyException {
 
         if (StringUtils.isEmpty(payload)) {
             throw new NullPointerException("payload cannot be empty");
         }
-        ObjectMapper mapper = new ObjectMapper();
+//        ObjectMapper mapper = new ObjectMapper();
         JwtBuilder builder = Jwts.builder()
-                .claim("payload", mapper.writeValueAsString(payload));
+                .claim("sessionId", payload)
+                .claim("sender", sender)
+                .claim("receiver", receiver);
         if (!StringUtils.isEmpty(data)) {
             builder.claim("data", data);
         }
@@ -73,11 +75,12 @@ public class JwtServiceImpl implements JwtService {
     public SessionMngrResponse validateJwt(String jws) {
         try {
             if (jws != null) {
-                String payloadString = Jwts.parser().setSigningKey(keyServ.getPublicKey()).parseClaimsJws(jws).getBody().get("payload", String.class);
+                String sessionId = Jwts.parser().setSigningKey(keyServ.getPublicKey()).parseClaimsJws(jws).getBody().get("sessionId", String.class);
                 String extraData = Jwts.parser().setSigningKey(keyServ.getPublicKey()).parseClaimsJws(jws).getBody().get("data", String.class);
 
-                ObjectMapper mapper = new ObjectMapper();
-                return new SessionMngrResponse(ResponseCode.OK, mapper.readValue(payloadString, MngrSessionTO.class), extraData, null);
+                MngrSessionTO responseSession = new MngrSessionTO();
+                responseSession.setSessionId(sessionId);
+                return new SessionMngrResponse(ResponseCode.OK, responseSession, extraData, null);
             }
         } catch (Exception e) {
             LOG.error("Error Validating jtw ", e);

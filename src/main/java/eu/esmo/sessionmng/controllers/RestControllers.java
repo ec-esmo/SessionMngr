@@ -5,7 +5,7 @@
  */
 package eu.esmo.sessionmng.controllers;
 
-import eu.esmo.sessionmng.builders.MngrSessionBuilder;
+import eu.esmo.sessionmng.builders.MngrSessionFactory;
 import eu.esmo.sessionmng.model.TO.MngrSessionTO;
 import eu.esmo.sessionmng.model.service.JwtService;
 import eu.esmo.sessionmng.model.service.ParameterService;
@@ -68,7 +68,7 @@ public class RestControllers {
         try {
             LOG.debug("Attempting to update variable " + variableName + " of session  " + sessionId + " with value  " + dataObject);
             sessionServ.updateSessionVariable(sessionId, variableName, dataObject);
-            return new SessionMngrResponse(ResponseCode.ERROR, null, null, null);
+            return new SessionMngrResponse(ResponseCode.OK, null, null, null);
         } catch (ChangeSetPersister.NotFoundException ex) {
             LOG.error("failed to update variable " + variableName + " NOT Found", ex.getMessage());
             return new SessionMngrResponse(ResponseCode.ERROR, null, null, "failed to update variable " + variableName + " NOT Found");
@@ -84,18 +84,26 @@ public class RestControllers {
         if (StringUtils.isEmpty(variableName)) {
             return new SessionMngrResponse(ResponseCode.OK, sessionServ.findBySessionId(sessionId), null, null);
         } else {
-            return new SessionMngrResponse(ResponseCode.OK, MngrSessionBuilder.buildMngrSessionFromVariable(sessionId, variableName, sessionServ.getValueByVariableAndId(sessionId, variableName)),
+            return new SessionMngrResponse(ResponseCode.OK, MngrSessionFactory.makeMngrSessionTOFromVariableAndSessionId(sessionId, variableName, sessionServ.getValueByVariableAndId(sessionId, variableName)),
                     null, null);
         }
     }
 
     @RequestMapping(value = "/generateToken", method = RequestMethod.GET)
-    @ApiOperation(value = "Generates a signed token, containing the Session data on the payload, and optioanlly  additional data passed by the data parameter")
-    public SessionMngrResponse generateToken(@RequestParam String sessionId, @RequestParam(required = false) String data) {
-        MngrSessionTO payload = sessionServ.findBySessionId(sessionId);
+    @ApiOperation(value = "Generates a signed token, only the sessionId as the payload, additionaly parameters include:"
+            + " The id of the requesting microservice (msA) and The id of the destination microservice (msB), may also include additional data")
+    public SessionMngrResponse generateToken(@RequestParam String sessionId, @RequestParam(required = true) String sender,
+            @RequestParam(required = true) String receiver, @RequestParam(required = false) String data) {
+//        MngrSessionTO payload = sessionServ.findBySessionId(sessionId);
         try {
-            String jwt = jwtServ.makeJwt(payload, data, paramServ.getProperty("ISSUER"), Long.valueOf(paramServ.getProperty("EXPIRES")));
+            if (sessionServ.findBySessionId(sessionId) == null) {
+                throw new ChangeSetPersister.NotFoundException();
+            }
+            String jwt = jwtServ.makeJwt(sessionId, data, paramServ.getProperty("ISSUER"), sender, receiver, Long.valueOf(paramServ.getProperty("EXPIRES")));
             return new SessionMngrResponse(ResponseCode.NEW, null, jwt, null);
+        } catch (ChangeSetPersister.NotFoundException e) {
+            LOG.error(e.getMessage());
+            return new SessionMngrResponse(ResponseCode.ERROR, null, null, "sessionId not found");
         } catch (Exception e) {
             LOG.error(e.getMessage());
             return new SessionMngrResponse(ResponseCode.ERROR, null, null, "error making jwt");
@@ -105,6 +113,7 @@ public class RestControllers {
     @RequestMapping(value = "/validateToken", method = RequestMethod.GET)
     @ApiOperation(value = "The passed security token’s signature will be validated, as well as the validity as well as other validation measures")
     public SessionMngrResponse validateToken(@RequestParam String token) {
+        //TODO check sender from config manager mciroservice
         return jwtServ.validateJwt(token);
     }
 

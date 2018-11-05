@@ -31,7 +31,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @RunWith(SpringJUnit4ClassRunner.class)
 @Transactional
 @SpringBootTest
-public class MngSessionDaoTests {
+public class MngSessionDaoIntegration {
 
     @Resource
     private SessionRepository sessionRepo;

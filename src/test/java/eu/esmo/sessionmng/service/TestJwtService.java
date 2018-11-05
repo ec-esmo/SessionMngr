@@ -47,36 +47,25 @@ public class TestJwtService {
     }
 
     @Test
-    public void testWithHS256Key() throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, UnsupportedEncodingException, JsonProcessingException {
+    public void testBuildAndValidateWithHS256Key() throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, UnsupportedEncodingException, JsonProcessingException {
         String secretKey = "QjG+wP1CbAH2z4PWlWIDkxP4oRlgK2vos5/jXFfeBw8=";
         Key key = new SecretKeySpec(secretKey.getBytes("UTF-8"), 0, secretKey.length(), "HmacSHA256");
 
         when(keyServ.getAlgorithm()).thenReturn(SignatureAlgorithm.HS256);
         when(keyServ.getSigningKey()).thenReturn(key);
-
-        Map map = new HashMap();
-        map.put("var1", "val1");
-        map.put("var2", "val2");
-        MngrSessionTO payload = new MngrSessionTO("uuid1", map);
-
-        String jwt = jwtServ.makeJwt(payload, null, "esmoSessionMngr", Long.valueOf(5));
-        assertNotNull(jwt);
-        System.out.println(jwt);
-    }
-
-    @Test
-    public void testValidateWithHS256() throws UnsupportedEncodingException, KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException {
-        String secretKey = "QjG+wP1CbAH2z4PWlWIDkxP4oRlgK2vos5/jXFfeBw8=";
-        Key key = new SecretKeySpec(secretKey.getBytes("UTF-8"), 0, secretKey.length(), "HmacSHA256");
-        when(keyServ.getAlgorithm()).thenReturn(SignatureAlgorithm.HS256);
         when(keyServ.getPublicKey()).thenReturn(key);
 
-        String jwt = "eyJhbGciOiJIUzI1NiJ9.eyJwYXlsb2FkIjoie1wic2Vzc2lvbklkXCI6XCJ1dWlkMVwiLFwic2Vzc2lvblZhcmlhYmxlc1wiOntcInZhcjJcIjpcInZhbDJcIixcInZhcjFcIjpcInZhbDFcIn19In0.vffJ1DjuxPj6q6il6Q0SbjKppI7IWmOqCooB5GRxy7A";
+//        Map map = new HashMap();
+//        map.put("var1", "val1");
+//        map.put("var2", "val2");
+//        MngrSessionTO payload = new MngrSessionTO("uuid1", map);
+        String jwt = jwtServ.makeJwt("sessionId", null, "esmoSessionMngr", "sender", "receiver", Long.valueOf(5));
+        assertNotNull(jwt);
+//        System.out.println(jwt);
 
         assertEquals(jwtServ.validateJwt(jwt).getCode(), ResponseCode.OK);
-        System.out.println(jwtServ.validateJwt(jwt).getAdditionalData());
-        assertEquals(jwtServ.validateJwt(jwt).getSessionData().getSessionVariables().get("var1"), "val1");
-
+//        System.out.println(jwtServ.validateJwt(jwt).getAdditionalData());
+        assertEquals(jwtServ.validateJwt(jwt).getSessionData().getSessionId(), "sessionId");
     }
 
     @Test

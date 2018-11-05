@@ -9,7 +9,7 @@ package eu.esmo.sessionmng.model.service.impl;
  *
  * @author nikos
  */
-import eu.esmo.sessionmng.builders.MngrSessionBuilder;
+import eu.esmo.sessionmng.builders.MngrSessionFactory;
 import eu.esmo.sessionmng.model.TO.MngrSessionTO;
 import eu.esmo.sessionmng.model.dao.SessionRepository;
 import eu.esmo.sessionmng.model.dmo.MngrSession;
@@ -43,7 +43,7 @@ public class SessionServiceImpl implements SessionService {
 
     @Override
     public MngrSessionTO findBySessionId(String sessionId) {
-        return MngrSessionBuilder.buildMngrSession(sessionRepo.findBySessionId(sessionId));
+        return MngrSessionFactory.getMngrSessionTO(sessionRepo.findBySessionId(sessionId));
     }
 
     @Override

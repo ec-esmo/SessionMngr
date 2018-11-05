@@ -31,6 +31,7 @@ public class TestSessionService {
 
     private SessionService sessionServ;
     private final String VALID_SESSION = "valid";
+    private final String INVALID_SESSION = "invalid";
 
     @MockBean
     private SessionRepository sessionRepo;
@@ -47,17 +48,26 @@ public class TestSessionService {
         MngrSession validSession = new MngrSession("sessionId", variables);
 
         when(sessionRepo.findBySessionId(VALID_SESSION)).thenReturn(validSession);
+        when(sessionRepo.findBySessionId(INVALID_SESSION)).thenReturn(null);
         when(sessionRepo.getValueByVariableAndId("sessionId", "var1")).thenReturn("val1");
 
     }
 
     @Test
     public void testUpdateSessionVariable() throws ChangeSetPersister.NotFoundException {
+        
         assertEquals(sessionServ.getValueByVariableAndId("sessionId", "var1"), "val1");
     }
 
+    
+    @Test(expected = ChangeSetPersister.NotFoundException.class)
+    public void testUpdateSessionVariableErrorSession() throws ChangeSetPersister.NotFoundException {
+        sessionServ.updateSessionVariable(INVALID_SESSION, "", "");
+    }
+    
+    @Test
     public void testFindBySessionId() {
-
+        assertEquals(sessionServ.getValueByVariableAndId("sessionId", "var1"), "val1");
     }
 
 }

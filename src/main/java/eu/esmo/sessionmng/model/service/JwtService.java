@@ -6,7 +6,6 @@
 package eu.esmo.sessionmng.model.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import eu.esmo.sessionmng.model.TO.MngrSessionTO;
 import eu.esmo.sessionmng.pojo.SessionMngrResponse;
 import java.io.UnsupportedEncodingException;
 import java.security.KeyStoreException;
@@ -19,7 +18,7 @@ import java.security.UnrecoverableKeyException;
  */
 public interface JwtService {
 
-    public String makeJwt(MngrSessionTO payload,String data, String issuer, Long minutesToExpire) throws JsonProcessingException, UnsupportedEncodingException, KeyStoreException,
+    public String makeJwt(String sessionId,String data, String issuer, String sender, String receiver, Long minutesToExpire) throws JsonProcessingException, UnsupportedEncodingException, KeyStoreException,
             NoSuchAlgorithmException, NoSuchAlgorithmException, UnrecoverableKeyException;
 
 

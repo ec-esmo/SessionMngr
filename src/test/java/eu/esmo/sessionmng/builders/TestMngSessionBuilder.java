@@ -5,13 +5,14 @@
  */
 package eu.esmo.sessionmng.builders;
 
-import eu.esmo.sessionmng.builders.MngrSessionBuilder;
+import eu.esmo.sessionmng.builders.MngrSessionFactory;
 import eu.esmo.sessionmng.model.TO.MngrSessionTO;
 import eu.esmo.sessionmng.model.dmo.MngrSession;
 import eu.esmo.sessionmng.model.dmo.SessionVariable;
 import java.util.HashSet;
 import java.util.Set;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import org.junit.Test;
 
 /**
@@ -19,11 +20,10 @@ import org.junit.Test;
  * @author nikos
  */
 public class TestMngSessionBuilder {
-    
 
     @Test
-    public void testBuildTO(){
-    
+    public void testBuildTO() {
+
         MngrSession session = new MngrSession();
         session.setId(Long.valueOf(1));
         session.setSessionId("sessionId");
@@ -33,25 +33,29 @@ public class TestMngSessionBuilder {
         variables.add(v2);
         variables.add(v1);
         session.setVariable(variables);
-        
-        
-        MngrSessionTO to = MngrSessionBuilder.buildMngrSession(session);
-        
-        assertEquals(to.getSessionId(),session.getSessionId());
-        assertEquals(to.getSessionId(),"sessionId");
-        assertEquals(to.getSessionVariables().get("name1"),"val1");
-        assertEquals(to.getSessionVariables().get("name2"),"val2");
-    
+
+        MngrSessionTO to = MngrSessionFactory.getMngrSessionTO(session);
+
+        assertEquals(to.getSessionId(), session.getSessionId());
+        assertEquals(to.getSessionId(), "sessionId");
+        assertEquals(to.getSessionVariables().get("name1"), "val1");
+        assertEquals(to.getSessionVariables().get("name2"), "val2");
+
     }
 
-    
-     @Test
-    public void testBuildTOFromVariable(){
-        MngrSessionTO to = MngrSessionBuilder.buildMngrSessionFromVariable("sessionId","name1","val1");
-        assertEquals(to.getSessionId(),"sessionId");
-        assertEquals(to.getSessionVariables().get("name1"),"val1");
-        assertEquals(to.getSessionVariables().get("name2"),null);
-    
+    @Test
+    public void testBuildTONullInput() {
+        MngrSessionTO to = MngrSessionFactory.getMngrSessionTO(null);
+        assertNull(to);
     }
-    
+
+    @Test
+    public void testBuildTOFromVariable() {
+        MngrSessionTO to = MngrSessionFactory.makeMngrSessionTOFromVariableAndSessionId("sessionId", "name1", "val1");
+        assertEquals(to.getSessionId(), "sessionId");
+        assertEquals(to.getSessionVariables().get("name1"), "val1");
+        assertEquals(to.getSessionVariables().get("name2"), null);
+
+    }
+
 }
