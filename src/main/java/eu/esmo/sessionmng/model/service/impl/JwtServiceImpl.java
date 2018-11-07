@@ -6,19 +6,18 @@
 package eu.esmo.sessionmng.model.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.esmo.sessionmng.model.TO.MngrSessionTO;
+import eu.esmo.sessionmng.model.service.BlackListService;
 import eu.esmo.sessionmng.model.service.JwtService;
 import eu.esmo.sessionmng.model.service.KeyStoreService;
+import eu.esmo.sessionmng.pojo.JwtValidationResponse;
 import eu.esmo.sessionmng.pojo.ResponseCode;
-import eu.esmo.sessionmng.pojo.SessionMngrResponse;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import java.io.UnsupportedEncodingException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
@@ -38,10 +37,12 @@ public class JwtServiceImpl implements JwtService {
 
     private final static Logger LOG = LoggerFactory.getLogger(JwtServiceImpl.class);
     private KeyStoreService keyServ;
+    private BlackListService blackListServ;
 
     @Autowired
-    public JwtServiceImpl(KeyStoreService keyServ) {
+    public JwtServiceImpl(KeyStoreService keyServ, BlackListService blacklistServ) {
         this.keyServ = keyServ;
+        this.blackListServ = blacklistServ;
     }
 
     @Override
@@ -72,22 +73,31 @@ public class JwtServiceImpl implements JwtService {
     }
 
     @Override
-    public SessionMngrResponse validateJwt(String jws) {
+    public JwtValidationResponse validateJwt(String jws) {
         try {
             if (jws != null) {
                 String sessionId = Jwts.parser().setSigningKey(keyServ.getPublicKey()).parseClaimsJws(jws).getBody().get("sessionId", String.class);
                 String extraData = Jwts.parser().setSigningKey(keyServ.getPublicKey()).parseClaimsJws(jws).getBody().get("data", String.class);
+                String jti = Jwts.parser().setSigningKey(keyServ.getPublicKey()).parseClaimsJws(jws).getBody().getId();
 
-                MngrSessionTO responseSession = new MngrSessionTO();
-                responseSession.setSessionId(sessionId);
-                return new SessionMngrResponse(ResponseCode.OK, responseSession, extraData, null);
+                if (blackListServ.isBlacklisted(jti)) {
+                    throw new KeyStoreException("JWT is blacklisted");
+                } else {
+                    MngrSessionTO responseSession = new MngrSessionTO();
+                    responseSession.setSessionId(sessionId);
+                    return new JwtValidationResponse(ResponseCode.OK, responseSession, extraData, null, jti);
+                }
             }
+        } catch (KeyStoreException e) {
+            LOG.error("Error Validating jtw, jti blacklisted ", e.getMessage());
+            return new JwtValidationResponse(ResponseCode.ERROR, null, null, "JWT is blacklisted", null);
+
         } catch (Exception e) {
-            LOG.error("Error Validating jtw ", e);
-            return new SessionMngrResponse(ResponseCode.ERROR, null, null, "Error Validating JWT");
+            LOG.error("Error Validating jtw ", e.getMessage());
+            return new JwtValidationResponse(ResponseCode.ERROR, null, null, "Error Validating JWT", null);
         }
         LOG.error("JWS was emptry ", jws);
-        return new SessionMngrResponse(ResponseCode.ERROR, null, null, "JWT token is empty");
+        return new JwtValidationResponse(ResponseCode.ERROR, null, null, "JWT token is empty", null);
     }
 
 }

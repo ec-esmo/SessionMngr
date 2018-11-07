@@ -5,7 +5,6 @@
  */
 package eu.esmo.sessionmng.builders;
 
-import eu.esmo.sessionmng.builders.MngrSessionFactory;
 import eu.esmo.sessionmng.model.TO.MngrSessionTO;
 import eu.esmo.sessionmng.model.dmo.MngrSession;
 import eu.esmo.sessionmng.model.dmo.SessionVariable;

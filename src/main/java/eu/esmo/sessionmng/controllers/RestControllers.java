@@ -6,10 +6,13 @@
 package eu.esmo.sessionmng.controllers;
 
 import eu.esmo.sessionmng.builders.MngrSessionFactory;
+import eu.esmo.sessionmng.builders.SessionMngrResponseFactory;
 import eu.esmo.sessionmng.model.TO.MngrSessionTO;
+import eu.esmo.sessionmng.model.service.BlackListService;
 import eu.esmo.sessionmng.model.service.JwtService;
 import eu.esmo.sessionmng.model.service.ParameterService;
 import eu.esmo.sessionmng.model.service.SessionService;
+import eu.esmo.sessionmng.pojo.JwtValidationResponse;
 import eu.esmo.sessionmng.pojo.ResponseCode;
 import eu.esmo.sessionmng.pojo.SessionMngrResponse;
 import io.swagger.annotations.ApiOperation;
@@ -43,6 +46,9 @@ public class RestControllers {
 
     @Autowired
     private ParameterService paramServ;
+
+    @Autowired
+    private BlackListService blacklistServ;
 
     @RequestMapping(value = "/startSession", method = RequestMethod.POST)
     @ApiOperation(value = "Sets up an internal session temporary storage and returns its identifier", response = String.class)
@@ -113,8 +119,15 @@ public class RestControllers {
     @RequestMapping(value = "/validateToken", method = RequestMethod.GET)
     @ApiOperation(value = "The passed security token’s signature will be validated, as well as the validity as well as other validation measures")
     public SessionMngrResponse validateToken(@RequestParam String token) {
-        //TODO check sender from config manager mciroservice
-        return jwtServ.validateJwt(token);
+        //TODO check sender from config manager mciroservicex
+
+        JwtValidationResponse valResp = jwtServ.validateJwt(token);
+        if (valResp.getCode().equals(ResponseCode.OK)) {
+            blacklistServ.addToBlacklist(valResp.getJti());
+        }
+
+        //TODO check sender from config manager mciroservicex
+        return SessionMngrResponseFactory.makeSessionMngrResponseFromValidationResponse(valResp);
     }
 
 }

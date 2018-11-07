@@ -5,20 +5,15 @@
  */
 package eu.esmo.sessionmng.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import eu.esmo.sessionmng.SessionMngApplication;
 import eu.esmo.sessionmng.controllers.TestRestControllers.TestConfig;
 import eu.esmo.sessionmng.model.TO.MngrSessionTO;
 import eu.esmo.sessionmng.model.dao.SessionRepository;
 import eu.esmo.sessionmng.model.dmo.MngrSession;
+import eu.esmo.sessionmng.model.service.BlackListService;
 import eu.esmo.sessionmng.model.service.JwtService;
 import eu.esmo.sessionmng.model.service.ParameterService;
 import eu.esmo.sessionmng.model.service.SessionService;
-import eu.esmo.sessionmng.pojo.ResponseCode;
-import java.io.UnsupportedEncodingException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -27,8 +22,6 @@ import static org.hamcrest.Matchers.nullValue;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import static org.mockito.ArgumentMatchers.any;
-import org.mockito.Mockito;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +32,6 @@ import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -68,6 +60,9 @@ public class TestRestControllers {
 
     @MockBean
     private JwtService jwtServ;
+    
+    @MockBean
+    private BlackListService blacklistServ;
 
     @Configuration
     static class TestConfig {

@@ -6,7 +6,7 @@
 package eu.esmo.sessionmng.model.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import eu.esmo.sessionmng.pojo.SessionMngrResponse;
+import eu.esmo.sessionmng.pojo.JwtValidationResponse;
 import java.io.UnsupportedEncodingException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -22,7 +22,7 @@ public interface JwtService {
             NoSuchAlgorithmException, NoSuchAlgorithmException, UnrecoverableKeyException;
 
 
-    public SessionMngrResponse validateJwt(String jws);
+    public JwtValidationResponse validateJwt(String jws);
 
 
 }

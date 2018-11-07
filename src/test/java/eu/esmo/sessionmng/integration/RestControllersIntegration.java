@@ -9,7 +9,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.esmo.sessionmng.SessionMngApplication;
 import eu.esmo.sessionmng.model.TO.MngrSessionTO;
-import eu.esmo.sessionmng.model.dmo.MngrSession;
 import eu.esmo.sessionmng.model.service.JwtService;
 import eu.esmo.sessionmng.model.service.KeyStoreService;
 import eu.esmo.sessionmng.model.service.ParameterService;
@@ -21,9 +20,6 @@ import java.security.Key;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
 import javax.crypto.spec.SecretKeySpec;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
@@ -35,11 +31,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -50,6 +45,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  *
  * @author nikos
  */
+@ActiveProfiles("test")
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = SessionMngApplication.class)
 @AutoConfigureMockMvc
@@ -184,7 +180,6 @@ public class RestControllersIntegration {
         assertNotNull(jwtResponse.getError());
         assertEquals(jwtResponse.getError(), "sessionId not found");
 
-
     }
 
     @Test
@@ -202,6 +197,29 @@ public class RestControllersIntegration {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code", is("OK")))
                 .andExpect(jsonPath("$.sessionData.sessionId", is("sessionId")));
+
+    }
+
+    @Test
+    public void replayJwtToken() throws JsonProcessingException, UnsupportedEncodingException, KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, Exception {
+
+        String secretKey = "QjG+wP1CbAH2z4PWlWIDkxP4oRlgK2vos5/jXFfeBw8=";
+        Key key = new SecretKeySpec(secretKey.getBytes("UTF-8"), 0, secretKey.length(), "HmacSHA256");
+
+        when(keyServ.getAlgorithm()).thenReturn(SignatureAlgorithm.HS256);
+        when(keyServ.getSigningKey()).thenReturn(key);
+        when(keyServ.getPublicKey()).thenReturn(key);
+
+        String jwt = jwtServ.makeJwt("sessionId", "extraData", "ISSUER", "sender", "receiver", Long.valueOf(5));
+        mvc.perform(get("/validateToken").param("token", jwt))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code", is("OK")))
+                .andExpect(jsonPath("$.sessionData.sessionId", is("sessionId")));
+
+        mvc.perform(get("/validateToken").param("token", jwt))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code", is("ERROR")));
+//                .andExpect(jsonPath("$.sessionData.sessionId", is("sessionId")));
 
     }
 

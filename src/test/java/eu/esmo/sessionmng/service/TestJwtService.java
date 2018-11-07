@@ -6,10 +6,11 @@
 package eu.esmo.sessionmng.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import eu.esmo.sessionmng.model.TO.MngrSessionTO;
+import eu.esmo.sessionmng.model.service.BlackListService;
 import eu.esmo.sessionmng.model.service.JwtService;
 import eu.esmo.sessionmng.model.service.KeyStoreService;
 import eu.esmo.sessionmng.model.service.impl.JwtServiceImpl;
+import eu.esmo.sessionmng.pojo.JwtValidationResponse;
 import eu.esmo.sessionmng.pojo.ResponseCode;
 import io.jsonwebtoken.SignatureAlgorithm;
 import java.io.UnsupportedEncodingException;
@@ -17,8 +18,6 @@ import java.security.Key;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
-import java.util.HashMap;
-import java.util.Map;
 import javax.crypto.spec.SecretKeySpec;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -39,11 +38,14 @@ public class TestJwtService {
     @MockBean
     private KeyStoreService keyServ;
 
+    @MockBean
+    private BlackListService blacklistServ;
+
     private JwtService jwtServ;
 
     @Before
     public void before() {
-        jwtServ = new JwtServiceImpl(keyServ);
+        jwtServ = new JwtServiceImpl(keyServ, blacklistServ);
     }
 
     @Test
@@ -93,6 +95,23 @@ public class TestJwtService {
         String jwt = "eyJhbGciOiJIUzI1NiJ9.eyJwYXlsb2FkIjoie1wic2Vzc2lvbklkXCI6XCJ1dWlkMVwiLFwic2Vzc2lvblZhcmlhYmxlc1wiOntcInZhcjJcIjpcInZhbDJcIixcInZhcjFcIjpcInZhbDFcIn19In0.vffJ1DjuxPj6q6il6Q0SbjKppI7IWmOqCooB5GRxy7A";
 
         assertEquals(jwtServ.validateJwt(jwt).getError(), "Error Validating JWT");
+        assertEquals(jwtServ.validateJwt(jwt).getCode(), ResponseCode.ERROR);
+
+    }
+
+    @Test
+    public void testBlackListedJWT() throws JsonProcessingException, UnsupportedEncodingException, KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException {
+        String secretKey = "QjG+wP1CbAH2z4PWlWIDkxP4oRlgK2vos5/jXFfeBw8=";
+        Key key = new SecretKeySpec(secretKey.getBytes("UTF-8"), 0, secretKey.length(), "HmacSHA256");
+        when(keyServ.getAlgorithm()).thenReturn(SignatureAlgorithm.HS256);
+        when(keyServ.getSigningKey()).thenReturn(key);
+        when(keyServ.getPublicKey()).thenReturn(key);
+
+        String jwt = jwtServ.makeJwt("sessionId", null, "esmoSessionMngr", "sender", "receiver", Long.valueOf(5));
+        String jti = jwtServ.validateJwt(jwt).getJti();
+        assertEquals(jwtServ.validateJwt(jwt).getCode(), ResponseCode.OK);
+        
+        when(blacklistServ.isBlacklisted(jti)).thenReturn(true);
         assertEquals(jwtServ.validateJwt(jwt).getCode(), ResponseCode.ERROR);
 
     }
