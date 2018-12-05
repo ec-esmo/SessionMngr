@@ -3,15 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package eu.esmo.sessionmng.pojo;
+package eu.esmo.sessionmng.enums;
 
 /**
  *
  * @author nikos
  */
-public enum ResponseCode {
-    
-    OK,
-    ERROR,
-    NEW
+public enum HttpResponseEnum {
+    AUTHORIZED,
+    UN_AUTHORIZED,
+    HEADER_MISSING,
+    BAD_REQUEST;
 }

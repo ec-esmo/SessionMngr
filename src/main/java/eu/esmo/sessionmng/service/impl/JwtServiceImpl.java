@@ -3,15 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package eu.esmo.sessionmng.model.service.impl;
+package eu.esmo.sessionmng.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import eu.esmo.sessionmng.model.TO.MngrSessionTO;
-import eu.esmo.sessionmng.model.service.BlackListService;
-import eu.esmo.sessionmng.model.service.JwtService;
-import eu.esmo.sessionmng.model.service.KeyStoreService;
+import eu.esmo.sessionmng.service.BlackListService;
+import eu.esmo.sessionmng.service.JwtService;
+import eu.esmo.sessionmng.service.KeyStoreService;
 import eu.esmo.sessionmng.pojo.JwtValidationResponse;
-import eu.esmo.sessionmng.pojo.ResponseCode;
+import eu.esmo.sessionmng.enums.ResponseCode;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import java.io.UnsupportedEncodingException;

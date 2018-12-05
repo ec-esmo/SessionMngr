@@ -5,15 +5,15 @@
  */
 package eu.esmo.sessionmng.controllers;
 
-import eu.esmo.sessionmng.builders.MngrSessionFactory;
-import eu.esmo.sessionmng.builders.SessionMngrResponseFactory;
+import eu.esmo.sessionmng.factory.MngrSessionFactory;
+import eu.esmo.sessionmng.factory.SessionMngrResponseFactory;
 import eu.esmo.sessionmng.model.TO.MngrSessionTO;
-import eu.esmo.sessionmng.model.service.BlackListService;
-import eu.esmo.sessionmng.model.service.JwtService;
-import eu.esmo.sessionmng.model.service.ParameterService;
-import eu.esmo.sessionmng.model.service.SessionService;
+import eu.esmo.sessionmng.service.BlackListService;
+import eu.esmo.sessionmng.service.JwtService;
+import eu.esmo.sessionmng.service.ParameterService;
+import eu.esmo.sessionmng.service.SessionService;
 import eu.esmo.sessionmng.pojo.JwtValidationResponse;
-import eu.esmo.sessionmng.pojo.ResponseCode;
+import eu.esmo.sessionmng.enums.ResponseCode;
 import eu.esmo.sessionmng.pojo.SessionMngrResponse;
 import io.swagger.annotations.ApiOperation;
 import java.util.HashMap;
@@ -129,5 +129,15 @@ public class RestControllers {
         //TODO check sender from config manager mciroservicex
         return SessionMngrResponseFactory.makeSessionMngrResponseFromValidationResponse(valResp);
     }
+    
+    
+    @RequestMapping(value = "/getSession", method = RequestMethod.GET)
+    @ApiOperation(value = "Returns the internal session identifier by querying using the UUID of the IdP request")
+    public SessionMngrResponse getSessionFromIdPUUUID(String iDpSession){
+        //TODO 
+        return null;
+    }
+            
+    
 
 }

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package eu.esmo.sessionmng.model.service;
+package eu.esmo.sessionmng.service;
 
 import io.jsonwebtoken.SignatureAlgorithm;
 import java.io.UnsupportedEncodingException;
@@ -18,6 +18,8 @@ import java.security.UnrecoverableKeyException;
  */
 public interface KeyStoreService {
 
+    //Split this to http signature keys and jwt keys
+    
     public Key getSigningKey() throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException,UnsupportedEncodingException;
     public Key getPublicKey() throws KeyStoreException, UnsupportedEncodingException;
     public SignatureAlgorithm getAlgorithm();

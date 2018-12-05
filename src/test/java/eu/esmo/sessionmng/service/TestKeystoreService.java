@@ -5,9 +5,7 @@
  */
 package eu.esmo.sessionmng.service;
 
-import eu.esmo.sessionmng.model.service.KeyStoreService;
-import eu.esmo.sessionmng.model.service.ParameterService;
-import eu.esmo.sessionmng.model.service.impl.KeyStoreServiceImpl;
+import eu.esmo.sessionmng.service.impl.KeyStoreServiceImpl;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -43,12 +41,12 @@ public class TestKeystoreService {
             NoSuchAlgorithmException, CertificateException, UnrecoverableKeyException {
 
         ClassLoader classLoader = getClass().getClassLoader();
-        String path = classLoader.getResource("testKeys/server.jks").getPath();
+        String path = classLoader.getResource("testKeys/keystore.jks").getPath();
 
         Mockito.when(paramServ.getProperty("KEYSTORE_PATH")).thenReturn(path);
-        Mockito.when(paramServ.getProperty("KEY_PASS")).thenReturn("keypassword");
-        Mockito.when(paramServ.getProperty("STORE_PASS")).thenReturn("jkspassword");
-        Mockito.when(paramServ.getProperty("CERT_ALIAS")).thenReturn("jwtkey");
+        Mockito.when(paramServ.getProperty("KEY_PASS")).thenReturn("selfsignedpass");
+        Mockito.when(paramServ.getProperty("STORE_PASS")).thenReturn("keystorepass");
+        Mockito.when(paramServ.getProperty("CERT_ALIAS")).thenReturn("selfsigned");
 
     }
 
@@ -71,6 +69,7 @@ public class TestKeystoreService {
         Key key = keyServ.getPublicKey();
         key.getAlgorithm();
         key.getFormat();
+        
         assertEquals(key.getAlgorithm(), "RSA");
         assertEquals(key.getFormat(), "X.509");
     }

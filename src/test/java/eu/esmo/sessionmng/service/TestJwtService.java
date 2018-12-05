@@ -6,12 +6,9 @@
 package eu.esmo.sessionmng.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import eu.esmo.sessionmng.model.service.BlackListService;
-import eu.esmo.sessionmng.model.service.JwtService;
-import eu.esmo.sessionmng.model.service.KeyStoreService;
-import eu.esmo.sessionmng.model.service.impl.JwtServiceImpl;
+import eu.esmo.sessionmng.service.impl.JwtServiceImpl;
 import eu.esmo.sessionmng.pojo.JwtValidationResponse;
-import eu.esmo.sessionmng.pojo.ResponseCode;
+import eu.esmo.sessionmng.enums.ResponseCode;
 import io.jsonwebtoken.SignatureAlgorithm;
 import java.io.UnsupportedEncodingException;
 import java.security.Key;

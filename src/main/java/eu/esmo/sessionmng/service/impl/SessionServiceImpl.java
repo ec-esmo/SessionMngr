@@ -3,18 +3,18 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package eu.esmo.sessionmng.model.service.impl;
+package eu.esmo.sessionmng.service.impl;
 
 /**
  *
  * @author nikos
  */
-import eu.esmo.sessionmng.builders.MngrSessionFactory;
+import eu.esmo.sessionmng.factory.MngrSessionFactory;
 import eu.esmo.sessionmng.model.TO.MngrSessionTO;
 import eu.esmo.sessionmng.model.dao.SessionRepository;
 import eu.esmo.sessionmng.model.dmo.MngrSession;
 import eu.esmo.sessionmng.model.dmo.SessionVariable;
-import eu.esmo.sessionmng.model.service.SessionService;
+import eu.esmo.sessionmng.service.SessionService;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;

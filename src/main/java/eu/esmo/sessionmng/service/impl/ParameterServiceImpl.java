@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package eu.esmo.sessionmng.model.service.impl;
+package eu.esmo.sessionmng.service.impl;
 
-import eu.esmo.sessionmng.model.service.ParameterService;
+import eu.esmo.sessionmng.service.ParameterService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 

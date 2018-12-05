@@ -5,7 +5,7 @@
  */
 package eu.esmo.sessionmng.integration;
 
-import eu.esmo.sessionmng.model.service.BlackListService;
+import eu.esmo.sessionmng.service.BlackListService;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.junit.runner.RunWith;

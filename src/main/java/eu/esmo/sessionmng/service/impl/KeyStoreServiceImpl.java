@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package eu.esmo.sessionmng.model.service.impl;
+package eu.esmo.sessionmng.service.impl;
 
-import eu.esmo.sessionmng.model.service.KeyStoreService;
-import eu.esmo.sessionmng.model.service.ParameterService;
+import eu.esmo.sessionmng.service.KeyStoreService;
+import eu.esmo.sessionmng.service.ParameterService;
 import io.jsonwebtoken.SignatureAlgorithm;
 import java.io.File;
 import java.io.FileInputStream;
@@ -18,7 +18,6 @@ import java.security.Key;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.security.PublicKey;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;

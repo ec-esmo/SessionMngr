@@ -14,7 +14,7 @@ import com.google.code.ssm.providers.spymemcached.MemcacheClientFactoryImpl;
 import com.google.code.ssm.spring.ExtendedSSMCacheManager;
 import com.google.code.ssm.spring.SSMCache;
 import static eu.esmo.sessionmng.MemCacheConfig.BLACKLIST;
-import eu.esmo.sessionmng.model.service.ParameterService;
+import eu.esmo.sessionmng.service.ParameterService;
 import java.util.ArrayList;
 import java.util.List;
 import org.mockito.Mockito;

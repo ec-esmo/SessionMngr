@@ -5,6 +5,7 @@
  */
 package eu.esmo.sessionmng.pojo;
 
+import eu.esmo.sessionmng.enums.ResponseCode;
 import eu.esmo.sessionmng.model.TO.MngrSessionTO;
 
 /**

@@ -5,9 +5,10 @@
  */
 package eu.esmo.sessionmng.builders;
 
+import eu.esmo.sessionmng.factory.SessionMngrResponseFactory;
 import eu.esmo.sessionmng.model.TO.MngrSessionTO;
 import eu.esmo.sessionmng.pojo.JwtValidationResponse;
-import eu.esmo.sessionmng.pojo.ResponseCode;
+import eu.esmo.sessionmng.enums.ResponseCode;
 import eu.esmo.sessionmng.pojo.SessionMngrResponse;
 import java.util.HashMap;
 import static org.junit.Assert.assertEquals;

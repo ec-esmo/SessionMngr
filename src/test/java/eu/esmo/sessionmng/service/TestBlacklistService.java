@@ -6,8 +6,7 @@
 package eu.esmo.sessionmng.service;
 
 import eu.esmo.sessionmng.SessionMngApplication;
-import eu.esmo.sessionmng.model.service.BlackListService;
-import eu.esmo.sessionmng.model.service.impl.BlackListServiceImpl;
+import eu.esmo.sessionmng.service.impl.BlackListServiceImpl;
 import eu.esmo.sessionmng.service.TestBlacklistService.TestConfig;
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;
