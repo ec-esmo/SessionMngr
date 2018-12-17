@@ -5,11 +5,14 @@
  */
 package eu.esmo.sessionmng.service;
 
+import com.google.common.base.Optional;
 import eu.esmo.sessionmng.model.dao.SessionRepository;
 import eu.esmo.sessionmng.model.dmo.MngrSession;
 import eu.esmo.sessionmng.model.dmo.SessionVariable;
 import eu.esmo.sessionmng.service.impl.SessionServiceImpl;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import org.assertj.core.util.Arrays;
 import static org.junit.Assert.assertEquals;
@@ -54,19 +57,28 @@ public class TestSessionService {
 
     @Test
     public void testUpdateSessionVariable() throws ChangeSetPersister.NotFoundException {
-        
+
         assertEquals(sessionServ.getValueByVariableAndId("sessionId", "var1"), "val1");
     }
 
-    
     @Test(expected = ChangeSetPersister.NotFoundException.class)
     public void testUpdateSessionVariableErrorSession() throws ChangeSetPersister.NotFoundException {
         sessionServ.updateSessionVariable(INVALID_SESSION, "", "");
     }
-    
+
     @Test
     public void testFindBySessionId() {
         assertEquals(sessionServ.getValueByVariableAndId("sessionId", "var1"), "val1");
+    }
+
+    @Test(expected = ArithmeticException.class)
+    public void testExceptionThrowForMutlipMatchingSessions() {
+        List<String> matchingIDs = new ArrayList<String>();
+        matchingIDs.add("id1");
+        matchingIDs.add("id2");
+        when(sessionRepo.getSessionIdByVariableAndValue("varName", "varValue")).thenReturn(java.util.Optional.of(matchingIDs));
+        sessionServ.getSessionIdByVariableAndValue("varName", "varValue");
+
     }
 
 }

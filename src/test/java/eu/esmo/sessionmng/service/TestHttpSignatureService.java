@@ -73,7 +73,7 @@ public class TestHttpSignatureService {
     public void testSignature() throws IOException, InvalidKeySpecException, KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException {
         MSConfigurationService msConfigServ = new MSConfigurationsServiceImplSTUB();
         HttpSignatureService httpSigServ = new HttpSignatureServiceImpl(keyServ, msConfigServ);
-        System.out.println(httpSigServ.getSignature());
+        System.out.println(httpSigServ.getFakeSignature());
         assertEquals(true, true);
     }
 

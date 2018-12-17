@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 public interface HttpSignatureService {
 
-    public String getSignature() throws IOException;
+    public String getFakeSignature() throws IOException;
 
     public HttpResponseEnum verifySignature(HttpServletRequest httpRequest);
 

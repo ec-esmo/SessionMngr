@@ -39,4 +39,12 @@ public class MngrSessionFactory {
         return sessionTO;
     }
 
+    public static MngrSessionTO makeMngrSessionTOFromSessionId(String sessionId) {
+        MngrSessionTO sessionTO = new MngrSessionTO();
+        sessionTO.setSessionId(sessionId);
+        Map<String, String> variables = new HashMap();
+        sessionTO.setSessionVariables(variables);
+        return sessionTO;
+    }
+
 }

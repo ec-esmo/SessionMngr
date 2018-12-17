@@ -25,8 +25,11 @@ public class CustomWebSecurityConfigurerAdapter extends WebSecurityConfigurerAda
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.addFilterAfter(
-                new HttpSignatureFilter(sigServ), BasicAuthenticationFilter.class)
+        http.antMatcher("/rest/**")
+                .addFilterBefore(new HttpSignatureFilter(sigServ), BasicAuthenticationFilter.class)
                 .csrf().disable();
     }
+
+ 
+
 }

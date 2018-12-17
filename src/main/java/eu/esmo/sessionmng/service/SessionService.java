@@ -8,6 +8,7 @@ package eu.esmo.sessionmng.service;
 import eu.esmo.sessionmng.model.TO.MngrSessionTO;
 import eu.esmo.sessionmng.model.dmo.MngrSession;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 
 /**
@@ -21,6 +22,9 @@ public interface SessionService {
     public MngrSessionTO findBySessionId(String sessionId);
 
     public String getValueByVariableAndId(String sessionId, String variable);
+    
+    
+    public Optional<String> getSessionIdByVariableAndValue(String variableName, String value) throws ArithmeticException;
 
     public void save(MngrSession session);
     

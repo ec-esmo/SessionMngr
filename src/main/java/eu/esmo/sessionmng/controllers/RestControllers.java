@@ -17,6 +17,7 @@ import eu.esmo.sessionmng.enums.ResponseCode;
 import eu.esmo.sessionmng.pojo.SessionMngrResponse;
 import io.swagger.annotations.ApiOperation;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author nikos
  */
 @RestController
+@RequestMapping("rest")
 public class RestControllers {
 
     private final static Logger LOG = LoggerFactory.getLogger(RestControllers.class);
@@ -129,15 +131,28 @@ public class RestControllers {
         //TODO check sender from config manager mciroservicex
         return SessionMngrResponseFactory.makeSessionMngrResponseFromValidationResponse(valResp);
     }
-    
-    
+
     @RequestMapping(value = "/getSession", method = RequestMethod.GET)
-    @ApiOperation(value = "Returns the internal session identifier by querying using the UUID of the IdP request")
-    public SessionMngrResponse getSessionFromIdPUUUID(String iDpSession){
-        //TODO 
-        return null;
+    @ApiOperation(value = "Returns the internal session identifier by querying using the UUID of an exteranal "
+            + "the session request. E.g. eIDAS request identifier, The identifier must be previously stored in the session")
+    public SessionMngrResponse getSessionFromIdPUUUID(String varName, String varValue) {
+        SessionMngrResponse response = new SessionMngrResponse();
+        try {
+            Optional<String> sessionId = sessionServ.getSessionIdByVariableAndValue(varName, varValue);
+
+            if (sessionId.isPresent() && !StringUtils.isEmpty(sessionId.get())) {
+                response.setCode(ResponseCode.OK);
+                response.setSessionData(MngrSessionFactory.makeMngrSessionTOFromSessionId(sessionId.get()));
+            } else {
+                response.setCode(ResponseCode.ERROR);
+                response.setError("No sessios found");
+            }
+        } catch (ArithmeticException e) {
+            response.setCode(ResponseCode.ERROR);
+            response.setError("More than one sessions match criteria!");
+            LOG.debug(e.getMessage());
+        }
+        return response;
     }
-            
-    
 
 }

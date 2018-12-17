@@ -79,9 +79,9 @@ public class HttpSignatureServiceImpl implements HttpSignatureService {
         }
     }
 
-    //TODO Add parameters here
+    
     @Override
-    public String getSignature() throws IOException {
+    public String getFakeSignature() throws IOException {
 
 //         String[] requiredHeaders = {"(request-target)", "host", "original-date", "digest", "x-request-id"};
         final String method = "GET";

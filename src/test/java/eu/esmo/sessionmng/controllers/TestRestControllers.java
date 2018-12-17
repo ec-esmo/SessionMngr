@@ -6,19 +6,15 @@
 package eu.esmo.sessionmng.controllers;
 
 import eu.esmo.sessionmng.SessionMngApplication;
-
 import eu.esmo.sessionmng.model.TO.MngrSessionTO;
 import eu.esmo.sessionmng.model.dao.SessionRepository;
 import eu.esmo.sessionmng.model.dmo.MngrSession;
-import eu.esmo.sessionmng.service.BlackListService;
 import eu.esmo.sessionmng.service.HttpSignatureService;
-import eu.esmo.sessionmng.service.JwtService;
 import eu.esmo.sessionmng.service.KeyStoreService;
 import eu.esmo.sessionmng.service.MSConfigurationService;
 import eu.esmo.sessionmng.service.ParameterService;
 import eu.esmo.sessionmng.service.SessionService;
 import eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl;
-import static eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl.getParamsString;
 import eu.esmo.sessionmng.service.impl.KeyStoreServiceImpl;
 import eu.esmo.sessionmng.service.impl.MSConfigurationsServiceImplSTUB;
 import java.io.FileNotFoundException;
@@ -45,13 +41,9 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.data.crossstore.ChangeSetPersister;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -120,8 +112,8 @@ public class TestRestControllers {
         String nowDate = formatter.format(date);
         byte[] digest = MessageDigest.getInstance("SHA-256").digest("".getBytes());
         String requestId = UUID.randomUUID().toString();
-        mvc.perform(get("/getSessionData?sessionId=somesession")
-                .header("authorization", sigServ.generateSignature("hostUrl", "GET", "/getSessionData?sessionId=somesession", null, "application/x-www-form-urlencoded", requestId))
+        mvc.perform(get("/rest/getSessionData?sessionId=somesession")
+                .header("authorization", sigServ.generateSignature("hostUrl", "GET", "/rest/getSessionData?sessionId=somesession", null, "application/x-www-form-urlencoded", requestId))
                 .header("host", "hostUrl")
                 .header("(request-target)", "GET /getSessionData?sessionId=somesession")
                 .header("original-date", nowDate)
@@ -144,8 +136,8 @@ public class TestRestControllers {
         byte[] digest = MessageDigest.getInstance("SHA-256").digest("".getBytes());
         String requestId = UUID.randomUUID().toString();
 
-        mvc.perform(get("/getSessionData?sessionId=somesession&variableName=var1")
-                .header("authorization", sigServ.generateSignature("hostUrl", "GET", "/getSessionData?sessionId=somesession&variableName=var1", null, "application/x-www-form-urlencoded", requestId))
+        mvc.perform(get("/rest/getSessionData?sessionId=somesession&variableName=var1")
+                .header("authorization", sigServ.generateSignature("hostUrl", "GET", "/rest/getSessionData?sessionId=somesession&variableName=var1", null, "application/x-www-form-urlencoded", requestId))
                 .header("host", "hostUrl")
                 .header("(request-target)", "GET /getSessionData?sessionId=somesession")
                 .header("original-date", nowDate)
@@ -169,8 +161,8 @@ public class TestRestControllers {
         byte[] digest = MessageDigest.getInstance("SHA-256").digest("".getBytes());
         String requestId = UUID.randomUUID().toString();
 
-        mvc.perform(get("/getSessionData?sessionId=somesession&variableName=var1")
-                .header("authorization", sigServ.generateSignature("hostUrl", "GET", "/getSessionData?sessionId=somesession&variableName=var1", null, "application/x-www-form-urlencoded", requestId))
+        mvc.perform(get("/rest/getSessionData?sessionId=somesession&variableName=var1")
+                .header("authorization", sigServ.generateSignature("hostUrl", "GET", "/rest/getSessionData?sessionId=somesession&variableName=var1", null, "application/x-www-form-urlencoded", requestId))
                 .header("host", "hostUrl")
                 .header("(request-target)", "GET /getSessionData?sessionId=somesession")
                 .header("original-date", nowDate)
@@ -200,8 +192,8 @@ public class TestRestControllers {
         postParams.put("dataObject", "dataObject");
         byte[] digest = MessageDigest.getInstance("SHA-256").digest("".getBytes()); // post parameters are added as uri parameters not in the body when form-encoding
 
-        mvc.perform(post("/updateSessionData")
-                .header("authorization", sigServ.generateSignature("hostUrl", "POST", "/updateSessionData", null, "application/x-www-form-urlencoded", requestId))
+        mvc.perform(post("/rest/updateSessionData")
+                .header("authorization", sigServ.generateSignature("hostUrl", "POST", "/rest/updateSessionData", null, "application/x-www-form-urlencoded", requestId))
                 .header("host", "hostUrl")
                 .header("(request-target)", "POST /updateSessionData")
                 .header("original-date", nowDate)
@@ -232,8 +224,8 @@ public class TestRestControllers {
         postParams.put("dataObject", "dataObject");
         byte[] digest = MessageDigest.getInstance("SHA-256").digest("".getBytes()); // post parameters are added as uri parameters not in the body when form-encoding
 
-        mvc.perform(post("/updateSessionData")
-                .header("authorization", sigServ.generateSignature("hostUrl", "POST", "/updateSessionData", null, "application/x-www-form-urlencoded", requestId))
+        mvc.perform(post("/rest/updateSessionData")
+                .header("authorization", sigServ.generateSignature("hostUrl", "POST", "/rest/updateSessionData", null, "application/x-www-form-urlencoded", requestId))
                 .header("host", "hostUrl")
                 .header("(request-target)", "POST /updateSessionData")
                 .header("original-date", nowDate)
@@ -248,14 +240,77 @@ public class TestRestControllers {
                 .andExpect(jsonPath("$.error", is("failed to update variable var1 NOT Found")));
     }
 
-//    @Test
-//    public void testStartSession() throws Exception {
-//        when(sessionServ.getValueByVariableAndId("somesession", "var1")).thenReturn("val1");
-//
-//        mvc.perform(get("/getSessionData?sessionId=somesession&variableName=var1"))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.sessionId", is("somesession")))
-//                .andExpect(jsonPath("$.sessionVariables.var1", is("val1")))
-//                .andExpect(jsonPath("$.sessionVariables.var2").doesNotExist());
-//    }
+    @Test
+    public void testGetSessionFromIdPUUUID() throws Exception {
+
+        java.util.Optional<String> sessionIdOpt = java.util.Optional.of("sessionId");
+        when(sessionServ.getSessionIdByVariableAndValue("varName", "varValue")).thenReturn(sessionIdOpt);
+
+        Date date = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z");
+        String nowDate = formatter.format(date);
+        byte[] digest = MessageDigest.getInstance("SHA-256").digest("".getBytes());
+        String requestId = UUID.randomUUID().toString();
+        mvc.perform(get("/rest/getSession?varName=varName&varValue=varValue")
+                .header("authorization", sigServ.generateSignature("hostUrl", "GET", "/rest/getSession?varName=varName&varValue=varValue", null, "application/x-www-form-urlencoded", requestId))
+                .header("host", "hostUrl")
+                .header("(request-target)", "GET /getSessionData?sessionId=somesession")
+                .header("original-date", nowDate)
+                .header("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)))
+                .header("x-request-id", requestId)
+        )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.sessionData.sessionId", is("sessionId")));
+
+    }
+
+    @Test
+    public void testGetSessionFromIdPUUUIDSessionNotFound() throws Exception {
+
+        java.util.Optional<String> sessionIdOpt = java.util.Optional.empty();
+        when(sessionServ.getSessionIdByVariableAndValue("varName", "varValue")).thenReturn(sessionIdOpt);
+
+        Date date = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z");
+        String nowDate = formatter.format(date);
+        byte[] digest = MessageDigest.getInstance("SHA-256").digest("".getBytes());
+        String requestId = UUID.randomUUID().toString();
+        mvc.perform(get("/rest/getSession?varName=varName&varValue=varValue")
+                .header("authorization", sigServ.generateSignature("hostUrl", "GET", "/rest/getSession?varName=varName&varValue=varValue", null, "application/x-www-form-urlencoded", requestId))
+                .header("host", "hostUrl")
+                .header("(request-target)", "GET /getSessionData?sessionId=somesession")
+                .header("original-date", nowDate)
+                .header("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)))
+                .header("x-request-id", requestId)
+        )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code", is("ERROR")))
+                .andExpect(jsonPath("$.error", is("No sessios found")));
+
+    }
+
+    @Test
+    public void testGetSessionFromIdPUUUIDSessionManySessionsMatching() throws Exception {
+
+        doThrow(new ArithmeticException()).when(sessionServ).getSessionIdByVariableAndValue("varName", "varValue");
+
+        Date date = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z");
+        String nowDate = formatter.format(date);
+        byte[] digest = MessageDigest.getInstance("SHA-256").digest("".getBytes());
+        String requestId = UUID.randomUUID().toString();
+        mvc.perform(get("/rest/getSession?varName=varName&varValue=varValue")
+                .header("authorization", sigServ.generateSignature("hostUrl", "GET", "/rest/getSession?varName=varName&varValue=varValue", null, "application/x-www-form-urlencoded", requestId))
+                .header("host", "hostUrl")
+                .header("(request-target)", "GET /getSessionData?sessionId=somesession")
+                .header("original-date", nowDate)
+                .header("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)))
+                .header("x-request-id", requestId)
+        )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code", is("ERROR")))
+                .andExpect(jsonPath("$.error", is("More than one sessions match criteria!")));
+
+    }
+
 }

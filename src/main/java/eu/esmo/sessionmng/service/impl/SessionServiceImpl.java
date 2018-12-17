@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import javax.transaction.Transactional;
+import org.hibernate.jdbc.TooManyRowsAffectedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
@@ -29,7 +30,7 @@ import org.springframework.stereotype.Service;
 public class SessionServiceImpl implements SessionService {
 
 //    @Autowired
-    private SessionRepository sessionRepo;
+    private final SessionRepository sessionRepo;
 
     @Autowired
     public SessionServiceImpl(SessionRepository sessionRepo) {
@@ -102,8 +103,21 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
+    @Transactional
     public void delete(String sessionId) {
         this.sessionRepo.deleteBySessionId(sessionId);
+    }
+
+    @Override
+    @Transactional
+    public Optional<String> getSessionIdByVariableAndValue(String variableName, String value) {
+        Optional<List<String>> result = this.sessionRepo.getSessionIdByVariableAndValue(variableName, value);
+        if (result.isPresent()) {
+            if(result.get().size() != 1) throw new ArithmeticException("More than one sessions match criteria!");
+            return Optional.of(result.get().iterator().next());
+        }
+        
+        return Optional.empty();
     }
 
 }
