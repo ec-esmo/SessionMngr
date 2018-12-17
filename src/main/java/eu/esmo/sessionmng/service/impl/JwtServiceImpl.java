@@ -76,9 +76,9 @@ public class JwtServiceImpl implements JwtService {
     public JwtValidationResponse validateJwt(String jws) {
         try {
             if (jws != null) {
-                String sessionId = Jwts.parser().setSigningKey(keyServ.getPublicKey()).parseClaimsJws(jws).getBody().get("sessionId", String.class);
-                String extraData = Jwts.parser().setSigningKey(keyServ.getPublicKey()).parseClaimsJws(jws).getBody().get("data", String.class);
-                String jti = Jwts.parser().setSigningKey(keyServ.getPublicKey()).parseClaimsJws(jws).getBody().getId();
+                String sessionId = Jwts.parser().setSigningKey(keyServ.getJWTPublicKey()).parseClaimsJws(jws).getBody().get("sessionId", String.class);
+                String extraData = Jwts.parser().setSigningKey(keyServ.getJWTPublicKey()).parseClaimsJws(jws).getBody().get("data", String.class);
+                String jti = Jwts.parser().setSigningKey(keyServ.getJWTPublicKey()).parseClaimsJws(jws).getBody().getId();
 
                 if (blackListServ.isBlacklisted(jti)) {
                     throw new KeyStoreException("JWT is blacklisted");

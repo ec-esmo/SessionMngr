@@ -46,7 +46,8 @@ public class TestKeystoreService {
         Mockito.when(paramServ.getProperty("KEYSTORE_PATH")).thenReturn(path);
         Mockito.when(paramServ.getProperty("KEY_PASS")).thenReturn("selfsignedpass");
         Mockito.when(paramServ.getProperty("STORE_PASS")).thenReturn("keystorepass");
-        Mockito.when(paramServ.getProperty("CERT_ALIAS")).thenReturn("selfsigned");
+        Mockito.when(paramServ.getProperty("JWT_CERT_ALIAS")).thenReturn("selfsigned");
+        Mockito.when(paramServ.getProperty("HTTPSIG_CERT_ALIAS")).thenReturn("selfsigned");
 
     }
 
@@ -66,10 +67,10 @@ public class TestKeystoreService {
     public void testGetPublicKeyRSA() throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, IOException, FileNotFoundException, CertificateException {
         Mockito.when(paramServ.getProperty("ASYNC_SIGNATURE")).thenReturn("true");
         keyServ = new KeyStoreServiceImpl(paramServ);
-        Key key = keyServ.getPublicKey();
+        Key key = keyServ.getHttpSigPublicKey();
         key.getAlgorithm();
         key.getFormat();
-        
+
         assertEquals(key.getAlgorithm(), "RSA");
         assertEquals(key.getFormat(), "X.509");
     }

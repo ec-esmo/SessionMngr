@@ -9,6 +9,6 @@ package eu.esmo.sessionmng.integration;
  *
  * @author nikos
  */
-public class SessionServiceIntegration {
+public class TestSessionServiceIntegration {
     
 }

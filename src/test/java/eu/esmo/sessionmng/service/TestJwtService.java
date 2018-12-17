@@ -52,7 +52,7 @@ public class TestJwtService {
 
         when(keyServ.getAlgorithm()).thenReturn(SignatureAlgorithm.HS256);
         when(keyServ.getSigningKey()).thenReturn(key);
-        when(keyServ.getPublicKey()).thenReturn(key);
+        when(keyServ.getJWTPublicKey()).thenReturn(key);
 
 //        Map map = new HashMap();
 //        map.put("var1", "val1");
@@ -72,7 +72,7 @@ public class TestJwtService {
         String secretKey = "QjG+wP1CbAH2z4PWlWIDkxP4oRlgK2vos5/jXFfeBw8=";
         Key key = new SecretKeySpec(secretKey.getBytes("UTF-8"), 0, secretKey.length(), "HmacSHA256");
         when(keyServ.getAlgorithm()).thenReturn(SignatureAlgorithm.HS256);
-        when(keyServ.getPublicKey()).thenReturn(key);
+        when(keyServ.getJWTPublicKey()).thenReturn(key);
 
         String jwt = "eyJhbGciOiJIUzI1NiJ9.eyJwYXlsb2FkIjoie1wic2Vzc2lvbklkXCI6XCI2YzBmNzBhOC1mMzJiLTQ1MzUtYjVmNi0wZDU5NmM1MjgxM2FcIixcInNlc3Npb25WYXJpYWJsZXNcIjp7fX0iLCJpc3MiOiJlcnJvclZhbHVlIiwianRpIjoiZjU2ZDM3MzktOWFkYi00MjkyLTgwZGQtNDk5OGE0OWUwOWU0IiwiaWF0IjoxNTQwMzY4MTc2LCJleHAiOjE1NDAzNjg0NzZ9.lNcpaIZDumVigOpkucVct7Yxk-H9BB2T5hxx0nf5a4Q";
 
@@ -87,7 +87,7 @@ public class TestJwtService {
         String secretKey = "QjG+wP1CbAH2z4PWlWIDkxP4oRlgK2vos5/jXFfeBw8=123";
         Key key = new SecretKeySpec(secretKey.getBytes("UTF-8"), 0, secretKey.length(), "HmacSHA256");
         when(keyServ.getAlgorithm()).thenReturn(SignatureAlgorithm.HS256);
-        when(keyServ.getPublicKey()).thenReturn(key);
+        when(keyServ.getJWTPublicKey()).thenReturn(key);
 
         String jwt = "eyJhbGciOiJIUzI1NiJ9.eyJwYXlsb2FkIjoie1wic2Vzc2lvbklkXCI6XCJ1dWlkMVwiLFwic2Vzc2lvblZhcmlhYmxlc1wiOntcInZhcjJcIjpcInZhbDJcIixcInZhcjFcIjpcInZhbDFcIn19In0.vffJ1DjuxPj6q6il6Q0SbjKppI7IWmOqCooB5GRxy7A";
 
@@ -102,7 +102,7 @@ public class TestJwtService {
         Key key = new SecretKeySpec(secretKey.getBytes("UTF-8"), 0, secretKey.length(), "HmacSHA256");
         when(keyServ.getAlgorithm()).thenReturn(SignatureAlgorithm.HS256);
         when(keyServ.getSigningKey()).thenReturn(key);
-        when(keyServ.getPublicKey()).thenReturn(key);
+        when(keyServ.getJWTPublicKey()).thenReturn(key);
 
         String jwt = jwtServ.makeJwt("sessionId", null, "esmoSessionMngr", "sender", "receiver", Long.valueOf(5));
         String jti = jwtServ.validateJwt(jwt).getJti();

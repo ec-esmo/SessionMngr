@@ -11,10 +11,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import eu.esmo.sessionmng.model.dao.SessionRepository;
 import eu.esmo.sessionmng.model.dmo.MngrSession;
 import eu.esmo.sessionmng.model.dmo.SessionVariable;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -23,7 +21,6 @@ import org.assertj.core.util.Arrays;
 import org.junit.Assert;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import org.junit.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -34,7 +31,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @RunWith(SpringJUnit4ClassRunner.class)
 @Transactional
 @SpringBootTest
-public class MngSessionDaoIntegration {
+public class TestMngSessionDaoIntegration {
 
     @Resource
     private SessionRepository sessionRepo;

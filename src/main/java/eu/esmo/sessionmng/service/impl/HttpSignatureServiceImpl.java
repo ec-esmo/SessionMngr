@@ -54,34 +54,33 @@ import org.tomitribe.auth.signatures.Verifier;
  */
 @Service
 public class HttpSignatureServiceImpl implements HttpSignatureService {
-    
+
     private Algorithm algorithm = Algorithm.RSA_SHA256;
     private Signer signer;
     private final static Logger log = LoggerFactory.getLogger(HttpSignatureServiceImpl.class);
-    
+
     public static String[] requiredHeaders = {"(request-target)", "host", "original-date", "digest", "x-request-id"};
     private static final String DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss z";
     private static final int DATE_DIFF_ALLOWED = 5;
-    
+
     private KeyStoreService keyServ;
     private MSConfigurationService msConfigServ;
-    
+
     @Autowired
     public HttpSignatureServiceImpl(KeyStoreService keyServ, MSConfigurationService msConfigServ)
             throws InvalidKeySpecException, IOException, KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException {
         try {
             this.msConfigServ = msConfigServ;
             this.keyServ = keyServ;
-            String keyId = DigestUtils.sha256Hex(getX509PubKeytoRSABinaryFormat((PublicKey) this.keyServ.getPublicKey()));
+            String keyId = DigestUtils.sha256Hex(getX509PubKeytoRSABinaryFormat((PublicKey) this.keyServ.getHttpSigPublicKey()));
             this.signer = new Signer(keyServ.getSigningKey(), new Signature(keyId, algorithm, null, "(request-target)", "host", "original-date", "digest", "x-request-id"));
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    
     @Override
-    public String getFakeSignature() throws IOException {
+    public String getFakeSignature() throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, UnsupportedEncodingException, IOException {
 
 //         String[] requiredHeaders = {"(request-target)", "host", "original-date", "digest", "x-request-id"};
         final String method = "GET";
@@ -96,17 +95,17 @@ public class HttpSignatureServiceImpl implements HttpSignatureService {
         headers.put("x-request-id", UUID.randomUUID().toString());
 
         // Here it is!
-        final Signature signed = signer.sign(method, uri, headers);
+        final Signature signed = getSigner().sign(method, uri, headers);
         return signed.toString();
     }
-    
+
     public String getX509PubKeytoRSABinaryFormat(PublicKey key) throws IOException, KeyStoreException {
         return Base64.getEncoder().encodeToString(key.getEncoded());
     }
-    
+
     public String generateSignature(String hostUrl, String method, String uri, Map<String, String> postParams, String contentType, String requestId)
             throws NoSuchAlgorithmException, KeyStoreException, UnrecoverableKeyException, UnsupportedEncodingException, IOException {
-        
+
         final String[] requiredHeaders = {"(request-target)", "host", "original-date", "digest", "x-request-id"};
         final Map<String, String> signatureHeaders = new HashMap<String, String>();
         signatureHeaders.put("host", hostUrl);
@@ -128,29 +127,29 @@ public class HttpSignatureServiceImpl implements HttpSignatureService {
         } else {
             digest = MessageDigest.getInstance("SHA-256").digest("".getBytes());
         }
-        
+
         signatureHeaders.put("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)));
-        
+
         signatureHeaders.put("Accept", "*/*");
-        signatureHeaders.put("Content-Length", Integer.toString( digest.length));
+        signatureHeaders.put("Content-Length", Integer.toString(digest.length));
         signatureHeaders.put("x-request-id", requestId);
         signatureHeaders.put("(request-target)", method + " " + uri);
-        
+
         Algorithm algorithm = Algorithm.RSA_SHA256;
         String keyId = "06f336b68ba82890576f92b7d564c709cea0c0f318a09b4fbc5a502a7c93f926";
         // Here it is!
         Signer signer = new Signer(keyServ.getSigningKey(), new Signature(keyId, algorithm, null, "(request-target)", "host", "original-date", "digest", "x-request-id"));
         Signature signed = signer.sign(method, uri, signatureHeaders);
-        
+
         return signed.toString();
-        
+
     }
-    
+
     @Override
     public HttpResponseEnum verifySignature(HttpServletRequest httpRequest) {
         String authorization = httpRequest.getHeader("authorization");
         if (authorization != null) {
-            
+
             Signature sigToVerify = Signature.fromString(authorization);
             log.debug("HTTP Signature received: " + sigToVerify);
 
@@ -170,16 +169,16 @@ public class HttpSignatureServiceImpl implements HttpSignatureService {
                     || emptyRequiredHeader) {
                 return HttpResponseEnum.HEADER_MISSING;
             }
-            
+
             Map<String, String> headers = new HashMap<String, String>();
             Collections.list(httpRequest.getHeaderNames())
                     .stream().forEach(hName -> {
                         headers.put(hName, httpRequest.getHeader(hName));
                     });
-            
+
             String clientTime = StringUtils.isEmpty(httpRequest.getHeader("date"))
                     ? httpRequest.getHeader("original-date") : httpRequest.getHeader("date");
-            
+
             try {
                 //TODO blacklist requestIds to remove replay attacks?
 
@@ -190,25 +189,25 @@ public class HttpSignatureServiceImpl implements HttpSignatureService {
                 byte[] requestBodyRaw = IOUtils.toByteArray(httpRequest.getInputStream());
                 byte[] digest = MessageDigest.getInstance("SHA-256").digest(requestBodyRaw);
                 String digestCalculated = new String(Base64.getEncoder().encodeToString(digest));
-                
+
                 if (!areDigestsEqual(httpRequest.getHeader("digest"), digestCalculated)) {
                     log.info("Digest missmatch");
                     return HttpResponseEnum.UN_AUTHORIZED;
                 }
-                
+
                 String method = httpRequest.getMethod().toLowerCase();
                 String uri = httpRequest.getRequestURI();
                 if (!StringUtils.isEmpty(httpRequest.getQueryString())) {
                     uri += "?" + httpRequest.getQueryString();
                 }
                 log.debug("Veryfing signature for " + uri + " and verb " + method);
-                
+
                 if (isSignatureValid(sigToVerify, msConfigServ, method, uri, headers)) {
                     return HttpResponseEnum.AUTHORIZED;
                 }
-                
+
                 return HttpResponseEnum.UN_AUTHORIZED;
-                
+
             } catch (IllegalArgumentException e) {
                 log.error("Wrong request ID");
                 log.error(e.getMessage());
@@ -232,7 +231,7 @@ public class HttpSignatureServiceImpl implements HttpSignatureService {
         }
         return HttpResponseEnum.UN_AUTHORIZED;
     }
-    
+
     public boolean hasValidRequestTime(String receivedTime) throws ParseException {
         SimpleDateFormat format = new SimpleDateFormat(DATE_FORMAT, Locale.US);
         format.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -242,7 +241,7 @@ public class HttpSignatureServiceImpl implements HttpSignatureService {
         long diffMinutes = diff / (60 * 1000) % 60;
         return diffMinutes < DATE_DIFF_ALLOWED;
     }
-    
+
     public boolean areDigestsEqual(String requestDigest, String calculatedDigest) {
         String reqDigestSha256;
         Pattern p = Pattern.compile("SHA-256=([^,$]+)");
@@ -255,7 +254,7 @@ public class HttpSignatureServiceImpl implements HttpSignatureService {
         }
         return calculatedDigest.equals(reqDigestSha256);
     }
-    
+
     public boolean isSignatureValid(Signature sigToVerify,
             MSConfigurationService msConfigServ, String method, String uri, Map<String, String> headers) throws InvalidKeyException, IOException, NoSuchAlgorithmException, InvalidKeySpecException, SignatureException {
         String fingerprint = sigToVerify.getKeyId();
@@ -266,11 +265,11 @@ public class HttpSignatureServiceImpl implements HttpSignatureService {
         }
         return false;
     }
-    
+
     public static String getParamsString(Map<String, String> params)
             throws UnsupportedEncodingException {
         StringBuilder result = new StringBuilder();
-        
+
         for (Map.Entry<String, String> entry : params.entrySet()) {
             result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
             result.append("=");
@@ -282,5 +281,14 @@ public class HttpSignatureServiceImpl implements HttpSignatureService {
                 ? resultString.substring(0, resultString.length() - 1)
                 : resultString;
     }
-    
+
+    private Signer getSigner() throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, UnsupportedEncodingException, IOException {
+        String keyId = DigestUtils.sha256Hex(getX509PubKeytoRSABinaryFormat((PublicKey) this.keyServ.getHttpSigPublicKey()));
+        if (this.signer == null) {
+            signer = new Signer(keyServ.getSigningKey(), new Signature(keyId, algorithm, null, "(request-target)", "host", "original-date", "digest", "x-request-id"));
+        }
+
+        return signer;
+    }
+
 }

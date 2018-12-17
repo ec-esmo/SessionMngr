@@ -5,26 +5,12 @@
  */
 package eu.esmo.sessionmng.controllers;
 
-import eu.esmo.sessionmng.SessionMngApplication;
 import eu.esmo.sessionmng.model.TO.MngrSessionTO;
 import eu.esmo.sessionmng.model.dao.SessionRepository;
 import eu.esmo.sessionmng.model.dmo.MngrSession;
 import eu.esmo.sessionmng.service.HttpSignatureService;
-import eu.esmo.sessionmng.service.KeyStoreService;
-import eu.esmo.sessionmng.service.MSConfigurationService;
-import eu.esmo.sessionmng.service.ParameterService;
 import eu.esmo.sessionmng.service.SessionService;
-import eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl;
-import eu.esmo.sessionmng.service.impl.KeyStoreServiceImpl;
-import eu.esmo.sessionmng.service.impl.MSConfigurationsServiceImplSTUB;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.security.KeyStoreException;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
-import java.security.spec.InvalidKeySpecException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -33,10 +19,8 @@ import java.util.Map;
 import java.util.UUID;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +28,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.crossstore.ChangeSetPersister;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -55,18 +40,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  *
  * @author nikos
  */
-//@RunWith(SpringJUnit4ClassRunner.class)
-//@WebMvcTest(RestControllers.class)
-//@ContextConfiguration
+
+@ActiveProfiles("test")
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = SessionMngApplication.class)
+@SpringBootTest
 @AutoConfigureMockMvc
 public class TestRestControllers {
 
     @Autowired
     private MockMvc mvc;
 
-//    @Autowired
+    @Autowired
     private HttpSignatureService sigServ;
 
     @MockBean
@@ -75,29 +59,10 @@ public class TestRestControllers {
     @MockBean
     private SessionRepository sessionRep;
 
-    @MockBean
-    private ParameterService paramServ;
+ 
 
-    private KeyStoreService keyServ;
+    
 
-    @Before
-    public void before() throws KeyStoreException, IOException, FileNotFoundException,
-            NoSuchAlgorithmException, CertificateException, UnrecoverableKeyException, InvalidKeySpecException {
-
-        ClassLoader classLoader = getClass().getClassLoader();
-        String path = classLoader.getResource("testKeys/keystore.jks").getPath();
-        Mockito.when(paramServ.getProperty("KEYSTORE_PATH")).thenReturn(path);
-        Mockito.when(paramServ.getProperty("KEY_PASS")).thenReturn("selfsignedpass");
-        Mockito.when(paramServ.getProperty("STORE_PASS")).thenReturn("keystorepass");
-        Mockito.when(paramServ.getProperty("CERT_ALIAS")).thenReturn("selfsigned");
-        Mockito.when(paramServ.getProperty("ASYNC_SIGNATURE")).thenReturn("true");
-
-        keyServ = new KeyStoreServiceImpl(paramServ);
-
-        MSConfigurationService msConfigServ = new MSConfigurationsServiceImplSTUB();
-        sigServ = new HttpSignatureServiceImpl(keyServ, msConfigServ);
-
-    }
 
     @Test
     public void testGetSessionDataNoVariableName() throws Exception {

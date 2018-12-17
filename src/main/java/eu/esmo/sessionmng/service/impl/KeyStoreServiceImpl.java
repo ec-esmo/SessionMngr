@@ -36,7 +36,8 @@ public class KeyStoreServiceImpl implements KeyStoreService {
     private final String certPath;
     private final String keyPass;
     private final String storePass;
-    private final String keyAlias;
+    private final String jtwKeyAlias;
+    private final String httpSigKeyAlias;
 
     private KeyStore keystore;
 
@@ -48,7 +49,8 @@ public class KeyStoreServiceImpl implements KeyStoreService {
         certPath = this.paramServ.getProperty("KEYSTORE_PATH");
         keyPass = this.paramServ.getProperty("KEY_PASS");
         storePass = this.paramServ.getProperty("STORE_PASS");
-        keyAlias = this.paramServ.getProperty("CERT_ALIAS");
+        jtwKeyAlias = this.paramServ.getProperty("JWT_CERT_ALIAS");
+        httpSigKeyAlias = this.paramServ.getProperty("HTTPSIG_CERT_ALIAS");
 
         keystore = KeyStore.getInstance(KeyStore.getDefaultType());
         if (!StringUtils.isEmpty(paramServ.getProperty("ASYNC_SIGNATURE")) && Boolean.parseBoolean(paramServ.getProperty("ASYNC_SIGNATURE"))) {
@@ -67,21 +69,28 @@ public class KeyStoreServiceImpl implements KeyStoreService {
         //return keystore.getKey(keyAlias, "keypassword".toCharArray());
         String asyncSignature = paramServ.getProperty("ASYNC_SIGNATURE");
         if (!StringUtils.isEmpty(asyncSignature) && Boolean.valueOf(asyncSignature)) {
-            return keystore.getKey(keyAlias, keyPass.toCharArray());
+            return keystore.getKey(httpSigKeyAlias, keyPass.toCharArray());
         }
         String secretKey = paramServ.getProperty("SIGNING_SECRET");
         return new SecretKeySpec(secretKey.getBytes("UTF-8"), 0, secretKey.length(), "HmacSHA256");
     }
 
-    public Key getPublicKey() throws KeyStoreException, UnsupportedEncodingException {
+    public Key getJWTPublicKey() throws KeyStoreException, UnsupportedEncodingException {
         //"jwtkey"
         String asyncSignature = paramServ.getProperty("ASYNC_SIGNATURE");
         if (!StringUtils.isEmpty(asyncSignature) && Boolean.valueOf(asyncSignature)) {
-            Certificate cert = keystore.getCertificate(keyAlias);
+            Certificate cert = keystore.getCertificate(jtwKeyAlias);
             return cert.getPublicKey();
         }
         String secretKey = paramServ.getProperty("SIGNING_SECRET");
         return new SecretKeySpec(secretKey.getBytes("UTF-8"), 0, secretKey.length(), "HmacSHA256");
+    }
+
+    public Key getHttpSigPublicKey() throws KeyStoreException, UnsupportedEncodingException {
+        //"httpSignaturesAlias"
+        Certificate cert = keystore.getCertificate(httpSigKeyAlias);
+        return cert.getPublicKey();
+
     }
 
     public KeyStore getKeystore() {

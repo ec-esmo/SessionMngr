@@ -63,7 +63,7 @@ public class TestHttpSignatureService {
         Mockito.when(paramServ.getProperty("KEYSTORE_PATH")).thenReturn(path);
         Mockito.when(paramServ.getProperty("KEY_PASS")).thenReturn("selfsignedpass");
         Mockito.when(paramServ.getProperty("STORE_PASS")).thenReturn("keystorepass");
-        Mockito.when(paramServ.getProperty("CERT_ALIAS")).thenReturn("selfsigned");
+        Mockito.when(paramServ.getProperty("HTTPSIG_CERT_ALIAS")).thenReturn("selfsigned");
         Mockito.when(paramServ.getProperty("ASYNC_SIGNATURE")).thenReturn("true");
 
         keyServ = new KeyStoreServiceImpl(paramServ);
@@ -135,17 +135,16 @@ public class TestHttpSignatureService {
         when(req.getHeader("host")).thenReturn("https://www.esmoSMgr.com");
         when(req.getHeader("(request-target)")).thenReturn("(request-target)");
         when(req.getHeader("original-date")).thenReturn(nowDate);
-        when(req.getHeader("digest")).thenReturn( "SHA-256=" + new String(Base64.encodeBase64(digest)));
+        when(req.getHeader("digest")).thenReturn("SHA-256=" + new String(Base64.encodeBase64(digest)));
         when(req.getHeader("x-request-id")).thenReturn(requestId);
 
-        
         String keyId = "06f336b68ba82890576f92b7d564c709cea0c0f318a09b4fbc5a502a7c93f926";
         ClassLoader classLoader = getClass().getClassLoader();
         String path = classLoader.getResource("testKeys/keystore.jks").getPath();
         Mockito.when(paramServ.getProperty("KEYSTORE_PATH")).thenReturn(path);
         Mockito.when(paramServ.getProperty("KEY_PASS")).thenReturn("selfsignedpass");
         Mockito.when(paramServ.getProperty("STORE_PASS")).thenReturn("keystorepass");
-        Mockito.when(paramServ.getProperty("CERT_ALIAS")).thenReturn("selfsigned");
+        Mockito.when(paramServ.getProperty("HTTPSIG_CERT_ALIAS")).thenReturn("selfsigned");
 
         Mockito.when(paramServ.getProperty("ASYNC_SIGNATURE")).thenReturn("true");
         keyServ = new KeyStoreServiceImpl(paramServ);
@@ -168,8 +167,7 @@ public class TestHttpSignatureService {
         assertEquals(httpSigServ.verifySignature(req), HttpResponseEnum.AUTHORIZED);
 
     }
-    
-    
+
     @Test
     public void testHttpSignatureValidSigGetWithParams() throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, UnsupportedEncodingException, IOException, FileNotFoundException, CertificateException, InvalidKeySpecException {
 
@@ -198,17 +196,16 @@ public class TestHttpSignatureService {
         when(req.getHeader("host")).thenReturn("https://www.esmoSMgr.com");
         when(req.getHeader("(request-target)")).thenReturn("(request-target)");
         when(req.getHeader("original-date")).thenReturn(nowDate);
-        when(req.getHeader("digest")).thenReturn( "SHA-256=" + new String(Base64.encodeBase64(digest)));
+        when(req.getHeader("digest")).thenReturn("SHA-256=" + new String(Base64.encodeBase64(digest)));
         when(req.getHeader("x-request-id")).thenReturn(requestId);
 
-        
         String keyId = "06f336b68ba82890576f92b7d564c709cea0c0f318a09b4fbc5a502a7c93f926";
         ClassLoader classLoader = getClass().getClassLoader();
         String path = classLoader.getResource("testKeys/keystore.jks").getPath();
         Mockito.when(paramServ.getProperty("KEYSTORE_PATH")).thenReturn(path);
         Mockito.when(paramServ.getProperty("KEY_PASS")).thenReturn("selfsignedpass");
         Mockito.when(paramServ.getProperty("STORE_PASS")).thenReturn("keystorepass");
-        Mockito.when(paramServ.getProperty("CERT_ALIAS")).thenReturn("selfsigned");
+        Mockito.when(paramServ.getProperty("HTTPSIG_CERT_ALIAS")).thenReturn("selfsigned");
 
         Mockito.when(paramServ.getProperty("ASYNC_SIGNATURE")).thenReturn("true");
         keyServ = new KeyStoreServiceImpl(paramServ);
@@ -231,6 +228,5 @@ public class TestHttpSignatureService {
         assertEquals(httpSigServ.verifySignature(req), HttpResponseEnum.AUTHORIZED);
 
     }
-    
 
 }

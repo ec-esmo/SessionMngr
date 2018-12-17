@@ -20,11 +20,11 @@ import javax.servlet.http.HttpServletRequest;
  */
 public interface HttpSignatureService {
 
-    public String getFakeSignature() throws IOException;
+    public String getFakeSignature() throws IOException, KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, UnsupportedEncodingException, IOException;
 
-    public HttpResponseEnum verifySignature(HttpServletRequest httpRequest);
+    public HttpResponseEnum verifySignature(HttpServletRequest httpRequest) throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, UnsupportedEncodingException, IOException;
 
     public String generateSignature(String hostUrl, String method, String uri, Map<String, String> postParams, String contentType, String requestId)
-            throws NoSuchAlgorithmException, KeyStoreException, UnrecoverableKeyException, UnsupportedEncodingException, IOException;
+            throws NoSuchAlgorithmException, KeyStoreException, UnrecoverableKeyException, UnsupportedEncodingException, IOException, UnsupportedEncodingException;
 
 }
