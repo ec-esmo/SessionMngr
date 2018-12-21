@@ -136,10 +136,10 @@ public class HttpSignatureServiceImpl implements HttpSignatureService {
         signatureHeaders.put("(request-target)", method + " " + uri);
 
         Algorithm algorithm = Algorithm.RSA_SHA256;
-        String keyId = "06f336b68ba82890576f92b7d564c709cea0c0f318a09b4fbc5a502a7c93f926";
+//        String keyId = "06f336b68ba82890576f92b7d564c709cea0c0f318a09b4fbc5a502a7c93f926";
         // Here it is!
-        Signer signer = new Signer(keyServ.getSigningKey(), new Signature(keyId, algorithm, null, "(request-target)", "host", "original-date", "digest", "x-request-id"));
-        Signature signed = signer.sign(method, uri, signatureHeaders);
+//        Signer signer = new Signer(keyServ.getSigningKey(), new Signature(keyId, algorithm, null, "(request-target)", "host", "original-date", "digest", "x-request-id"));
+        Signature signed = getSigner().sign(method, uri, signatureHeaders);
 
         return signed.toString();
 
@@ -151,7 +151,7 @@ public class HttpSignatureServiceImpl implements HttpSignatureService {
         if (authorization != null) {
 
             Signature sigToVerify = Signature.fromString(authorization);
-            log.debug("HTTP Signature received: " + sigToVerify);
+            log.info("HTTP Signature received: " + sigToVerify);
 
             /* check request contains all mandatory headers
              */
@@ -182,7 +182,7 @@ public class HttpSignatureServiceImpl implements HttpSignatureService {
             try {
                 //TODO blacklist requestIds to remove replay attacks?
 
-                String requestId = UUID.fromString(httpRequest.getHeader("x-request-id")).toString();
+//                String requestId = UUID.fromString(httpRequest.getHeader("x-request-id")).toString();
                 if (!hasValidRequestTime(clientTime)) {
                     return HttpResponseEnum.BAD_REQUEST;
                 }
@@ -283,11 +283,10 @@ public class HttpSignatureServiceImpl implements HttpSignatureService {
     }
 
     private Signer getSigner() throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, UnsupportedEncodingException, IOException {
-        String keyId = DigestUtils.sha256Hex(getX509PubKeytoRSABinaryFormat((PublicKey) this.keyServ.getHttpSigPublicKey()));
         if (this.signer == null) {
+            String keyId = DigestUtils.sha256Hex(getX509PubKeytoRSABinaryFormat((PublicKey) this.keyServ.getHttpSigPublicKey()));
             signer = new Signer(keyServ.getSigningKey(), new Signature(keyId, algorithm, null, "(request-target)", "host", "original-date", "digest", "x-request-id"));
         }
-
         return signer;
     }
 

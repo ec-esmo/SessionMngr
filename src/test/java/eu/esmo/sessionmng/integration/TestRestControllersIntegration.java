@@ -7,15 +7,12 @@ package eu.esmo.sessionmng.integration;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import eu.esmo.sessionmng.SessionMngApplication;
 import eu.esmo.sessionmng.model.TO.MngrSessionTO;
 import eu.esmo.sessionmng.service.JwtService;
-import eu.esmo.sessionmng.service.KeyStoreService;
 import eu.esmo.sessionmng.service.ParameterService;
 import eu.esmo.sessionmng.service.SessionService;
 import eu.esmo.sessionmng.pojo.SessionMngrResponse;
 import eu.esmo.sessionmng.service.HttpSignatureService;
-import io.jsonwebtoken.SignatureAlgorithm;
 import java.io.UnsupportedEncodingException;
 import java.security.Key;
 import java.security.KeyStoreException;
@@ -26,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 import javax.crypto.spec.SecretKeySpec;
+import javax.servlet.ServletException;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -35,7 +33,6 @@ import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -84,14 +81,14 @@ public class TestRestControllersIntegration {
         byte[] digest = MessageDigest.getInstance("SHA-256").digest("".getBytes());
         String requestId = UUID.randomUUID().toString();
 
-        MvcResult result = mvc.perform(post("/rest/startSession")
-                .header("authorization", sigServ.generateSignature("hostUrl", "POST", "/rest/startSession", null, "application/x-www-form-urlencoded", requestId))
+        MvcResult result = mvc.perform(post("/sm/startSession")
+                .header("authorization", sigServ.generateSignature("hostUrl", "POST", "/sm/startSession", null, "application/x-www-form-urlencoded", requestId))
                 .header("host", "hostUrl")
-                .header("(request-target)", "POST /rest/startSession")
+                .header("(request-target)", "POST /sm/startSession")
                 .header("original-date", nowDate)
                 .header("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)))
                 .header("x-request-id", requestId))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andReturn();
 
         ObjectMapper mapper = new ObjectMapper();
@@ -112,23 +109,23 @@ public class TestRestControllersIntegration {
         byte[] digest = MessageDigest.getInstance("SHA-256").digest("".getBytes());
         String requestId = UUID.randomUUID().toString();
 
-        MvcResult result = mvc.perform(post("/rest/startSession")
-                .header("authorization", sigServ.generateSignature("hostUrl", "POST", "/rest/startSession", null, "application/x-www-form-urlencoded", requestId))
+        MvcResult result = mvc.perform(post("/sm/startSession")
+                .header("authorization", sigServ.generateSignature("hostUrl", "POST", "/sm/startSession", null, "application/x-www-form-urlencoded", requestId))
                 .header("host", "hostUrl")
-                .header("(request-target)", "POST /rest/startSession")
+                .header("(request-target)", "POST /sm/startSession")
                 .header("original-date", nowDate)
                 .header("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)))
                 .header("x-request-id", requestId))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andReturn();
 
         ObjectMapper mapper = new ObjectMapper();
         SessionMngrResponse resp = mapper.readValue(result.getResponse().getContentAsString(), SessionMngrResponse.class);
         String sessionId = resp.getSessionData().getSessionId();
-        mvc.perform(delete("/rest/endSession")
-                .header("authorization", sigServ.generateSignature("hostUrl", "DELETE", "/rest/endSession", null, "application/x-www-form-urlencoded", requestId))
+        mvc.perform(delete("/sm/endSession")
+                .header("authorization", sigServ.generateSignature("hostUrl", "DELETE", "/sm/endSession", null, "application/x-www-form-urlencoded", requestId))
                 .header("host", "hostUrl")
-                .header("(request-target)", "DELETE /rest/startSession")
+                .header("(request-target)", "DELETE /sm/startSession")
                 .header("original-date", nowDate)
                 .header("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)))
                 .header("x-request-id", requestId)
@@ -147,23 +144,23 @@ public class TestRestControllersIntegration {
         byte[] digest = MessageDigest.getInstance("SHA-256").digest("".getBytes());
         String requestId = UUID.randomUUID().toString();
 
-        MvcResult result = mvc.perform(post("/rest/startSession")
-                .header("authorization", sigServ.generateSignature("hostUrl", "POST", "/rest/startSession", null, "application/x-www-form-urlencoded", requestId))
+        MvcResult result = mvc.perform(post("/sm/startSession")
+                .header("authorization", sigServ.generateSignature("hostUrl", "POST", "/sm/startSession", null, "application/x-www-form-urlencoded", requestId))
                 .header("host", "hostUrl")
-                .header("(request-target)", "POST /rest/startSession")
+                .header("(request-target)", "POST /sm/startSession")
                 .header("original-date", nowDate)
                 .header("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)))
                 .header("x-request-id", requestId))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andReturn();
         ObjectMapper mapper = new ObjectMapper();
         SessionMngrResponse resp = mapper.readValue(result.getResponse().getContentAsString(), SessionMngrResponse.class);
         String sessionId = resp.getSessionData().getSessionId();
 
-        mvc.perform(post("/rest/updateSessionData")
-                .header("authorization", sigServ.generateSignature("hostUrl", "POST", "/rest/updateSessionData", null, "application/x-www-form-urlencoded", requestId))
+        mvc.perform(post("/sm/updateSessionData")
+                .header("authorization", sigServ.generateSignature("hostUrl", "POST", "/sm/updateSessionData", null, "application/x-www-form-urlencoded", requestId))
                 .header("host", "hostUrl")
-                .header("(request-target)", "POST /rest/updateSessionData")
+                .header("(request-target)", "POST /sm/updateSessionData")
                 .header("original-date", nowDate)
                 .header("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)))
                 .header("x-request-id", requestId)
@@ -171,7 +168,7 @@ public class TestRestControllersIntegration {
                 .param("variableName", "var1")
                 .param("dataObject", "dataObject")
         )
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.code", is("OK")));
 
         assertEquals(sessionServ.findBySessionId(sessionId).getSessionVariables().get("var1"), "dataObject");
@@ -195,29 +192,29 @@ public class TestRestControllersIntegration {
         byte[] digest = MessageDigest.getInstance("SHA-256").digest("".getBytes());
         String requestId = UUID.randomUUID().toString();
 
-        MvcResult result = mvc.perform(post("/rest/startSession")
-                .header("authorization", sigServ.generateSignature("hostUrl", "POST", "/rest/startSession", null, "application/x-www-form-urlencoded", requestId))
+        MvcResult result = mvc.perform(post("/sm/startSession")
+                .header("authorization", sigServ.generateSignature("hostUrl", "POST", "/sm/startSession", null, "application/x-www-form-urlencoded", requestId))
                 .header("host", "hostUrl")
-                .header("(request-target)", "POST /rest/startSession")
+                .header("(request-target)", "POST /sm/startSession")
                 .header("original-date", nowDate)
                 .header("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)))
                 .header("x-request-id", requestId))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andReturn();
         ObjectMapper mapper = new ObjectMapper();
         SessionMngrResponse resp = mapper.readValue(result.getResponse().getContentAsString(), SessionMngrResponse.class);
         String sessionId = resp.getSessionData().getSessionId();
 
-        MvcResult jwtResult = mvc.perform(get("/rest/generateToken")
-                .header("authorization", sigServ.generateSignature("hostUrl", "GET", "/rest/generateToken", null, "application/x-www-form-urlencoded", requestId))
+        MvcResult jwtResult = mvc.perform(get("/sm/generateToken")
+                .header("authorization", sigServ.generateSignature("hostUrl", "GET", "/sm/generateToken", null, "application/x-www-form-urlencoded", requestId))
                 .header("host", "hostUrl")
-                .header("(request-target)", "GET /rest/generateToken")
+                .header("(request-target)", "GET /sm/generateToken")
                 .header("original-date", nowDate)
                 .header("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)))
                 .header("x-request-id", requestId)
                 .param("sessionId", sessionId)
                 .param("sender", "senderId")
-                .param("receiver", "receiverId")
+                .param("receiver", "ACMms001")
                 .param("data", "extraData")
         )
                 .andExpect(status().isOk())
@@ -250,16 +247,16 @@ public class TestRestControllersIntegration {
         when(paramServ.getProperty("ISSUER")).thenReturn("EMSO_SESSION_MANAGER");
         when(paramServ.getProperty("EXPIRES")).thenReturn("5");
 
-        MvcResult jwtResult = mvc.perform(get("/rest/generateToken")
-                .header("authorization", sigServ.generateSignature("hostUrl", "GET", "/rest/generateToken", null, "application/x-www-form-urlencoded", requestId))
+        MvcResult jwtResult = mvc.perform(get("/sm/generateToken")
+                .header("authorization", sigServ.generateSignature("hostUrl", "GET", "/sm/generateToken", null, "application/x-www-form-urlencoded", requestId))
                 .header("host", "hostUrl")
-                .header("(request-target)", "GET /rest/generateToken")
+                .header("(request-target)", "GET /sm/generateToken")
                 .header("original-date", nowDate)
                 .header("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)))
                 .header("x-request-id", requestId)
                 .param("sessionId", "fakeSession")
                 .param("sender", "senderId")
-                .param("receiver", "receiverId")
+                .param("receiver", "ACMms001")
                 .param("data", "extraData")
         )
                 .andExpect(status().isOk())
@@ -287,11 +284,11 @@ public class TestRestControllersIntegration {
         byte[] digest = MessageDigest.getInstance("SHA-256").digest("".getBytes());
         String requestId = UUID.randomUUID().toString();
 
-        String jwt = jwtServ.makeJwt("sessionId", "extraData", "ISSUER", "sender", "receiver", Long.valueOf(5));
-        mvc.perform(get("/rest/validateToken")
-                .header("authorization", sigServ.generateSignature("hostUrl", "GET", "/rest/validateToken", null, "application/x-www-form-urlencoded", requestId))
+        String jwt = jwtServ.makeJwt("sessionId", "extraData", "ISSUER", "sender", "ACMms001", Long.valueOf(5));
+        mvc.perform(get("/sm/validateToken")
+                .header("authorization", sigServ.generateSignature("hostUrl", "GET", "/sm/validateToken", null, "application/x-www-form-urlencoded", requestId))
                 .header("host", "hostUrl")
-                .header("(request-target)", "GET /rest/validateToken")
+                .header("(request-target)", "GET /sm/validateToken")
                 .header("original-date", nowDate)
                 .header("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)))
                 .header("x-request-id", requestId)
@@ -307,22 +304,24 @@ public class TestRestControllersIntegration {
     public void replayJwtToken() throws JsonProcessingException, UnsupportedEncodingException, KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, Exception {
 
         String secretKey = "QjG+wP1CbAH2z4PWlWIDkxP4oRlgK2vos5/jXFfeBw8=";
-        Key key = new SecretKeySpec(secretKey.getBytes("UTF-8"), 0, secretKey.length(), "HmacSHA256");
+//        Key key = new SecretKeySpec(secretKey.getBytes("UTF-8"), 0, secretKey.length(), "HmacSHA256");
 
 //        when(keyServ.getAlgorithm()).thenReturn(SignatureAlgorithm.HS256);
 //        when(keyServ.getSigningKey()).thenReturn(key);
 //        when(keyServ.getJWTPublicKey()).thenReturn(key);
-        String jwt = jwtServ.makeJwt("sessionId", "extraData", "ISSUER", "sender", "receiver", Long.valueOf(5));
+//        String jwt = jwtServ.makeJwt("sessionId", "extraData", "ISSUER", "sender", "ACMms001", Long.valueOf(5));
         Date date = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z");
         String nowDate = formatter.format(date);
         byte[] digest = MessageDigest.getInstance("SHA-256").digest("".getBytes());
         String requestId = UUID.randomUUID().toString();
+        String authHeader = sigServ.generateSignature("hostUrl", "GET", "/sm/validateToken", null, "application/x-www-form-urlencoded", requestId);
 
-        mvc.perform(get("/rest/validateToken")
-                .header("authorization", sigServ.generateSignature("hostUrl", "GET", "/rest/validateToken", null, "application/x-www-form-urlencoded", requestId))
+        String jwt = jwtServ.makeJwt("sessionId", "extraData", "ISSUER", "sender", "ACMms001", Long.valueOf(5));
+        mvc.perform(get("/sm/validateToken")
+                .header("authorization", authHeader)
                 .header("host", "hostUrl")
-                .header("(request-target)", "GET /rest/validateToken")
+                .header("(request-target)", "GET /sm/validateToken")
                 .header("original-date", nowDate)
                 .header("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)))
                 .header("x-request-id", requestId)
@@ -331,10 +330,12 @@ public class TestRestControllersIntegration {
                 .andExpect(jsonPath("$.code", is("OK")))
                 .andExpect(jsonPath("$.sessionData.sessionId", is("sessionId")));
 
-        mvc.perform(get("/rest/validateToken")
-                .header("authorization", sigServ.generateSignature("hostUrl", "GET", "/rest/validateToken", null, "application/x-www-form-urlencoded", requestId))
+        requestId = UUID.randomUUID().toString();
+        nowDate = formatter.format(new Date());
+        mvc.perform(get("/sm/validateToken")
+                .header("authorization", sigServ.generateSignature("hostUrl", "GET", "/sm/validateToken", null, "application/x-www-form-urlencoded", requestId))
                 .header("host", "hostUrl")
-                .header("(request-target)", "GET /rest/validateToken")
+                .header("(request-target)", "GET /sm/validateToken")
                 .header("original-date", nowDate)
                 .header("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)))
                 .header("x-request-id", requestId)
@@ -342,8 +343,6 @@ public class TestRestControllersIntegration {
         )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code", is("ERROR")));
-//                .andExpect(jsonPath("$.sessionData.sessionId", is("sessionId")));
-
     }
 
 }

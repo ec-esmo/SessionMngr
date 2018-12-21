@@ -22,18 +22,19 @@ public interface SessionService {
     public MngrSessionTO findBySessionId(String sessionId);
 
     public String getValueByVariableAndId(String sessionId, String variable);
-    
-    
+
     public Optional<String> getSessionIdByVariableAndValue(String variableName, String value) throws ArithmeticException;
 
     public void save(MngrSession session);
-    
+
     public void delete(MngrSession session);
-    
+
     public void delete(String sessionId);
-    
+
     public void makeNewSession(String sessionId);
 
     public void updateSessionVariable(String sessionId, String variableName, String newValue) throws NotFoundException;
+
+    public void replaceSession(String sessionId, String variableName, String newValue) throws NotFoundException;
 
 }

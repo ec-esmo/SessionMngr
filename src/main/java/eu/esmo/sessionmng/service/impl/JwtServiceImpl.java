@@ -79,25 +79,28 @@ public class JwtServiceImpl implements JwtService {
                 String sessionId = Jwts.parser().setSigningKey(keyServ.getJWTPublicKey()).parseClaimsJws(jws).getBody().get("sessionId", String.class);
                 String extraData = Jwts.parser().setSigningKey(keyServ.getJWTPublicKey()).parseClaimsJws(jws).getBody().get("data", String.class);
                 String jti = Jwts.parser().setSigningKey(keyServ.getJWTPublicKey()).parseClaimsJws(jws).getBody().getId();
+                String sender = Jwts.parser().setSigningKey(keyServ.getJWTPublicKey()).parseClaimsJws(jws).getBody().get("sender", String.class);
+                String receiver = Jwts.parser().setSigningKey(keyServ.getJWTPublicKey()).parseClaimsJws(jws).getBody().get("receiver", String.class);
 
                 if (blackListServ.isBlacklisted(jti)) {
-                    throw new KeyStoreException("JWT is blacklisted");
+                    return new JwtValidationResponse(ResponseCode.ERROR, null, null, "JWT is blacklisted", jti, sender, receiver);
+//                    throw new KeyStoreException("JWT is blacklisted");
                 } else {
                     MngrSessionTO responseSession = new MngrSessionTO();
                     responseSession.setSessionId(sessionId);
-                    return new JwtValidationResponse(ResponseCode.OK, responseSession, extraData, null, jti);
+                    return new JwtValidationResponse(ResponseCode.OK, responseSession, extraData, null, jti, sender, receiver);
                 }
             }
         } catch (KeyStoreException e) {
             LOG.error("Error Validating jtw, jti blacklisted ", e.getMessage());
-            return new JwtValidationResponse(ResponseCode.ERROR, null, null, "JWT is blacklisted", null);
+            return new JwtValidationResponse(ResponseCode.ERROR, null, null, "JWT is blacklisted", null, null, null);
 
         } catch (Exception e) {
             LOG.error("Error Validating jtw ", e.getMessage());
-            return new JwtValidationResponse(ResponseCode.ERROR, null, null, "Error Validating JWT", null);
+            return new JwtValidationResponse(ResponseCode.ERROR, null, null, "Error Validating JWT", null, null, null);
         }
         LOG.error("JWS was emptry ", jws);
-        return new JwtValidationResponse(ResponseCode.ERROR, null, null, "JWT token is empty", null);
+        return new JwtValidationResponse(ResponseCode.ERROR, null, null, "JWT token is empty", null, null, null);
     }
 
 }

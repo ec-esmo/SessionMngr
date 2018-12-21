@@ -19,13 +19,17 @@ public class JwtValidationResponse {
     private String additionalData;
     private String error;
     private String jti;
+    private String sender;
+    private String receiver;
 
-    public JwtValidationResponse(ResponseCode code, MngrSessionTO sessionData, String additionalData, String error, String jti) {
+    public JwtValidationResponse(ResponseCode code, MngrSessionTO sessionData, String additionalData, String error, String jti, String sender, String receiver) {
         this.code = code;
         this.sessionData = sessionData;
         this.additionalData = additionalData;
         this.error = error;
         this.jti = jti;
+        this.sender = sender;
+        this.receiver = receiver;
     }
 
     public JwtValidationResponse() {
@@ -69,6 +73,22 @@ public class JwtValidationResponse {
 
     public void setJti(String jti) {
         this.jti = jti;
+    }
+
+    public String getSender() {
+        return sender;
+    }
+
+    public void setSender(String sender) {
+        this.sender = sender;
+    }
+
+    public String getReceiver() {
+        return receiver;
+    }
+
+    public void setReceiver(String receiver) {
+        this.receiver = receiver;
     }
 
 }

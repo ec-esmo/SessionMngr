@@ -5,7 +5,6 @@
  */
 package eu.esmo.sessionmng.service;
 
-import com.google.common.base.Optional;
 import eu.esmo.sessionmng.model.dao.SessionRepository;
 import eu.esmo.sessionmng.model.dmo.MngrSession;
 import eu.esmo.sessionmng.model.dmo.SessionVariable;
@@ -14,7 +13,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.assertj.core.util.Arrays;
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
@@ -80,5 +78,27 @@ public class TestSessionService {
         sessionServ.getSessionIdByVariableAndValue("varName", "varValue");
 
     }
+
+    @Test(expected = ChangeSetPersister.NotFoundException.class)
+    public void testReplaceSessionVarialbeErrorSession() throws ChangeSetPersister.NotFoundException {
+        sessionServ.replaceSession(INVALID_SESSION, "", "");
+    }
+
+//    @Test
+//    public void testReplaceSessionVarialbe() throws ChangeSetPersister.NotFoundException {
+//
+//        Set<SessionVariable> variables = new HashSet();
+//        SessionVariable v1 = new SessionVariable("var1", "val1");
+//        SessionVariable v2 = new SessionVariable("var2", "val2");
+//        variables.add(v2);
+//        variables.add(v1);
+//        MngrSession replacableSession = new MngrSession("replacableSession", variables);
+//        when(sessionRepo.findBySessionId("replacableSession")).thenReturn(replacableSession);
+//        
+//        assertEquals(sessionServ.getValueByVariableAndId("replacableSession", "var1"),"val1");
+//        sessionServ.replaceSession("replacableSession", "data", "thisIsReplaced");
+//        assertEquals(sessionServ.getValueByVariableAndId("replacableSession", "var1"),null);
+//        
+//    }
 
 }

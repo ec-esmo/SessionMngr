@@ -20,7 +20,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import javax.transaction.Transactional;
-import org.hibernate.jdbc.TooManyRowsAffectedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
@@ -113,11 +112,28 @@ public class SessionServiceImpl implements SessionService {
     public Optional<String> getSessionIdByVariableAndValue(String variableName, String value) {
         Optional<List<String>> result = this.sessionRepo.getSessionIdByVariableAndValue(variableName, value);
         if (result.isPresent()) {
-            if(result.get().size() != 1) throw new ArithmeticException("More than one sessions match criteria!");
+            if (result.get().size() != 1) {
+                throw new ArithmeticException("More than one sessions match criteria!");
+            }
             return Optional.of(result.get().iterator().next());
         }
-        
+
         return Optional.empty();
+    }
+
+    @Override
+    @Transactional
+    public void replaceSession(String sessionId, String variableName, String newValue) throws ChangeSetPersister.NotFoundException {
+        if (sessionRepo.findBySessionId(sessionId) != null) {
+            this.sessionRepo.deleteBySessionId(sessionId);
+            MngrSession session = new MngrSession(sessionId, new HashSet());
+            SessionVariable newVariable = new SessionVariable(variableName, newValue);
+            session.getVariable().add(newVariable);
+            this.sessionRepo.save(session);
+        } else {
+            throw new ChangeSetPersister.NotFoundException();
+        }
+
     }
 
 }

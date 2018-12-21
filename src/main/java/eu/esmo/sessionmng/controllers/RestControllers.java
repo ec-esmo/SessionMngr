@@ -15,27 +15,33 @@ import eu.esmo.sessionmng.service.SessionService;
 import eu.esmo.sessionmng.pojo.JwtValidationResponse;
 import eu.esmo.sessionmng.enums.ResponseCode;
 import eu.esmo.sessionmng.pojo.SessionMngrResponse;
+import eu.esmo.sessionmng.service.MSConfigurationService;
 import io.swagger.annotations.ApiOperation;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
+import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister;
+import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.tomitribe.auth.signatures.Signature;
 
 /**
  *
  * @author nikos
  */
 @RestController
-@RequestMapping("rest")
+@RequestMapping("sm")
 public class RestControllers {
 
     private final static Logger LOG = LoggerFactory.getLogger(RestControllers.class);
@@ -52,8 +58,12 @@ public class RestControllers {
     @Autowired
     private BlackListService blacklistServ;
 
-    @RequestMapping(value = "/startSession", method = RequestMethod.POST)
-    @ApiOperation(value = "Sets up an internal session temporary storage and returns its identifier", response = String.class)
+    @Autowired
+    private MSConfigurationService configServ;
+
+    @RequestMapping(value = "/startSession", method = RequestMethod.POST, produces = "application/json")
+    @ResponseStatus(code = HttpStatus.CREATED)
+    @ApiOperation(value = "Sets up an internal session temporary storage and returns its identifier", response = SessionMngrResponse.class, code = 200)
     public @ResponseBody
     SessionMngrResponse startSession() {
         UUID sessionId = UUID.randomUUID();
@@ -62,7 +72,7 @@ public class RestControllers {
         return new SessionMngrResponse(ResponseCode.NEW, new MngrSessionTO(sessionId.toString(), new HashMap()), null, null);
     }
 
-    @RequestMapping(value = "/endSession", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/endSession", method = RequestMethod.DELETE, produces = "application/json")
     @ApiOperation(value = "Terminates a session and deletes all the stored data")
     public SessionMngrResponse endSession(@RequestParam String sessionId) {
         LOG.debug("Asked to delete session:: " + sessionId);
@@ -70,12 +80,20 @@ public class RestControllers {
         return new SessionMngrResponse(ResponseCode.OK, null, null, null);
     }
 
-    @RequestMapping(value = "/updateSessionData", method = RequestMethod.POST)
-    @ApiOperation(value = "Passed data is stored in a session variable overwriting the previous value")
-    public SessionMngrResponse updateSessionData(@RequestParam String sessionId, @RequestParam String variableName, @RequestParam String dataObject) {
+    @RequestMapping(value = "/updateSessionData", method = RequestMethod.POST, produces = "application/json")
+    @ResponseStatus(code = HttpStatus.CREATED)
+    @ApiOperation(value = "Passed data is stored in a session variable overwriting the previous value. If no session variable is given, "
+            + "then the whole data stored in this session will be replaced with the passed dataObject, under the default variable name data", response = SessionMngrResponse.class)
+    public SessionMngrResponse updateSessionData(@RequestParam String sessionId, @RequestParam(required = false) String variableName, @RequestParam String dataObject) {
         try {
-            LOG.debug("Attempting to update variable " + variableName + " of session  " + sessionId + " with value  " + dataObject);
-            sessionServ.updateSessionVariable(sessionId, variableName, dataObject);
+            if (StringUtils.isEmpty(variableName)) {
+                LOG.debug("Attempting to update the whole session  " + sessionId + " with value  " + dataObject);
+                sessionServ.replaceSession(sessionId, "data", dataObject);
+            } else {
+                LOG.debug("Attempting to update variable " + variableName + " of session  " + sessionId + " with value  " + dataObject);
+                sessionServ.updateSessionVariable(sessionId, variableName, dataObject);
+            }
+
             return new SessionMngrResponse(ResponseCode.OK, null, null, null);
         } catch (ChangeSetPersister.NotFoundException ex) {
             LOG.error("failed to update variable " + variableName + " NOT Found", ex.getMessage());
@@ -83,7 +101,7 @@ public class RestControllers {
         }
     }
 
-    @RequestMapping(value = "/getSessionData", method = RequestMethod.GET)
+    @RequestMapping(value = "/getSessionData", method = RequestMethod.GET, produces = "application/json")
     @ApiOperation(value = "A variable Or the whole session object  is retrieved")
     public @ResponseBody
     SessionMngrResponse getSessionData(@RequestParam String sessionId, @RequestParam(required = false) String variableName) {
@@ -97,7 +115,7 @@ public class RestControllers {
         }
     }
 
-    @RequestMapping(value = "/generateToken", method = RequestMethod.GET)
+    @RequestMapping(value = "/generateToken", method = RequestMethod.GET, produces = "application/json")
     @ApiOperation(value = "Generates a signed token, only the sessionId as the payload, additionaly parameters include:"
             + " The id of the requesting microservice (msA) and The id of the destination microservice (msB), may also include additional data")
     public SessionMngrResponse generateToken(@RequestParam String sessionId, @RequestParam(required = true) String sender,
@@ -118,21 +136,40 @@ public class RestControllers {
         }
     }
 
-    @RequestMapping(value = "/validateToken", method = RequestMethod.GET)
+    @RequestMapping(value = "/validateToken", method = RequestMethod.GET, produces = "application/json")
     @ApiOperation(value = "The passed security token’s signature will be validated, as well as the validity as well as other validation measures")
-    public SessionMngrResponse validateToken(@RequestParam String token) {
-        //TODO check sender from config manager mciroservicex
-
-        JwtValidationResponse valResp = jwtServ.validateJwt(token);
-        if (valResp.getCode().equals(ResponseCode.OK)) {
-            blacklistServ.addToBlacklist(valResp.getJti());
+    public SessionMngrResponse validateToken(@RequestParam String token, HttpServletRequest req) {
+        SessionMngrResponse response = new SessionMngrResponse();
+        response.setCode(ResponseCode.ERROR);
+        try {
+            String authorization = req.getHeader("authorization");
+            if (authorization != null) {
+                Signature sigToVerify = Signature.fromString(authorization);
+                String fingerprint = sigToVerify.getKeyId();
+                Optional<String> requestSenderId = configServ.getMsIDfromRSAFingerprint(fingerprint);
+                if (requestSenderId.isPresent()) {
+                    JwtValidationResponse valResp = jwtServ.validateJwt(token);
+                    if (valResp.getCode().equals(ResponseCode.OK)) {
+                        blacklistServ.addToBlacklist(valResp.getJti());
+                    }
+                    if (!valResp.getReceiver().equals(requestSenderId.get())) {
+                        valResp.setError("sender id token missmatch!");
+                    }
+                    return SessionMngrResponseFactory.makeSessionMngrResponseFromValidationResponse(valResp);
+                }
+                response.setError("sender id is missing!");
+            }
+            response.setError("authorization header is missing!");
+        } catch (IOException ex) {
+            LOG.error(ex.getMessage());
+            response.setError("error getting sender public key!");
+            return response;
         }
+        return response;
 
-        //TODO check sender from config manager mciroservicex
-        return SessionMngrResponseFactory.makeSessionMngrResponseFromValidationResponse(valResp);
     }
 
-    @RequestMapping(value = "/getSession", method = RequestMethod.GET)
+    @RequestMapping(value = "/getSession", method = RequestMethod.GET, produces = "application/json")
     @ApiOperation(value = "Returns the internal session identifier by querying using the UUID of an exteranal "
             + "the session request. E.g. eIDAS request identifier, The identifier must be previously stored in the session")
     public SessionMngrResponse getSessionFromIdPUUUID(String varName, String varValue) {

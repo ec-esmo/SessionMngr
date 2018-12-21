@@ -77,8 +77,8 @@ public class TestRestControllers {
         String nowDate = formatter.format(date);
         byte[] digest = MessageDigest.getInstance("SHA-256").digest("".getBytes());
         String requestId = UUID.randomUUID().toString();
-        mvc.perform(get("/rest/getSessionData?sessionId=somesession")
-                .header("authorization", sigServ.generateSignature("hostUrl", "GET", "/rest/getSessionData?sessionId=somesession", null, "application/x-www-form-urlencoded", requestId))
+        mvc.perform(get("/sm/getSessionData?sessionId=somesession")
+                .header("authorization", sigServ.generateSignature("hostUrl", "GET", "/sm/getSessionData?sessionId=somesession", null, "application/x-www-form-urlencoded", requestId))
                 .header("host", "hostUrl")
                 .header("(request-target)", "GET /getSessionData?sessionId=somesession")
                 .header("original-date", nowDate)
@@ -101,8 +101,8 @@ public class TestRestControllers {
         byte[] digest = MessageDigest.getInstance("SHA-256").digest("".getBytes());
         String requestId = UUID.randomUUID().toString();
 
-        mvc.perform(get("/rest/getSessionData?sessionId=somesession&variableName=var1")
-                .header("authorization", sigServ.generateSignature("hostUrl", "GET", "/rest/getSessionData?sessionId=somesession&variableName=var1", null, "application/x-www-form-urlencoded", requestId))
+        mvc.perform(get("/sm/getSessionData?sessionId=somesession&variableName=var1")
+                .header("authorization", sigServ.generateSignature("hostUrl", "GET", "/sm/getSessionData?sessionId=somesession&variableName=var1", null, "application/x-www-form-urlencoded", requestId))
                 .header("host", "hostUrl")
                 .header("(request-target)", "GET /getSessionData?sessionId=somesession")
                 .header("original-date", nowDate)
@@ -126,8 +126,8 @@ public class TestRestControllers {
         byte[] digest = MessageDigest.getInstance("SHA-256").digest("".getBytes());
         String requestId = UUID.randomUUID().toString();
 
-        mvc.perform(get("/rest/getSessionData?sessionId=somesession&variableName=var1")
-                .header("authorization", sigServ.generateSignature("hostUrl", "GET", "/rest/getSessionData?sessionId=somesession&variableName=var1", null, "application/x-www-form-urlencoded", requestId))
+        mvc.perform(get("/sm/getSessionData?sessionId=somesession&variableName=var1")
+                .header("authorization", sigServ.generateSignature("hostUrl", "GET", "/sm/getSessionData?sessionId=somesession&variableName=var1", null, "application/x-www-form-urlencoded", requestId))
                 .header("host", "hostUrl")
                 .header("(request-target)", "GET /getSessionData?sessionId=somesession")
                 .header("original-date", nowDate)
@@ -157,8 +157,8 @@ public class TestRestControllers {
         postParams.put("dataObject", "dataObject");
         byte[] digest = MessageDigest.getInstance("SHA-256").digest("".getBytes()); // post parameters are added as uri parameters not in the body when form-encoding
 
-        mvc.perform(post("/rest/updateSessionData")
-                .header("authorization", sigServ.generateSignature("hostUrl", "POST", "/rest/updateSessionData", null, "application/x-www-form-urlencoded", requestId))
+        mvc.perform(post("/sm/updateSessionData")
+                .header("authorization", sigServ.generateSignature("hostUrl", "POST", "/sm/updateSessionData", null, "application/x-www-form-urlencoded", requestId))
                 .header("host", "hostUrl")
                 .header("(request-target)", "POST /updateSessionData")
                 .header("original-date", nowDate)
@@ -168,7 +168,7 @@ public class TestRestControllers {
                 .param("variableName", "var1")
                 .param("dataObject", "dataObject")
         )
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.code", is("OK")));
     }
 
@@ -189,8 +189,8 @@ public class TestRestControllers {
         postParams.put("dataObject", "dataObject");
         byte[] digest = MessageDigest.getInstance("SHA-256").digest("".getBytes()); // post parameters are added as uri parameters not in the body when form-encoding
 
-        mvc.perform(post("/rest/updateSessionData")
-                .header("authorization", sigServ.generateSignature("hostUrl", "POST", "/rest/updateSessionData", null, "application/x-www-form-urlencoded", requestId))
+        mvc.perform(post("/sm/updateSessionData")
+                .header("authorization", sigServ.generateSignature("hostUrl", "POST", "/sm/updateSessionData", null, "application/x-www-form-urlencoded", requestId))
                 .header("host", "hostUrl")
                 .header("(request-target)", "POST /updateSessionData")
                 .header("original-date", nowDate)
@@ -200,7 +200,7 @@ public class TestRestControllers {
                 .param("variableName", "var1")
                 .param("dataObject", "dataObject")
         )
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.code", is("ERROR")))
                 .andExpect(jsonPath("$.error", is("failed to update variable var1 NOT Found")));
     }
@@ -216,8 +216,8 @@ public class TestRestControllers {
         String nowDate = formatter.format(date);
         byte[] digest = MessageDigest.getInstance("SHA-256").digest("".getBytes());
         String requestId = UUID.randomUUID().toString();
-        mvc.perform(get("/rest/getSession?varName=varName&varValue=varValue")
-                .header("authorization", sigServ.generateSignature("hostUrl", "GET", "/rest/getSession?varName=varName&varValue=varValue", null, "application/x-www-form-urlencoded", requestId))
+        mvc.perform(get("/sm/getSession?varName=varName&varValue=varValue")
+                .header("authorization", sigServ.generateSignature("hostUrl", "GET", "/sm/getSession?varName=varName&varValue=varValue", null, "application/x-www-form-urlencoded", requestId))
                 .header("host", "hostUrl")
                 .header("(request-target)", "GET /getSessionData?sessionId=somesession")
                 .header("original-date", nowDate)
@@ -240,8 +240,8 @@ public class TestRestControllers {
         String nowDate = formatter.format(date);
         byte[] digest = MessageDigest.getInstance("SHA-256").digest("".getBytes());
         String requestId = UUID.randomUUID().toString();
-        mvc.perform(get("/rest/getSession?varName=varName&varValue=varValue")
-                .header("authorization", sigServ.generateSignature("hostUrl", "GET", "/rest/getSession?varName=varName&varValue=varValue", null, "application/x-www-form-urlencoded", requestId))
+        mvc.perform(get("/sm/getSession?varName=varName&varValue=varValue")
+                .header("authorization", sigServ.generateSignature("hostUrl", "GET", "/sm/getSession?varName=varName&varValue=varValue", null, "application/x-www-form-urlencoded", requestId))
                 .header("host", "hostUrl")
                 .header("(request-target)", "GET /getSessionData?sessionId=somesession")
                 .header("original-date", nowDate)
@@ -264,8 +264,8 @@ public class TestRestControllers {
         String nowDate = formatter.format(date);
         byte[] digest = MessageDigest.getInstance("SHA-256").digest("".getBytes());
         String requestId = UUID.randomUUID().toString();
-        mvc.perform(get("/rest/getSession?varName=varName&varValue=varValue")
-                .header("authorization", sigServ.generateSignature("hostUrl", "GET", "/rest/getSession?varName=varName&varValue=varValue", null, "application/x-www-form-urlencoded", requestId))
+        mvc.perform(get("/sm/getSession?varName=varName&varValue=varValue")
+                .header("authorization", sigServ.generateSignature("hostUrl", "GET", "/sm/getSession?varName=varName&varValue=varValue", null, "application/x-www-form-urlencoded", requestId))
                 .header("host", "hostUrl")
                 .header("(request-target)", "GET /getSessionData?sessionId=somesession")
                 .header("original-date", nowDate)
