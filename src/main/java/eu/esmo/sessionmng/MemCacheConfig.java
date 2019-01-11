@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.StringUtils;
 
 /**
  *
@@ -32,15 +33,26 @@ public class MemCacheConfig {
 
     private ParameterService paramServ;
 
+    private final static Logger log = LoggerFactory.getLogger(MemCacheConfig.class);
+    private String _memcachedHost = "172.17.0.1";// when running in docker bridge mode the address of memchached becomse the the 
+    // default brider for more info look at https://stackoverflow.com/questions/24319662/from-inside-of-a-docker-container-how-do-i-connect-to-the-localhost-of-the-mach
+    //"127.0.0.1"; //Machine where memcached is running
+    private int _memcachedPort = 11211;    //Port on which memcached is running
+    public final static String BLACKLIST = "blackList";
+
     @Autowired
     public MemCacheConfig(ParameterService paramserv) {
         this.paramServ = paramserv;
-    }
+        try {
+            this._memcachedHost = StringUtils.isEmpty(this.paramServ.getProperty("MEMCACHED_HOST")) ? "172.17.0.1" : this.paramServ.getProperty("MEMCACHED_HOST");
+            this._memcachedPort = StringUtils.isEmpty(this.paramServ.getProperty("MEMCACHED_PORT")) ? 11211 : Integer.parseInt(this.paramServ.getProperty("MEMCACHED_PORT"));
+        } catch (NumberFormatException e) {
+            log.error(e.getMessage());
+            this._memcachedPort = 11211;
+            this._memcachedHost="172.17.0.1";
+        }
 
-    private final static Logger log = LoggerFactory.getLogger(MemCacheConfig.class);
-    private String _memcachedHost = "127.0.0.1"; //Machine where memcached is running
-    private int _memcachedPort = 11211;    //Port on which memcached is running
-    public final static String BLACKLIST = "blackList";
+    }
 
     @Bean
     public CacheManager cacheManager() {

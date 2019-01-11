@@ -18,6 +18,7 @@ import java.util.Optional;
  * @author nikos
  */
 public interface MSConfigurationService {
+    
 
     public MSConfigurationResponse getConfigurationJSON();
 

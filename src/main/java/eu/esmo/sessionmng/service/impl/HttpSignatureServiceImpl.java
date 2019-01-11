@@ -5,6 +5,7 @@
  */
 package eu.esmo.sessionmng.service.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.esmo.sessionmng.enums.HttpResponseEnum;
 import eu.esmo.sessionmng.service.HttpSignatureService;
 import eu.esmo.sessionmng.service.KeyStoreService;
@@ -34,7 +35,6 @@ import java.util.TimeZone;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.compress.utils.IOUtils;
@@ -64,13 +64,11 @@ public class HttpSignatureServiceImpl implements HttpSignatureService {
     private static final int DATE_DIFF_ALLOWED = 5;
 
     private KeyStoreService keyServ;
-    private MSConfigurationService msConfigServ;
 
     @Autowired
-    public HttpSignatureServiceImpl(KeyStoreService keyServ, MSConfigurationService msConfigServ)
+    public HttpSignatureServiceImpl(KeyStoreService keyServ)
             throws InvalidKeySpecException, IOException, KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException {
         try {
-            this.msConfigServ = msConfigServ;
             this.keyServ = keyServ;
             String keyId = DigestUtils.sha256Hex(getX509PubKeytoRSABinaryFormat((PublicKey) this.keyServ.getHttpSigPublicKey()));
             this.signer = new Signer(keyServ.getSigningKey(), new Signature(keyId, algorithm, null, "(request-target)", "host", "original-date", "digest", "x-request-id"));
@@ -103,7 +101,7 @@ public class HttpSignatureServiceImpl implements HttpSignatureService {
         return Base64.getEncoder().encodeToString(key.getEncoded());
     }
 
-    public String generateSignature(String hostUrl, String method, String uri, Map<String, String> postParams, String contentType, String requestId)
+    public String generateSignature(String hostUrl, String method, String uri, Object postParams, String contentType, String requestId)
             throws NoSuchAlgorithmException, KeyStoreException, UnrecoverableKeyException, UnsupportedEncodingException, IOException {
 
         final String[] requiredHeaders = {"(request-target)", "host", "original-date", "digest", "x-request-id"};
@@ -122,10 +120,17 @@ public class HttpSignatureServiceImpl implements HttpSignatureService {
         byte[] digest;
         //only when the request is json encoded are the post params added to the body of the request
         // else they eventually become encoded to the url
-        if (postParams != null && contentType.equals("application/json")) {
-            digest = MessageDigest.getInstance("SHA-256").digest(getParamsString(postParams).getBytes());
+        if (postParams != null && contentType.contains("application/json")) {
+            ObjectMapper mapper = new ObjectMapper();
+            String updateString = mapper.writeValueAsString(postParams);
+            digest = MessageDigest.getInstance("SHA-256").digest(updateString.getBytes());
         } else {
-            digest = MessageDigest.getInstance("SHA-256").digest("".getBytes());
+            if (postParams != null) {
+                digest = MessageDigest.getInstance("SHA-256").digest(getParamsString((Map<String,String>)postParams).getBytes());
+            } else {
+                digest = MessageDigest.getInstance("SHA-256").digest("".getBytes());
+
+            }
         }
 
         signatureHeaders.put("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)));
@@ -146,7 +151,7 @@ public class HttpSignatureServiceImpl implements HttpSignatureService {
     }
 
     @Override
-    public HttpResponseEnum verifySignature(HttpServletRequest httpRequest) {
+    public HttpResponseEnum verifySignature(HttpServletRequest httpRequest, MSConfigurationService confServ) {
         String authorization = httpRequest.getHeader("authorization");
         if (authorization != null) {
 
@@ -202,7 +207,7 @@ public class HttpSignatureServiceImpl implements HttpSignatureService {
                 }
                 log.debug("Veryfing signature for " + uri + " and verb " + method);
 
-                if (isSignatureValid(sigToVerify, msConfigServ, method, uri, headers)) {
+                if (isSignatureValid(sigToVerify, confServ, method, uri, headers)) {
                     return HttpResponseEnum.AUTHORIZED;
                 }
 

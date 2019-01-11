@@ -16,6 +16,11 @@
                 <Env.SIGNING_SECRET>QjG+wP1CbAH2z4PWlWIDkxP4oRlgK2vos5/jXFfeBw8=</Env.SIGNING_SECRET>
                 <Env.ASYNC_SIGNATURE>false</Env.ASYNC_SIGNATURE>
                 <Env.EXPIRES>5</Env.EXPIRES>
+                <Env.DATABASE_HOST>172.17.0.1</Env.DATABASE_HOST>
+                <Env.DATABASE_PORT>3307</Env.DATABASE_PORT>
+                <Env.DATABASE_NAME>sessionMngr</Env.DATABASE_NAME>
+                <Env.DATABASE_USER>root</Env.DATABASE_USER>
+                <Env.DATABASE_PASSWORD>example</Env.DATABASE_PASSWORD>
             </properties>
         </action>
         <action>

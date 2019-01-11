@@ -5,9 +5,11 @@
  */
 package eu.esmo.sessionmng.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.esmo.sessionmng.model.TO.MngrSessionTO;
 import eu.esmo.sessionmng.model.dao.SessionRepository;
 import eu.esmo.sessionmng.model.dmo.MngrSession;
+import eu.esmo.sessionmng.pojo.UpdateDataRequest;
 import eu.esmo.sessionmng.service.HttpSignatureService;
 import eu.esmo.sessionmng.service.SessionService;
 import java.security.MessageDigest;
@@ -28,11 +30,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.crossstore.ChangeSetPersister;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -40,7 +44,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  *
  * @author nikos
  */
-
 @ActiveProfiles("test")
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -58,11 +61,6 @@ public class TestRestControllers {
 
     @MockBean
     private SessionRepository sessionRep;
-
- 
-
-    
-
 
     @Test
     public void testGetSessionDataNoVariableName() throws Exception {
@@ -85,6 +83,7 @@ public class TestRestControllers {
                 .header("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)))
                 .header("x-request-id", requestId)
         )
+                .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code", is("OK")))
                 .andExpect(jsonPath("$.sessionData.sessionId", is("somesession")))
@@ -155,18 +154,25 @@ public class TestRestControllers {
         postParams.put("sessionId", "sessionId");
         postParams.put("variableName", "var1");
         postParams.put("dataObject", "dataObject");
-        byte[] digest = MessageDigest.getInstance("SHA-256").digest("".getBytes()); // post parameters are added as uri parameters not in the body when form-encoding
+
+        UpdateDataRequest update = new UpdateDataRequest("sessionId", "var1", "dataObject");
+        ObjectMapper mapper = new ObjectMapper();
+        String updateString = mapper.writeValueAsString(update);
+
+        byte[] digest = MessageDigest.getInstance("SHA-256").digest(updateString.getBytes()); // post parameters are added as uri parameters not in the body when form-encoding
 
         mvc.perform(post("/sm/updateSessionData")
-                .header("authorization", sigServ.generateSignature("hostUrl", "POST", "/sm/updateSessionData", null, "application/x-www-form-urlencoded", requestId))
+                .header("authorization", sigServ.generateSignature("hostUrl", "POST", "/sm/updateSessionData", update, "application/json;charset=UTF-8", requestId))
                 .header("host", "hostUrl")
                 .header("(request-target)", "POST /updateSessionData")
                 .header("original-date", nowDate)
                 .header("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)))
                 .header("x-request-id", requestId)
-                .param("sessionId", "sessionId")
-                .param("variableName", "var1")
-                .param("dataObject", "dataObject")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(updateString.getBytes())
+        //                        .param("sessionId", "sessionId")
+        //                        .param("variableName", "var1")
+        //                        .param("dataObject", "dataObject")
         )
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.code", is("OK")));
@@ -183,22 +189,21 @@ public class TestRestControllers {
         String nowDate = formatter.format(date);
         String requestId = UUID.randomUUID().toString();
 
-        Map<String, String> postParams = new HashMap();
-        postParams.put("sessionId", "somesession");
-        postParams.put("variableName", "var1");
-        postParams.put("dataObject", "dataObject");
-        byte[] digest = MessageDigest.getInstance("SHA-256").digest("".getBytes()); // post parameters are added as uri parameters not in the body when form-encoding
+        UpdateDataRequest update = new UpdateDataRequest("somesession", "var1", "dataObject");
+        ObjectMapper mapper = new ObjectMapper();
+        String updateString = mapper.writeValueAsString(update);
+
+        byte[] digest = MessageDigest.getInstance("SHA-256").digest(updateString.getBytes()); // post parameters are added as uri parameters not in the body when form-encoding
 
         mvc.perform(post("/sm/updateSessionData")
-                .header("authorization", sigServ.generateSignature("hostUrl", "POST", "/sm/updateSessionData", null, "application/x-www-form-urlencoded", requestId))
+                .header("authorization", sigServ.generateSignature("hostUrl", "POST", "/sm/updateSessionData", update, "application/json", requestId))
                 .header("host", "hostUrl")
                 .header("(request-target)", "POST /updateSessionData")
                 .header("original-date", nowDate)
                 .header("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)))
                 .header("x-request-id", requestId)
-                .param("sessionId", "somesession")
-                .param("variableName", "var1")
-                .param("dataObject", "dataObject")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(updateString.getBytes())
         )
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.code", is("ERROR")))
@@ -224,6 +229,7 @@ public class TestRestControllers {
                 .header("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)))
                 .header("x-request-id", requestId)
         )
+                .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.sessionData.sessionId", is("sessionId")));
 
@@ -250,7 +256,7 @@ public class TestRestControllers {
         )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code", is("ERROR")))
-                .andExpect(jsonPath("$.error", is("No sessios found")));
+                .andExpect(jsonPath("$.error", is("No sessions found")));
 
     }
 

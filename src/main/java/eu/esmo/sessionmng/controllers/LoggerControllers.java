@@ -10,6 +10,7 @@ import ch.qos.logback.classic.LoggerContext;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -27,7 +28,10 @@ public class LoggerControllers {
 
     @RequestMapping(value = "/loglevel/{loglevel}", method = RequestMethod.POST)
     @ApiOperation(value = "Changes the log level of the logger for the given package", response = String.class)
-    public String loglevel(@PathVariable("loglevel") String logLevel, @RequestParam(value = "package") String packageName) throws Exception {
+    public String loglevel(@PathVariable("loglevel") String logLevel, @RequestParam(value = "package", required=false) String packageName) throws Exception {
+        if(StringUtils.isEmpty(packageName)){
+            packageName ="eu.esmo.sessionmng";
+        }
         log.info("Log level: " + logLevel);
         log.info("Package name: " + packageName);
         String retVal = setLogLevel(logLevel, packageName);

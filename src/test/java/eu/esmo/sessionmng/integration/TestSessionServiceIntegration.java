@@ -19,12 +19,14 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.crossstore.ChangeSetPersister;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  *
  * @author nikos
  */
+@ActiveProfiles("test")
 @RunWith(SpringJUnit4ClassRunner.class)
 @Transactional
 @SpringBootTest
@@ -45,7 +47,7 @@ public class TestSessionServiceIntegration {
         Assert.assertTrue(sessionServ.getSessionIdByVariableAndValue("var1", "value1").get().contains("ID1"));
         sessionServ.replaceSession("ID1", "data", "thisIsReplaced");
         assertEquals(sessionServ.getValueByVariableAndId("ID1", "var1"), null);
-         assertEquals(sessionServ.getValueByVariableAndId("ID1", "data"), "thisIsReplaced");
+        assertEquals(sessionServ.getValueByVariableAndId("ID1", "data"), "thisIsReplaced");
     }
 
 }

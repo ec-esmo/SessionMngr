@@ -7,6 +7,7 @@ package eu.esmo.sessionmng.filters;
 
 import eu.esmo.sessionmng.enums.HttpResponseEnum;
 import eu.esmo.sessionmng.service.HttpSignatureService;
+import eu.esmo.sessionmng.service.MSConfigurationService;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.KeyStoreException;
@@ -29,18 +30,20 @@ import org.springframework.web.filter.GenericFilterBean;
 public class HttpSignatureFilter extends GenericFilterBean {
 
     private final HttpSignatureService sigServ;
+    private final MSConfigurationService confServ;
     private final Logger Logger = LoggerFactory.getLogger(HttpSignatureFilter.class);
 
     @Autowired
-    public HttpSignatureFilter(HttpSignatureService sigServ) {
+    public HttpSignatureFilter(HttpSignatureService sigServ, MSConfigurationService confServ) {
         this.sigServ = sigServ;
+        this.confServ = confServ;
     }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 
         try {
-            if (sigServ.verifySignature((HttpServletRequest) request).equals(HttpResponseEnum.AUTHORIZED)) {
+            if (sigServ.verifySignature((HttpServletRequest) request, confServ).equals(HttpResponseEnum.AUTHORIZED)) {
                 chain.doFilter(request, response);
             } else {
                 throw new ServletException("Error Validating Http Signature from request");

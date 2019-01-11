@@ -11,7 +11,6 @@ import java.io.UnsupportedEncodingException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
-import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -22,9 +21,9 @@ public interface HttpSignatureService {
 
     public String getFakeSignature() throws IOException, KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, UnsupportedEncodingException, IOException;
 
-    public HttpResponseEnum verifySignature(HttpServletRequest httpRequest) throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, UnsupportedEncodingException, IOException;
+    public HttpResponseEnum verifySignature(HttpServletRequest httpRequest, MSConfigurationService confServ) throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, UnsupportedEncodingException, IOException;
 
-    public String generateSignature(String hostUrl, String method, String uri, Map<String, String> postParams, String contentType, String requestId)
+    public String generateSignature(String hostUrl, String method, String uri, Object postParams, String contentType, String requestId)
             throws NoSuchAlgorithmException, KeyStoreException, UnrecoverableKeyException, UnsupportedEncodingException, IOException, UnsupportedEncodingException;
 
 }

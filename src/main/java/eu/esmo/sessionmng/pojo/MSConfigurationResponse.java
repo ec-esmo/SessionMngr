@@ -5,6 +5,8 @@
  */
 package eu.esmo.sessionmng.pojo;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+
 /**
  *
  * @author nikos
@@ -31,27 +33,39 @@ public class MSConfigurationResponse {
     //static is needed for jackson
     public static class MicroService {
 
-        private String msID;
+        @JsonAlias({"msId", "msID"})
+        private String msId;
+        private String[] authorizedMicroservices; // List of ms identifiers that will be authorised to contact this microservice (will be used by the SM when validating a token).
         private String msType;
         private String rsaPublicKeyBinary;
-        private MsAPI[] publishedAPI;
+        private PublishedAPI[] publishedAPI;
 
-        public MicroService(String msID, String msType, String rsaPublicKeyBinary, MsAPI[] publishedAPI) {
-            this.msID = msID;
+        public MicroService(String msID, String msType, String rsaPublicKeyBinary, PublishedAPI[] publishedAPI, String[] authorizedMicroservices) {
+            this.msId = msID;
             this.msType = msType;
             this.rsaPublicKeyBinary = rsaPublicKeyBinary;
             this.publishedAPI = publishedAPI;
+            this.authorizedMicroservices= authorizedMicroservices;
         }
 
+        public String[] getAuthorizedMicroservices() {
+            return authorizedMicroservices;
+        }
+
+        public void setAuthorizedMicroservices(String[] authorizedMicroservices) {
+            this.authorizedMicroservices = authorizedMicroservices;
+        }
+
+        
         public MicroService() {
         }
 
-        public String getMsID() {
-            return msID;
+        public String getMsId() {
+            return msId;
         }
 
-        public void setMsID(String msID) {
-            this.msID = msID;
+        public void setMsId(String msId) {
+            this.msId = msId;
         }
 
         public String getMsType() {
@@ -70,64 +84,64 @@ public class MSConfigurationResponse {
             this.rsaPublicKeyBinary = rsaPublicKeyBinary;
         }
 
-        public MsAPI[] getPublishedAPI() {
+        public PublishedAPI[] getPublishedAPI() {
             return publishedAPI;
         }
 
-        public void setPublishedAPI(MsAPI[] publishedAPI) {
+        public void setPublishedAPI(PublishedAPI[] publishedAPI) {
             this.publishedAPI = publishedAPI;
         }
 
     }
 
     //static is needed for jackson
-    public static class MsAPI {
+    public static class PublishedAPI {
 
-        private String apiClass;
-        private String apiCall;
-        private String apiConnectionType;
-        private String url;
+        private ApiClassEnum apiClass;
+        private ApiCallType apiCall;
+        private ApiConnectionType apiConnectionType;
+        private String apiEndpoint;
 
-        public MsAPI() {
+        public PublishedAPI() {
         }
 
-        public MsAPI(String apiClass, String apiCall, String apiConnectionType, String url) {
+        public PublishedAPI(ApiClassEnum apiClass, ApiCallType apiCall, ApiConnectionType apiConnectionType, String url) {
             this.apiClass = apiClass;
             this.apiCall = apiCall;
             this.apiConnectionType = apiConnectionType;
-            this.url = url;
+            this.apiEndpoint = url;
         }
 
-        public String getApiClass() {
+        public ApiClassEnum getApiClass() {
             return apiClass;
         }
 
-        public void setApiClass(String apiClass) {
+        public void setApiClass(ApiClassEnum apiClass) {
             this.apiClass = apiClass;
         }
 
-        public String getApiCall() {
+        public ApiCallType getApiCall() {
             return apiCall;
         }
 
-        public void setApiCall(String apiCall) {
+        public void setApiCall(ApiCallType apiCall) {
             this.apiCall = apiCall;
         }
 
-        public String getApiConnectionType() {
+        public ApiConnectionType getApiConnectionType() {
             return apiConnectionType;
         }
 
-        public void setApiConnectionType(String apiConnectionType) {
+        public void setApiConnectionType(ApiConnectionType apiConnectionType) {
             this.apiConnectionType = apiConnectionType;
         }
 
-        public String getUrl() {
-            return url;
+        public String getApiEndpoint() {
+            return apiEndpoint;
         }
 
-        public void setUrl(String url) {
-            this.url = url;
+        public void setApiEndpoint(String apiEndpoint) {
+            this.apiEndpoint = apiEndpoint;
         }
 
     }

@@ -1,0 +1,61 @@
+version: '2'
+volumes:
+  # volume to store mysql database data  
+  data_sql:   
+services:
+    Memcached:
+      image: sameersbn/memcached:1.5.6
+      ports:
+        - 11211:11211
+#      restart: always
+
+    docker-mysql:
+      image: mysql
+#      command: --default-authentication-plugin=mysql_native_password
+      #restart: always
+      environment:
+        MYSQL_ROOT_PASSWORD: example
+        MYSQL_PASSWORD: example
+        MYSQL_DATABASE: sessionMngr
+      ports:
+        - 3307:3306     
+
+    
+    SessionManager:
+        image: endimion13/esmo-session-manager:0.0.1 
+        environment:
+            - KEYSTORE_PATH=/resources/testKeys/keystore.jks
+            - KEY_PASS=selfsignedpass
+            - STORE_PASS=keystorepass
+            - JWT_CERT_ALIAS=selfsigned
+            - HTTPSIG_CERT_ALIAS=selfsigned
+            - SIGNING_SECRET=QjG+wP1CbAH2z4PWlWIDkxP4oRlgK2vos5/jXFfeBw8=
+            - ASYNC_SIGNATURE=false
+            - EXPIRES=5
+            - CONFIG_JSON=/resources/configurationResponse.json
+            - CONFIGURATION_MANAGER_URL=http://localhost:8070
+            - MEMCACHED_HOST=172.17.0.1
+            - MEMCACHED_PORT=11211
+            - DATABASE_HOST=docker-mysql
+            - DATABASE_USER=root
+            - DATABASE_PASSWORD=example
+            - DATABASE_NAME=sessionMngr
+            - DATABASE_PORT=3306
+            
+        volumes:
+            - /home/nikos/NetBeansProjects/esmo.gr.idp/src/test/resources:/resources
+        links:
+            - docker-mysql:mysql   
+        ports:
+          - 8090:8080
+        depends_on:
+          - docker-mysql 
+        
+
+
+
+#- env.KEY_PASS=selfsignedpass
+#- Env.STORE_PASS=keystorepass
+#- env.JWT_CERT_ALIAS=selfsigned
+#- env.HTTPSIG_CERT_ALIAS=selfsigned
+#-env.ASYNC_SIGNATURE=true

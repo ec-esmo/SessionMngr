@@ -19,7 +19,6 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -39,14 +38,16 @@ public class TestRestControllersConfig {
     @Bean
     @Primary
     public ParameterService paramServ() {
-        return Mockito.mock(ParameterService.class);
+        ParameterService paramServ = Mockito.mock(ParameterService.class);
+        Mockito.when(paramServ.getProperty("CONFIG_JSON")).thenReturn(null);
+        return paramServ;
     }
 
     @Bean
     @Primary
     public HttpSignatureService sigServ() throws InvalidKeySpecException, IOException, KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, CertificateException {
-        MSConfigurationService msConfigServ = new MSConfigurationsServiceImplSTUB();
-        return new HttpSignatureServiceImpl(keyStoreService(), msConfigServ);
+//        MSConfigurationService msConfigServ = new MSConfigurationsServiceImplSTUB(paramServ);
+        return new HttpSignatureServiceImpl(keyStoreService());
     }
 
     @Bean

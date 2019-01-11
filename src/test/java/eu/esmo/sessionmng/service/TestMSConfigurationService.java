@@ -14,26 +14,35 @@ import java.util.Optional;
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  *
  * @author nikos
  */
+@RunWith(SpringJUnit4ClassRunner.class)
 public class TestMSConfigurationService {
 
     private MSConfigurationService stubServ;
 
+    @MockBean
+    private ParameterService paramServ;
+
     @Before
     public void before() {
-        this.stubServ = new MSConfigurationsServiceImplSTUB();
+        Mockito.when(paramServ.getProperty("CONFIG_JSON")).thenReturn(null);
+        this.stubServ = new MSConfigurationsServiceImplSTUB(paramServ);
     }
 
     @Test
     public void testReadConfnigJSON() {
         MSConfigurationResponse resp = stubServ.getConfigurationJSON();
-        assertEquals(resp.getMs()[0].getMsID(), "SAMLms001");
+        assertEquals(resp.getMs()[0].getMsId(), "SAMLms001");
         assertEquals(resp.getMs()[0].getMsType(), "SP_AP_IDP");
-        assertEquals(resp.getMs()[0].getPublishedAPI()[0].getApiClass(), "AP");
+        assertEquals(resp.getMs()[0].getPublishedAPI()[0].getApiClass().toString(), "AP");
 
     }
 

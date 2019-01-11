@@ -15,6 +15,7 @@ import eu.esmo.sessionmng.service.SessionService;
 import eu.esmo.sessionmng.pojo.JwtValidationResponse;
 import eu.esmo.sessionmng.enums.ResponseCode;
 import eu.esmo.sessionmng.pojo.SessionMngrResponse;
+import eu.esmo.sessionmng.pojo.UpdateDataRequest;
 import eu.esmo.sessionmng.service.MSConfigurationService;
 import io.swagger.annotations.ApiOperation;
 import java.io.IOException;
@@ -28,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -63,7 +65,8 @@ public class RestControllers {
 
     @RequestMapping(value = "/startSession", method = RequestMethod.POST, produces = "application/json")
     @ResponseStatus(code = HttpStatus.CREATED)
-    @ApiOperation(value = "Sets up an internal session temporary storage and returns its identifier", response = SessionMngrResponse.class, code = 200)
+    @ApiOperation(value = "Sets up an internal session temporary storage and returns its identifier"
+            + "by setting the code to NEW and the identifier at sessionData.sessionId ", response = SessionMngrResponse.class, code = 200)
     public @ResponseBody
     SessionMngrResponse startSession() {
         UUID sessionId = UUID.randomUUID();
@@ -73,19 +76,26 @@ public class RestControllers {
     }
 
     @RequestMapping(value = "/endSession", method = RequestMethod.DELETE, produces = "application/json")
-    @ApiOperation(value = "Terminates a session and deletes all the stored data")
+    @ApiOperation(value = "Terminates a session and deletes all the stored data"
+            + "+ \"by setting the code to OK")
     public SessionMngrResponse endSession(@RequestParam String sessionId) {
         LOG.debug("Asked to delete session:: " + sessionId);
         sessionServ.delete(sessionId);
         return new SessionMngrResponse(ResponseCode.OK, null, null, null);
     }
 
-    @RequestMapping(value = "/updateSessionData", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/updateSessionData", method = RequestMethod.POST, produces = "application/json",consumes = "application/json")
     @ResponseStatus(code = HttpStatus.CREATED)
     @ApiOperation(value = "Passed data is stored in a session variable overwriting the previous value. If no session variable is given, "
-            + "then the whole data stored in this session will be replaced with the passed dataObject, under the default variable name data", response = SessionMngrResponse.class)
-    public SessionMngrResponse updateSessionData(@RequestParam String sessionId, @RequestParam(required = false) String variableName, @RequestParam String dataObject) {
+            + "then the whole data stored in this session will be replaced with the passed dataObject, under the default variable name data"
+            + " Responds by setting code = OK ", response = SessionMngrResponse.class)
+    public SessionMngrResponse updateSessionData(@RequestBody UpdateDataRequest updateRequest) {
+
+        String sessionId = updateRequest.getSessionId();
+        String variableName = updateRequest.getVariableName();
+        String dataObject = updateRequest.getDataObject();
         try {
+            //@RequestBody String sessionId, @RequestBody(required = false) String variableName, @RequestBody String dataObject
             if (StringUtils.isEmpty(variableName)) {
                 LOG.debug("Attempting to update the whole session  " + sessionId + " with value  " + dataObject);
                 sessionServ.replaceSession(sessionId, "data", dataObject);
@@ -102,7 +112,8 @@ public class RestControllers {
     }
 
     @RequestMapping(value = "/getSessionData", method = RequestMethod.GET, produces = "application/json")
-    @ApiOperation(value = "A variable Or the whole session object  is retrieved")
+    @ApiOperation(value = "A variable Or the whole session object  is retrieved. "
+            + "Responds by code:OK, sessionData:{sessionId: the session, sessioVarialbes: map of variables,values}")
     public @ResponseBody
     SessionMngrResponse getSessionData(@RequestParam String sessionId, @RequestParam(required = false) String variableName) {
 
@@ -117,7 +128,8 @@ public class RestControllers {
 
     @RequestMapping(value = "/generateToken", method = RequestMethod.GET, produces = "application/json")
     @ApiOperation(value = "Generates a signed token, only the sessionId as the payload, additionaly parameters include:"
-            + " The id of the requesting microservice (msA) and The id of the destination microservice (msB), may also include additional data")
+            + " The id of the requesting microservice (msA) and The id of the destination microservice (msB), may also include additional data"
+            + " Responds by code: New, additionalData: the jwt token")
     public SessionMngrResponse generateToken(@RequestParam String sessionId, @RequestParam(required = true) String sender,
             @RequestParam(required = true) String receiver, @RequestParam(required = false) String data) {
 //        MngrSessionTO payload = sessionServ.findBySessionId(sessionId);
@@ -137,7 +149,8 @@ public class RestControllers {
     }
 
     @RequestMapping(value = "/validateToken", method = RequestMethod.GET, produces = "application/json")
-    @ApiOperation(value = "The passed security token’s signature will be validated, as well as the validity as well as other validation measures")
+    @ApiOperation(value = "The passed security token’s signature will be validated, as well as the validity as well as other validation measures"
+            + "Responds by code: OK, sessionData.sessionId the sessionId used to gen. the jwt, and additionalData: extraData that were used to generate the jwt")
     public SessionMngrResponse validateToken(@RequestParam String token, HttpServletRequest req) {
         SessionMngrResponse response = new SessionMngrResponse();
         response.setCode(ResponseCode.ERROR);
@@ -148,10 +161,12 @@ public class RestControllers {
                 String fingerprint = sigToVerify.getKeyId();
                 Optional<String> requestSenderId = configServ.getMsIDfromRSAFingerprint(fingerprint);
                 if (requestSenderId.isPresent()) {
+                    LOG.debug("SenderId " + requestSenderId.get());
                     JwtValidationResponse valResp = jwtServ.validateJwt(token);
                     if (valResp.getCode().equals(ResponseCode.OK)) {
                         blacklistServ.addToBlacklist(valResp.getJti());
                     }
+                    LOG.debug("Receiver " + valResp.getReceiver());
                     if (!valResp.getReceiver().equals(requestSenderId.get())) {
                         valResp.setError("sender id token missmatch!");
                     }
@@ -171,7 +186,8 @@ public class RestControllers {
 
     @RequestMapping(value = "/getSession", method = RequestMethod.GET, produces = "application/json")
     @ApiOperation(value = "Returns the internal session identifier by querying using the UUID of an exteranal "
-            + "the session request. E.g. eIDAS request identifier, The identifier must be previously stored in the session")
+            + "the session request. E.g. eIDAS request identifier, The identifier must be previously stored in the session"
+            + "Responds; code:OK, sessionData.sessionId: the internal sessionId that matches the request params")
     public SessionMngrResponse getSessionFromIdPUUUID(String varName, String varValue) {
         SessionMngrResponse response = new SessionMngrResponse();
         try {
@@ -182,7 +198,7 @@ public class RestControllers {
                 response.setSessionData(MngrSessionFactory.makeMngrSessionTOFromSessionId(sessionId.get()));
             } else {
                 response.setCode(ResponseCode.ERROR);
-                response.setError("No sessios found");
+                response.setError("No sessions found");
             }
         } catch (ArithmeticException e) {
             response.setCode(ResponseCode.ERROR);

@@ -23,11 +23,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 /**
  *
  * @author nikos
  */
+@ActiveProfiles("test")
 @RunWith(SpringJUnit4ClassRunner.class)
 @Transactional
 @SpringBootTest

@@ -17,7 +17,7 @@ import java.io.IOException;
 public class MSConfigurationResponseFactory {
 
     public static MSConfigurationResponse makeMSConfigResponseFromJSON(String json) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         return mapper.readValue(json, MSConfigurationResponse.class);
     }

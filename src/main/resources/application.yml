@@ -1,0 +1,21 @@
+spring:
+  datasource:
+    url: jdbc:mysql://172.17.0.1:3307/sessionMngr?autoReconnect=true
+    username: root
+    password: example
+    platform: mysql
+    initialize: true
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL5Dialect
+    hibernate:
+      ddlAuto: create
+    show-sql: true
+
+---
+spring:
+  profiles: container
+  datasource:
+    url: jdbc:mysql://${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}?autoReconnect=true
+    username: ${DATABASE_USER}
+    password: ${DATABASE_PASSWORD}
+    initialize: true

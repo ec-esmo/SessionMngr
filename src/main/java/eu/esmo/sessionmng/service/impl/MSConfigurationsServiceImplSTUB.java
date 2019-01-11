@@ -9,6 +9,7 @@ import eu.esmo.sessionmng.factory.MSConfigurationResponseFactory;
 import eu.esmo.sessionmng.service.MSConfigurationService;
 import eu.esmo.sessionmng.pojo.MSConfigurationResponse;
 import eu.esmo.sessionmng.pojo.MSConfigurationResponse.MicroService;
+import eu.esmo.sessionmng.service.ParameterService;
 import java.io.File;
 import java.io.IOException;
 import java.security.InvalidKeyException;
@@ -24,22 +25,34 @@ import java.util.Scanner;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 /**
  *
  * @author nikos
  */
 @Service
+@Profile("test")
 public class MSConfigurationsServiceImplSTUB implements MSConfigurationService {
 
     private final static Logger log = LoggerFactory.getLogger(MSConfigurationsServiceImplSTUB.class);
+
+    private ParameterService paramServ;
+
+    @Autowired
+    public MSConfigurationsServiceImplSTUB(ParameterService paramServ) {
+        this.paramServ = paramServ;
+    }
 
     @Override
     public MSConfigurationResponse getConfigurationJSON() {
 
         try {
-            return MSConfigurationResponseFactory.makeMSConfigResponseFromJSON(getFile("configurationResponse.json"));
+            String configPath = StringUtils.isEmpty(paramServ.getProperty("CONFIG_JSON")) ? "configurationResponse.json" : paramServ.getProperty("CONFIG_JSON");
+            return MSConfigurationResponseFactory.makeMSConfigResponseFromJSON(getFile(configPath));
         } catch (IOException e) {
             log.error("file not found ", e);
             return null;
@@ -51,7 +64,13 @@ public class MSConfigurationsServiceImplSTUB implements MSConfigurationService {
         StringBuilder result = new StringBuilder("");
         //Get file from resources folder
         ClassLoader classLoader = getClass().getClassLoader();
-        File file = new File(classLoader.getResource(fileName).getFile());
+        File file;
+        if (StringUtils.isEmpty(paramServ.getProperty("CONFIG_JSON"))) {
+            file = new File(classLoader.getResource(fileName).getFile());
+        } else {
+            file = new File(paramServ.getProperty("CONFIG_JSON"));
+        }
+
         try (Scanner scanner = new Scanner(file)) {
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
@@ -67,13 +86,14 @@ public class MSConfigurationsServiceImplSTUB implements MSConfigurationService {
 
     @Override
     public Optional<String> getMsIDfromRSAFingerprint(String rsaFingerPrint) throws IOException {
-        MSConfigurationResponse configResp = MSConfigurationResponseFactory.makeMSConfigResponseFromJSON(getFile("configurationResponse.json"));
+        String configPath = StringUtils.isEmpty(paramServ.getProperty("CONFIG_JSON")) ? "configurationResponse.json" : paramServ.getProperty("CONFIG_JSON");
+        MSConfigurationResponse configResp = MSConfigurationResponseFactory.makeMSConfigResponseFromJSON(getFile(configPath));
         Optional<MicroService> msMatch = Arrays.stream(configResp.getMs()).filter(msConfig -> {
             return DigestUtils.sha256Hex(msConfig.getRsaPublicKeyBinary()).equals(rsaFingerPrint);
         }).findFirst();
 
         if (msMatch.isPresent()) {
-            return Optional.of(msMatch.get().getMsID());
+            return Optional.of(msMatch.get().getMsId());
         }
 
         return Optional.empty();
@@ -81,7 +101,8 @@ public class MSConfigurationsServiceImplSTUB implements MSConfigurationService {
 
     @Override
     public Optional<PublicKey> getPublicKeyFromFingerPrint(String rsaFingerPrint) throws InvalidKeyException, IOException, NoSuchAlgorithmException, InvalidKeySpecException {
-        MSConfigurationResponse configResp = MSConfigurationResponseFactory.makeMSConfigResponseFromJSON(getFile("configurationResponse.json"));
+        String configPath = StringUtils.isEmpty(paramServ.getProperty("CONFIG_JSON")) ? "configurationResponse.json" : paramServ.getProperty("CONFIG_JSON");
+        MSConfigurationResponse configResp = MSConfigurationResponseFactory.makeMSConfigResponseFromJSON(getFile(configPath));
         Optional<MicroService> msMatch = Arrays.stream(configResp.getMs()).filter(msConfig -> {
             return DigestUtils.sha256Hex(msConfig.getRsaPublicKeyBinary()).equals(rsaFingerPrint);
         }).findFirst();

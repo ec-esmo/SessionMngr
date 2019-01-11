@@ -7,19 +7,19 @@
                     "publishedAPI": 
                             [{
                                     "apiClass": "AP",
-                                    "apiCall": "DCARequest",
+                                    "apiCall": "acmResponse",
                                     "apiConnectionType": "post",
                                     "url": "https://example.com/esmo/SAMLms/001/DCARequest"
                                 },
                                 {
                                     "apiClass": "SP",
-                                    "apiCall": "AuthnResponse",
+                                    "apiCall": "handleResponse",
                                     "apiConnectionType": "post",
                                     "url": "https://example.com/esmo/SAMLms/001/SP_AuthnResponse"
                                 },
                                 {
-                                    "apiClass": "IdP",
-                                    "apiCall": "AuthnRequest",
+                                    "apiClass": "IDP",
+                                    "apiCall": "handleResponse",
                                     "apiConnectionType": "post",
                                     "url": "https://example.com/esmo/SAMLms/001/IDP_AuthnRequest"
                                 }
@@ -32,13 +32,13 @@
                     "publishedAPI": 
                             [{
                                     "apiClass": "ACM",
-                                    "apiCall": "DSARequest",
+                                    "apiCall": "authenticate",
                                     "apiConnectionType": "post",
                                     "url": "https://example.com/esmo/ACMms/001/DSARequest"
                                 },
                                 {
                                     "apiClass": "ACM",
-                                    "apiCall": "DSAResponse",
+                                    "apiCall": "handleResponse",
                                     "apiConnectionType": "post",
                                     "url": "https://example.com/esmo/ACMms/001/DSAResponse"
                                 }]

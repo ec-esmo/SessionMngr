@@ -7,6 +7,7 @@ package eu.esmo.sessionmng;
 
 import eu.esmo.sessionmng.filters.HttpSignatureFilter;
 import eu.esmo.sessionmng.service.HttpSignatureService;
+import eu.esmo.sessionmng.service.MSConfigurationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -22,11 +23,13 @@ public class CustomWebSecurityConfigurerAdapter extends WebSecurityConfigurerAda
 
     @Autowired
     private HttpSignatureService sigServ;
+    @Autowired
+    private MSConfigurationService confServ;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.antMatcher("/rest/**")
-                .addFilterBefore(new HttpSignatureFilter(sigServ), BasicAuthenticationFilter.class)
+        http.antMatcher("/sm/**")
+                .addFilterBefore(new HttpSignatureFilter(sigServ,confServ), BasicAuthenticationFilter.class)
                 .csrf().disable();
     }
 
