@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.logging.Level;
 import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,7 +64,7 @@ public class RestControllers {
     @Autowired
     private MSConfigurationService configServ;
 
-    @RequestMapping(value = "/startSession", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/startSession", method = RequestMethod.POST, produces = "application/json", consumes = {"application/x-www-form-urlencoded"})
     @ResponseStatus(code = HttpStatus.CREATED)
     @ApiOperation(value = "Sets up an internal session temporary storage and returns its identifier"
             + "by setting the code to NEW and the identifier at sessionData.sessionId ", response = SessionMngrResponse.class, code = 200)
@@ -84,10 +85,11 @@ public class RestControllers {
         return new SessionMngrResponse(ResponseCode.OK, null, null, null);
     }
 
-    @RequestMapping(value = "/updateSessionData", method = RequestMethod.POST, produces = "application/json",consumes = "application/json")
+    @RequestMapping(value = "/updateSessionData", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
     @ResponseStatus(code = HttpStatus.CREATED)
     @ApiOperation(value = "Passed data is stored in a session variable overwriting the previous value. If no session variable is given, "
-            + "then the whole data stored in this session will be replaced with the passed dataObject, under the default variable name data"
+            + "then the whole data stored in this session will be replaced with the passed dataObject, in that case the dataObject must be a dictionary"
+            + "containing paris of key, values e.g. {key1:value1, key2:value2} with keys and values strings (the latter may be json)"
             + " Responds by setting code = OK ", response = SessionMngrResponse.class)
     public SessionMngrResponse updateSessionData(@RequestBody UpdateDataRequest updateRequest) {
 
@@ -98,7 +100,7 @@ public class RestControllers {
             //@RequestBody String sessionId, @RequestBody(required = false) String variableName, @RequestBody String dataObject
             if (StringUtils.isEmpty(variableName)) {
                 LOG.debug("Attempting to update the whole session  " + sessionId + " with value  " + dataObject);
-                sessionServ.replaceSession(sessionId, "data", dataObject);
+                sessionServ.replaceSession(sessionId, dataObject);
             } else {
                 LOG.debug("Attempting to update variable " + variableName + " of session  " + sessionId + " with value  " + dataObject);
                 sessionServ.updateSessionVariable(sessionId, variableName, dataObject);
@@ -108,6 +110,10 @@ public class RestControllers {
         } catch (ChangeSetPersister.NotFoundException ex) {
             LOG.error("failed to update variable " + variableName + " NOT Found", ex.getMessage());
             return new SessionMngrResponse(ResponseCode.ERROR, null, null, "failed to update variable " + variableName + " NOT Found");
+        } catch (IOException ex) {
+            LOG.error("failed to update session,  marshalling dataObject" + dataObject);
+            LOG.error(ex.getMessage());
+            return new SessionMngrResponse(ResponseCode.ERROR, null, null, "failed to update sessionId could not mashall " + dataObject);
         }
     }
 

@@ -9,15 +9,18 @@ package eu.esmo.sessionmng.service.impl;
  *
  * @author nikos
  */
+import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.esmo.sessionmng.factory.MngrSessionFactory;
 import eu.esmo.sessionmng.model.TO.MngrSessionTO;
 import eu.esmo.sessionmng.model.dao.SessionRepository;
 import eu.esmo.sessionmng.model.dmo.MngrSession;
 import eu.esmo.sessionmng.model.dmo.SessionVariable;
 import eu.esmo.sessionmng.service.SessionService;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -123,12 +126,18 @@ public class SessionServiceImpl implements SessionService {
 
     @Override
     @Transactional
-    public void replaceSession(String sessionId, String variableName, String newValue) throws ChangeSetPersister.NotFoundException {
+    public void replaceSession(String sessionId, String newValuesMap) throws ChangeSetPersister.NotFoundException, IOException {
         if (sessionRepo.findBySessionId(sessionId) != null) {
             this.sessionRepo.deleteBySessionId(sessionId);
             MngrSession session = new MngrSession(sessionId, new HashSet());
-            SessionVariable newVariable = new SessionVariable(variableName, newValue);
-            session.getVariable().add(newVariable);
+            ObjectMapper mapper = new ObjectMapper();
+            Map<String, String> map = mapper.readValue(newValuesMap, Map.class);
+
+            map.entrySet().stream().forEach(entry -> {
+                SessionVariable newVariable = new SessionVariable(entry.getKey(), entry.getValue());
+                session.getVariable().add(newVariable);
+            });
+
             this.sessionRepo.save(session);
         } else {
             throw new ChangeSetPersister.NotFoundException();

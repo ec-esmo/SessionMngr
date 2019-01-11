@@ -178,6 +178,59 @@ public class TestRestControllers {
                 .andExpect(jsonPath("$.code", is("OK")));
     }
 
+    private class UpdateMissingStuff {
+        private String sessionId;
+        private String dataObject;
+        public UpdateMissingStuff() {
+        }
+        public String getSessionId() {
+            return sessionId;
+        }
+
+        public void setSessionId(String sessionId) {
+            this.sessionId = sessionId;
+        }
+
+        public String getDataObject() {
+            return dataObject;
+        }
+
+        public void setDataObject(String dataObject) {
+            this.dataObject = dataObject;
+        }
+    }
+
+    @Test
+    public void testUpdateSessionDataExistingSessionNoVariableName() throws Exception {
+        MngrSession existingSession = new MngrSession("sessionId", new HashSet());
+        when(sessionRep.findBySessionId("sessionId")).thenReturn(existingSession);
+
+        Date date = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z");
+        String nowDate = formatter.format(date);
+        String requestId = UUID.randomUUID().toString();
+
+        UpdateMissingStuff update = new UpdateMissingStuff();
+        update.setSessionId("sessionId");
+        update.setDataObject("dataObject");
+        String updateString = "{\"sessionId\":\"sessionId\",\"dataObject\":\"dataObject\"}";
+
+        byte[] digest = MessageDigest.getInstance("SHA-256").digest(updateString.getBytes()); // post parameters are added as uri parameters not in the body when form-encoding
+
+        mvc.perform(post("/sm/updateSessionData")
+                .header("authorization", sigServ.generateSignature("hostUrl", "POST", "/sm/updateSessionData", update, "application/json;charset=UTF-8", requestId))
+                .header("host", "hostUrl")
+                .header("(request-target)", "POST /updateSessionData")
+                .header("original-date", nowDate)
+                .header("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)))
+                .header("x-request-id", requestId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(updateString.getBytes())
+        )
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.code", is("OK")));
+    }
+
     @Test
     public void testUpdateSessionDataNOTExistingSession() throws Exception {
 //        when(sessionServ.updateSessionVariable("somesession",Mockito.any(String.class),Mockito.any(String.class))); //.thenThrow(new ChangeSetPersister.NotFoundException());

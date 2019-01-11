@@ -9,6 +9,7 @@ import eu.esmo.sessionmng.model.dao.SessionRepository;
 import eu.esmo.sessionmng.model.dmo.MngrSession;
 import eu.esmo.sessionmng.model.dmo.SessionVariable;
 import eu.esmo.sessionmng.service.impl.SessionServiceImpl;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -80,8 +81,8 @@ public class TestSessionService {
     }
 
     @Test(expected = ChangeSetPersister.NotFoundException.class)
-    public void testReplaceSessionVarialbeErrorSession() throws ChangeSetPersister.NotFoundException {
-        sessionServ.replaceSession(INVALID_SESSION, "", "");
+    public void testReplaceSessionVarialbeErrorSession() throws ChangeSetPersister.NotFoundException, IOException {
+        sessionServ.replaceSession(INVALID_SESSION,  "");
     }
 
 //    @Test

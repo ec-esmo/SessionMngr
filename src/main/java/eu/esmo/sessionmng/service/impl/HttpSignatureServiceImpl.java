@@ -172,6 +172,8 @@ public class HttpSignatureServiceImpl implements HttpSignatureService {
              */
             if (!sigToVerify.getHeaders().containsAll(Arrays.asList(requiredHeaders))
                     || emptyRequiredHeader) {
+                
+                log.error("error header is missing!!!");
                 return HttpResponseEnum.HEADER_MISSING;
             }
 
@@ -196,7 +198,7 @@ public class HttpSignatureServiceImpl implements HttpSignatureService {
                 String digestCalculated = new String(Base64.getEncoder().encodeToString(digest));
 
                 if (!areDigestsEqual(httpRequest.getHeader("digest"), digestCalculated)) {
-                    log.info("Digest missmatch");
+                    log.error("Digest missmatch");
                     return HttpResponseEnum.UN_AUTHORIZED;
                 }
 
@@ -209,8 +211,10 @@ public class HttpSignatureServiceImpl implements HttpSignatureService {
 
                 if (isSignatureValid(sigToVerify, confServ, method, uri, headers)) {
                     return HttpResponseEnum.AUTHORIZED;
+                }else{
+                    log.info("message  here!");
+                    log.error("could not verify signature!! from library method: " + method + " uri: " +uri  );
                 }
-
                 return HttpResponseEnum.UN_AUTHORIZED;
 
             } catch (IllegalArgumentException e) {
@@ -267,6 +271,8 @@ public class HttpSignatureServiceImpl implements HttpSignatureService {
         if (pubKey.isPresent()) {
             Verifier verifier = new Verifier(pubKey.get(), sigToVerify);
             return verifier.verify(method, uri, headers);
+        }else{
+            log.error("could not find sender key!");
         }
         return false;
     }

@@ -89,7 +89,8 @@ public class TestRestControllersIntegration {
                 .header("(request-target)", "POST /startSession")
                 .header("original-date", nowDate)
                 .header("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)))
-                .header("x-request-id", requestId))
+                .header("x-request-id", requestId)
+                .header("content-type", "application/x-www-form-urlencoded"))
                 .andExpect(status().isCreated())
                 .andReturn();
 
@@ -117,7 +118,8 @@ public class TestRestControllersIntegration {
                 .header("(request-target)", "POST /startSession")
                 .header("original-date", nowDate)
                 .header("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)))
-                .header("x-request-id", requestId))
+                .header("x-request-id", requestId)
+                .header("content-type", "application/x-www-form-urlencoded"))
                 .andExpect(status().isCreated())
                 .andReturn();
 
@@ -152,7 +154,8 @@ public class TestRestControllersIntegration {
                 .header("(request-target)", "POST /startSession")
                 .header("original-date", nowDate)
                 .header("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)))
-                .header("x-request-id", requestId))
+                .header("x-request-id", requestId)
+                .header("content-type", "application/x-www-form-urlencoded"))
                 .andExpect(status().isCreated())
                 .andDo(MockMvcResultHandlers.print())
                 .andReturn();
@@ -164,6 +167,8 @@ public class TestRestControllersIntegration {
         String updateString = mapper.writeValueAsString(update);
         digest = MessageDigest.getInstance("SHA-256").digest(updateString.getBytes()); // post parameters are added as uri parameters not in the body when form-encoding
 
+        date = new Date();
+        nowDate = formatter.format(date);
         mvc.perform(post("/sm/updateSessionData")
                 .header("authorization", sigServ.generateSignature("hostUrl", "POST", "/sm/updateSessionData", update, "application/json", requestId))
                 .header("host", "hostUrl")
@@ -205,7 +210,8 @@ public class TestRestControllersIntegration {
                 .header("(request-target)", "POST /startSession")
                 .header("original-date", nowDate)
                 .header("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)))
-                .header("x-request-id", requestId))
+                .header("x-request-id", requestId)
+                .header("content-type", "application/x-www-form-urlencoded"))
                 .andExpect(status().isCreated())
                 .andReturn();
         ObjectMapper mapper = new ObjectMapper();

@@ -7,6 +7,7 @@ package eu.esmo.sessionmng.service;
 
 import eu.esmo.sessionmng.model.TO.MngrSessionTO;
 import eu.esmo.sessionmng.model.dmo.MngrSession;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
@@ -35,6 +36,6 @@ public interface SessionService {
 
     public void updateSessionVariable(String sessionId, String variableName, String newValue) throws NotFoundException;
 
-    public void replaceSession(String sessionId, String variableName, String newValue) throws NotFoundException;
+    public void replaceSession(String sessionId,  String newValuesMap) throws NotFoundException,IOException;
 
 }
