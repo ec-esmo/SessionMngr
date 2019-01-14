@@ -20,6 +20,10 @@ services:
       ports:
         - 3307:3306     
 
+    conf:
+      image: endimion13/test-conf:0.0.1  
+      ports:
+        - 8070:8080       
     
     SessionManager:
         image: endimion13/esmo-session-manager:0.0.1 
@@ -30,10 +34,10 @@ services:
             - JWT_CERT_ALIAS=selfsigned
             - HTTPSIG_CERT_ALIAS=selfsigned
             - SIGNING_SECRET=QjG+wP1CbAH2z4PWlWIDkxP4oRlgK2vos5/jXFfeBw8=
-            - ASYNC_SIGNATURE=false
+            - ASYNC_SIGNATURE=true
             - EXPIRES=5
             - CONFIG_JSON=/resources/configurationResponse.json
-            - CONFIGURATION_MANAGER_URL=http://localhost:8070
+            - CONFIGURATION_MANAGER_URL=http://172.17.0.1:8070
             - MEMCACHED_HOST=172.17.0.1
             - MEMCACHED_PORT=11211
             - DATABASE_HOST=docker-mysql

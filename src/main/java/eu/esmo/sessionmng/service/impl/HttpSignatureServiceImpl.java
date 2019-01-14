@@ -125,12 +125,12 @@ public class HttpSignatureServiceImpl implements HttpSignatureService {
             String updateString = mapper.writeValueAsString(postParams);
             digest = MessageDigest.getInstance("SHA-256").digest(updateString.getBytes());
         } else {
-            if (postParams != null) {
-                digest = MessageDigest.getInstance("SHA-256").digest(getParamsString((Map<String,String>)postParams).getBytes());
-            } else {
+//            if (postParams != null) {
+//                digest = MessageDigest.getInstance("SHA-256").digest(getParamsString((Map<String, String>) postParams).getBytes());
+//            } else {
                 digest = MessageDigest.getInstance("SHA-256").digest("".getBytes());
 
-            }
+//            }
         }
 
         signatureHeaders.put("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)));
@@ -160,11 +160,16 @@ public class HttpSignatureServiceImpl implements HttpSignatureService {
 
             /* check request contains all mandatory headers
              */
+//            log.info(httpRequest.getHeaderNames().toString());
+//            sigToVerify.getHeaders().iterator().forEachRemaining(header -> {
+//                log.info(header);
+//                log.info(httpRequest.getHeader(header));
+//            });
             boolean emptyRequiredHeader
                     = sigToVerify.getHeaders()
                             .stream()
                             .anyMatch(headerName -> {
-                                return StringUtils.isEmpty(httpRequest.getHeader(headerName));
+                                return StringUtils.isEmpty(httpRequest.getHeader(headerName)) && !(headerName.equals("(request-target)"));
                             });
 
             /* Verify that all the required headers are signed (i.e. are part of the http signature)
@@ -172,7 +177,7 @@ public class HttpSignatureServiceImpl implements HttpSignatureService {
              */
             if (!sigToVerify.getHeaders().containsAll(Arrays.asList(requiredHeaders))
                     || emptyRequiredHeader) {
-                
+
                 log.error("error header is missing!!!");
                 return HttpResponseEnum.HEADER_MISSING;
             }
@@ -211,9 +216,8 @@ public class HttpSignatureServiceImpl implements HttpSignatureService {
 
                 if (isSignatureValid(sigToVerify, confServ, method, uri, headers)) {
                     return HttpResponseEnum.AUTHORIZED;
-                }else{
-                    log.info("message  here!");
-                    log.error("could not verify signature!! from library method: " + method + " uri: " +uri  );
+                } else {
+                    log.error("could not verify signature!! from library method: " + method + " uri: " + uri);
                 }
                 return HttpResponseEnum.UN_AUTHORIZED;
 
@@ -271,7 +275,7 @@ public class HttpSignatureServiceImpl implements HttpSignatureService {
         if (pubKey.isPresent()) {
             Verifier verifier = new Verifier(pubKey.get(), sigToVerify);
             return verifier.verify(method, uri, headers);
-        }else{
+        } else {
             log.error("could not find sender key!");
         }
         return false;

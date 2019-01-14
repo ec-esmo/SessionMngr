@@ -20,5 +20,8 @@ services:
       ports:
         - 3307:3306     
 
-
+    conf:
+      image: endimion13/test-conf:0.0.1  
+      ports:
+        - 8070:8080  
     

@@ -91,13 +91,12 @@ public class RestControllers {
             + "then the whole data stored in this session will be replaced with the passed dataObject, in that case the dataObject must be a dictionary"
             + "containing paris of key, values e.g. {key1:value1, key2:value2} with keys and values strings (the latter may be json)"
             + " Responds by setting code = OK ", response = SessionMngrResponse.class)
-    public SessionMngrResponse updateSessionData(@RequestBody UpdateDataRequest updateRequest) {
+    public SessionMngrResponse updateSessionData(@RequestBody(required=false) UpdateDataRequest updateRequest, HttpServletRequest req) {
 
         String sessionId = updateRequest.getSessionId();
         String variableName = updateRequest.getVariableName();
         String dataObject = updateRequest.getDataObject();
         try {
-            //@RequestBody String sessionId, @RequestBody(required = false) String variableName, @RequestBody String dataObject
             if (StringUtils.isEmpty(variableName)) {
                 LOG.debug("Attempting to update the whole session  " + sessionId + " with value  " + dataObject);
                 sessionServ.replaceSession(sessionId, dataObject);

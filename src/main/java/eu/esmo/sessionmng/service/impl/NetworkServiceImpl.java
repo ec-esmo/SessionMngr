@@ -5,14 +5,17 @@
  */
 package eu.esmo.sessionmng.service.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.esmo.sessionmng.service.HttpSignatureService;
 import eu.esmo.sessionmng.service.NetworkService;
 import java.io.IOException;
+import java.net.URL;
 import java.security.KeyStoreException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -50,7 +53,8 @@ public class NetworkServiceImpl implements NetworkService {
     }
 
     @Override
-    public String sendPostForm(String hostUrl, String uri, List<NameValuePair> urlParameters) throws IOException, NoSuchAlgorithmException {
+    public String sendPostForm(String hostUrl, String uri,
+            List<NameValuePair> urlParameters) throws IOException, NoSuchAlgorithmException {
 
         Map<String, String> map = new HashMap();
         MultiValueMap<String, String> multiMap = new LinkedMultiValueMap<>();
@@ -63,15 +67,18 @@ public class NetworkServiceImpl implements NetworkService {
         String requestId = UUID.randomUUID().toString();
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
+
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        String host = hostUrl.replace("http://", "").replace("https://", "");
+
         try {
-            headers.add("authorization", sigServ.generateSignature(hostUrl, "POST", uri, map, "application/x-www-form-urlencoded", requestId));
+            headers.add("authorization", sigServ.generateSignature(host, "POST", uri, null, "application/x-www-form-urlencoded", requestId));
             Date date = new Date();
             byte[] digestBytes;
             //only when the request is json encoded are the post params added to the body of the request
             // else they eventually become encoded to the url
             digestBytes = MessageDigest.getInstance("SHA-256").digest("".getBytes());
-            addHeaders(headers, hostUrl, date, digestBytes, "POST", uri, requestId);
+            addHeaders(headers, host, date, digestBytes, uri, requestId);
 
         } catch (IOException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException e) {
             LOG.error("could not generate signature!!");
@@ -86,53 +93,86 @@ public class NetworkServiceImpl implements NetworkService {
         return response.getBody();
     }
 
-    @Override
-    public String sendGet(String hostUrl, String uri, List<NameValuePair> urlParameters) throws IOException, NoSuchAlgorithmException {
+    public String sendPostBody(String hostUrl, String uri, Object postBody, String contentType) throws IOException, NoSuchAlgorithmException {
 
+        Date date = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z");
+        String nowDate = formatter.format(date);
+        String requestId = UUID.randomUUID().toString();
+
+        ObjectMapper mapper = new ObjectMapper();
+        String updateString = mapper.writeValueAsString(postBody);
+        byte[] digest = MessageDigest.getInstance("SHA-256").digest(updateString.getBytes()); // post parameters are added as uri parameters not in the body when form-encoding
+        String host = hostUrl.replace("http://", "").replace("https://", "");
+        try {
+            HttpHeaders requestHeaders = new HttpHeaders();
+            requestHeaders.add("authorization", sigServ.generateSignature(host, "POST", "/sm/updateSessionData", postBody, "application/json;charset=UTF-8", requestId));
+            requestHeaders.add("host", hostUrl);
+            requestHeaders.add("original-date", nowDate);
+            requestHeaders.add("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(MessageDigest.getInstance("SHA-256").digest(updateString.getBytes()))));
+            requestHeaders.add("x-request-id", requestId);
+            requestHeaders.setContentType(MediaType.APPLICATION_JSON);
+            requestHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(hostUrl + uri);
+            RestTemplate restTemplate = new RestTemplate();
+            HttpEntity<Object> requestEntity = new HttpEntity<>(postBody, requestHeaders);
+            ResponseEntity<String> response
+                    = restTemplate.exchange(builder.toUriString(), HttpMethod.POST, requestEntity,
+                            String.class);
+            return response.getBody();
+        } catch (Exception e) {
+            LOG.info(e.getMessage());
+        }
+        return null;
+    }
+
+    @Override
+    public String sendGet(String hostUrl, String uri,
+            List<NameValuePair> urlParameters) throws IOException, NoSuchAlgorithmException {
+
+        Date date = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z");
+        String nowDate = formatter.format(date);
         String requestId = UUID.randomUUID().toString();
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(hostUrl + uri);
-        Map<String, String> map = new HashMap();
-        urlParameters.stream().forEach(nameVal -> {
-            map.put(nameVal.getName(), nameVal.getValue());
-            builder.queryParam(nameVal.getName(), nameVal.getValue());
-        });
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        try {
-            headers.add("authorization", sigServ.generateSignature(hostUrl, "GET", uri, map, "application/x-www-form-urlencoded", requestId));
-            Date date = new Date();
-            byte[] digestBytes;
-            //only when the request is json encoded are the post params added to the body of the request
-            // else they eventually become encoded to the url
-            digestBytes = MessageDigest.getInstance("SHA-256").digest("".getBytes());
-            addHeaders(headers, hostUrl, date, digestBytes, "GET", uri, requestId);
+        if (urlParameters != null) {
+            Map<String, String> map = new HashMap();
+            urlParameters.stream().forEach(nameVal -> {
+                map.put(nameVal.getName(), nameVal.getValue());
+                builder.queryParam(nameVal.getName(), nameVal.getValue());
+            });
+        }
 
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders requestHeaders = new HttpHeaders();
+        String host = hostUrl.replace("http://", "").replace("https://", "");
+        byte[] digest = MessageDigest.getInstance("SHA-256").digest("".getBytes());
+        try {
+            requestHeaders.add("host", host);
+            requestHeaders.add("original-date", nowDate);
+            requestHeaders.add("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)));
+            requestHeaders.add("x-request-id", requestId);
+            URL url = new URL(builder.toUriString());
+
+            requestHeaders.add("authorization", sigServ.generateSignature(host, "GET", url.getPath() + "?" + url.getQuery(), null, "application/x-www-form-urlencoded", requestId));
         } catch (IOException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException e) {
             LOG.error("could not generate signature!!");
             LOG.error(e.getMessage());
         }
 
-        HttpEntity entity = new HttpEntity(headers);
+        HttpEntity entity = new HttpEntity(requestHeaders);
         ResponseEntity<String> response = restTemplate.exchange(
                 builder.toUriString(), HttpMethod.GET, entity, String.class);
         return response.getBody();
     }
 
-    private void addHeaders(HttpHeaders headers, String host, Date date, byte[] digestBytes, String method, String uri, String requestId) throws NoSuchAlgorithmException {
+    private void addHeaders(HttpHeaders headers, String host, Date date, byte[] digestBytes, String uri, String requestId) throws NoSuchAlgorithmException {
         SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z");
         String nowDate = formatter.format(date);
-        //only when the request is json encoded are the post params added to the body of the request
-        // else they eventually become encoded to the url
-        digestBytes = MessageDigest.getInstance("SHA-256").digest("".getBytes());
-        String digest = "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digestBytes));
-        String requestTarget = method + " " + uri;
-
         headers.add("host", host);
-        headers.add("(request-target)", requestTarget);
         headers.add("original-date", nowDate);
-        headers.add("digest", digest);
+        headers.add("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digestBytes)));
         headers.add("x-request-id", requestId);
-
     }
 
 }

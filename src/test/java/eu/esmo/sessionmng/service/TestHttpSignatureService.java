@@ -5,7 +5,9 @@
  */
 package eu.esmo.sessionmng.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.esmo.sessionmng.enums.HttpResponseEnum;
+import eu.esmo.sessionmng.pojo.UpdateDataRequest;
 import eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl;
 import eu.esmo.sessionmng.service.impl.KeyStoreServiceImpl;
 import eu.esmo.sessionmng.service.impl.MSConfigurationsServiceImplSTUB;
@@ -86,7 +88,7 @@ public class TestHttpSignatureService {
 
         MSConfigurationService msConfigServ = new MSConfigurationsServiceImplSTUB(paramServ);
         HttpSignatureService httpSigServ = new HttpSignatureServiceImpl(keyServ);
-        assertEquals(httpSigServ.verifySignature(req,msConfigServ), HttpResponseEnum.HEADER_MISSING);
+        assertEquals(httpSigServ.verifySignature(req, msConfigServ), HttpResponseEnum.HEADER_MISSING);
 
     }
 
@@ -104,7 +106,7 @@ public class TestHttpSignatureService {
 
         MSConfigurationService msConfigServ = new MSConfigurationsServiceImplSTUB(paramServ);
         HttpSignatureService httpSigServ = new HttpSignatureServiceImpl(keyServ);
-        assertEquals(httpSigServ.verifySignature(req,msConfigServ), HttpResponseEnum.HEADER_MISSING);
+        assertEquals(httpSigServ.verifySignature(req, msConfigServ), HttpResponseEnum.HEADER_MISSING);
     }
 
     @Test
@@ -164,7 +166,71 @@ public class TestHttpSignatureService {
         System.out.println(signed.toString());
         MSConfigurationService msConfigServ = new MSConfigurationsServiceImplSTUB(paramServ);
         HttpSignatureService httpSigServ = new HttpSignatureServiceImpl(keyServ);
-        assertEquals(httpSigServ.verifySignature(req,msConfigServ), HttpResponseEnum.AUTHORIZED);
+        assertEquals(httpSigServ.verifySignature(req, msConfigServ), HttpResponseEnum.AUTHORIZED);
+
+    }
+
+    @Test
+    public void testHttpSignatureValidSigPOSTBody() throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, UnsupportedEncodingException, IOException, FileNotFoundException, CertificateException, InvalidKeySpecException {
+
+        final String method = "POST";
+        final String uri = "/foo/Bar";
+        final Map<String, String> signatureHeaders = new HashMap<String, String>();
+        signatureHeaders.put("host", "https://www.esmoSMgr.com");
+        Date date = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z");
+        String nowDate = formatter.format(date);
+        signatureHeaders.put("original-date", nowDate);
+
+        signatureHeaders.put("Content-Type", "application/json");
+
+        String requestId = UUID.randomUUID().toString();
+        String[] requiredHeaders = {"(request-target)", "host", "original-date", "digest", "x-request-id"};
+
+        Object postBody = new UpdateDataRequest("session1d", "var1", "val1");
+        ObjectMapper mapper = new ObjectMapper();
+        String updateString = mapper.writeValueAsString(postBody);
+        byte[] digest = MessageDigest.getInstance("SHA-256").digest(updateString.getBytes()); // post parameters are added as uri parameters not in the body when form-encoding
+        signatureHeaders.put("digest", "SHA-256=" + new String(Base64.encodeBase64(digest)));
+        signatureHeaders.put("Accept", "*/*");
+        signatureHeaders.put("x-request-id", requestId);
+
+        
+        HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
+        when(req.getHeaderNames()).thenReturn(Collections.enumeration(Arrays.asList(requiredHeaders)));
+        when(req.getHeader("host")).thenReturn("https://www.esmoSMgr.com");
+//        when(req.getHeader("(request-target)")).thenReturn("(request-target)");
+        when(req.getHeader("original-date")).thenReturn(nowDate);
+        when(req.getHeader("digest")).thenReturn("SHA-256=" + new String(Base64.encodeBase64(digest)));
+        when(req.getHeader("x-request-id")).thenReturn(requestId);
+
+        String keyId = "06f336b68ba82890576f92b7d564c709cea0c0f318a09b4fbc5a502a7c93f926";
+        ClassLoader classLoader = getClass().getClassLoader();
+        String path = classLoader.getResource("testKeys/keystore.jks").getPath();
+        Mockito.when(paramServ.getProperty("KEYSTORE_PATH")).thenReturn(path);
+        Mockito.when(paramServ.getProperty("KEY_PASS")).thenReturn("selfsignedpass");
+        Mockito.when(paramServ.getProperty("STORE_PASS")).thenReturn("keystorepass");
+        Mockito.when(paramServ.getProperty("HTTPSIG_CERT_ALIAS")).thenReturn("selfsigned");
+
+        Mockito.when(paramServ.getProperty("ASYNC_SIGNATURE")).thenReturn("true");
+        keyServ = new KeyStoreServiceImpl(paramServ);
+
+        Algorithm algorithm = Algorithm.RSA_SHA256;
+        // Here it is!
+        Signer signer = new Signer(keyServ.getSigningKey(), new Signature(keyId, algorithm, null, "(request-target)", "host", "original-date", "digest", "x-request-id"));
+        Signature signed = signer.sign(method, uri, signatureHeaders);
+
+        when(req.getHeader("authorization")).thenReturn(signed.toString());
+
+        when(req.getMethod()).thenReturn(method);
+        when(req.getRequestURI()).thenReturn(uri);
+        when(req.getInputStream()).thenReturn(
+                new DelegatingServletInputStream(
+                        new ByteArrayInputStream(updateString.getBytes(StandardCharsets.UTF_8))));
+        System.out.println(signed.toString());
+        MSConfigurationService msConfigServ = new MSConfigurationsServiceImplSTUB(paramServ);
+        HttpSignatureService httpSigServ = new HttpSignatureServiceImpl(keyServ);
+        assertEquals(httpSigServ.verifySignature(req, msConfigServ), HttpResponseEnum.AUTHORIZED);
 
     }
 
@@ -226,7 +292,7 @@ public class TestHttpSignatureService {
 
         MSConfigurationService msConfigServ = new MSConfigurationsServiceImplSTUB(paramServ);
         HttpSignatureService httpSigServ = new HttpSignatureServiceImpl(keyServ);
-        assertEquals(httpSigServ.verifySignature(req,msConfigServ), HttpResponseEnum.AUTHORIZED);
+        assertEquals(httpSigServ.verifySignature(req, msConfigServ), HttpResponseEnum.AUTHORIZED);
 
     }
 

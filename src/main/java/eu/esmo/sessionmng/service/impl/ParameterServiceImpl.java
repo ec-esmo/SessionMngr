@@ -22,7 +22,7 @@ public class ParameterServiceImpl implements ParameterService {
         if(!StringUtils.isEmpty(res)){
             return res;
         }
-        return "errorValue";
+        return "";
     }
     
 }

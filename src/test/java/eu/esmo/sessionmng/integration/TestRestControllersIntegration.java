@@ -14,6 +14,7 @@ import eu.esmo.sessionmng.service.SessionService;
 import eu.esmo.sessionmng.pojo.SessionMngrResponse;
 import eu.esmo.sessionmng.pojo.UpdateDataRequest;
 import eu.esmo.sessionmng.service.HttpSignatureService;
+import eu.esmo.sessionmng.service.NetworkService;
 import java.io.UnsupportedEncodingException;
 import java.security.Key;
 import java.security.KeyStoreException;
@@ -73,6 +74,10 @@ public class TestRestControllersIntegration {
 
     @Autowired
     private HttpSignatureService sigServ;
+    
+    
+    @Autowired
+    private NetworkService netServ;
 
     @Test
     public void testsStartSession() throws Exception {
@@ -86,7 +91,7 @@ public class TestRestControllersIntegration {
         MvcResult result = mvc.perform(post("/sm/startSession")
                 .header("authorization", sigServ.generateSignature("hostUrl", "POST", "/sm/startSession", null, "application/x-www-form-urlencoded", requestId))
                 .header("host", "hostUrl")
-                .header("(request-target)", "POST /startSession")
+                //                .header("(request-target)", "POST /startSession")
                 .header("original-date", nowDate)
                 .header("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)))
                 .header("x-request-id", requestId)
@@ -115,7 +120,7 @@ public class TestRestControllersIntegration {
         MvcResult result = mvc.perform(post("/sm/startSession")
                 .header("authorization", sigServ.generateSignature("hostUrl", "POST", "/sm/startSession", null, "application/x-www-form-urlencoded", requestId))
                 .header("host", "hostUrl")
-                .header("(request-target)", "POST /startSession")
+                //                .header("(request-target)", "POST /startSession")
                 .header("original-date", nowDate)
                 .header("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)))
                 .header("x-request-id", requestId)
@@ -129,7 +134,7 @@ public class TestRestControllersIntegration {
         mvc.perform(delete("/sm/endSession")
                 .header("authorization", sigServ.generateSignature("hostUrl", "DELETE", "/sm/endSession", null, "application/x-www-form-urlencoded", requestId))
                 .header("host", "hostUrl")
-                .header("(request-target)", "DELETE /endSession")
+                //                .header("(request-target)", "DELETE /endSession")
                 .header("original-date", nowDate)
                 .header("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)))
                 .header("x-request-id", requestId)
@@ -151,7 +156,7 @@ public class TestRestControllersIntegration {
         MvcResult result = mvc.perform(post("/sm/startSession")
                 .header("authorization", sigServ.generateSignature("hostUrl", "POST", "/sm/startSession", null, "application/x-www-form-urlencoded", requestId))
                 .header("host", "hostUrl")
-                .header("(request-target)", "POST /startSession")
+                //                .header("(request-target)", "POST /startSession")
                 .header("original-date", nowDate)
                 .header("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)))
                 .header("x-request-id", requestId)
@@ -172,7 +177,7 @@ public class TestRestControllersIntegration {
         mvc.perform(post("/sm/updateSessionData")
                 .header("authorization", sigServ.generateSignature("hostUrl", "POST", "/sm/updateSessionData", update, "application/json", requestId))
                 .header("host", "hostUrl")
-                .header("(request-target)", "POST /updateSessionData")
+                //                .header("(request-target)", "POST /updateSessionData")
                 .header("original-date", nowDate)
                 .header("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)))
                 .header("x-request-id", requestId)
@@ -207,7 +212,7 @@ public class TestRestControllersIntegration {
         MvcResult result = mvc.perform(post("/sm/startSession")
                 .header("authorization", sigServ.generateSignature("hostUrl", "POST", "/sm/startSession", null, "application/x-www-form-urlencoded", requestId))
                 .header("host", "hostUrl")
-                .header("(request-target)", "POST /startSession")
+                //                .header("(request-target)", "POST /startSession")
                 .header("original-date", nowDate)
                 .header("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)))
                 .header("x-request-id", requestId)
@@ -221,7 +226,7 @@ public class TestRestControllersIntegration {
         MvcResult jwtResult = mvc.perform(get("/sm/generateToken")
                 .header("authorization", sigServ.generateSignature("hostUrl", "GET", "/sm/generateToken", null, "application/x-www-form-urlencoded", requestId))
                 .header("host", "hostUrl")
-                .header("(request-target)", "GET /generateToken")
+//                .header("(request-target)", "GET /generateToken")
                 .header("original-date", nowDate)
                 .header("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)))
                 .header("x-request-id", requestId)
@@ -264,7 +269,7 @@ public class TestRestControllersIntegration {
         MvcResult jwtResult = mvc.perform(get("/sm/generateToken")
                 .header("authorization", sigServ.generateSignature("hostUrl", "GET", "/sm/generateToken", null, "application/x-www-form-urlencoded", requestId))
                 .header("host", "hostUrl")
-                .header("(request-target)", "GET /generateToken")
+                //                .header("(request-target)", "GET /generateToken")
                 .header("original-date", nowDate)
                 .header("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)))
                 .header("x-request-id", requestId)
@@ -285,24 +290,18 @@ public class TestRestControllersIntegration {
 
     @Test
     public void validateToken() throws JsonProcessingException, UnsupportedEncodingException, KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, Exception {
-
-        String secretKey = "QjG+wP1CbAH2z4PWlWIDkxP4oRlgK2vos5/jXFfeBw8=";
-        Key key = new SecretKeySpec(secretKey.getBytes("UTF-8"), 0, secretKey.length(), "HmacSHA256");
-
-//        when(keyServ.getAlgorithm()).thenReturn(SignatureAlgorithm.HS256);
-//        when(keyServ.getSigningKey()).thenReturn(key);
-//        when(keyServ.getJWTPublicKey()).thenReturn(key);
         Date date = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z");
         String nowDate = formatter.format(date);
         byte[] digest = MessageDigest.getInstance("SHA-256").digest("".getBytes());
         String requestId = UUID.randomUUID().toString();
+        String authHeader = sigServ.generateSignature("hostUrl", "GET", "/sm/validateToken", null, "application/x-www-form-urlencoded", requestId);
 
         String jwt = jwtServ.makeJwt("sessionId", "extraData", "ISSUER", "sender", "ACMms001", Long.valueOf(5));
         mvc.perform(get("/sm/validateToken")
-                .header("authorization", sigServ.generateSignature("hostUrl", "GET", "/sm/validateToken", null, "application/x-www-form-urlencoded", requestId))
+                .header("authorization", authHeader)
                 .header("host", "hostUrl")
-                .header("(request-target)", "GET /validateToken")
+                //                .header("(request-target)", "GET /validateToken")
                 .header("original-date", nowDate)
                 .header("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)))
                 .header("x-request-id", requestId)
@@ -336,7 +335,7 @@ public class TestRestControllersIntegration {
         mvc.perform(get("/sm/validateToken")
                 .header("authorization", authHeader)
                 .header("host", "hostUrl")
-                .header("(request-target)", "GET /validateToken")
+                //                .header("(request-target)", "GET /validateToken")
                 .header("original-date", nowDate)
                 .header("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)))
                 .header("x-request-id", requestId)
@@ -350,7 +349,7 @@ public class TestRestControllersIntegration {
         mvc.perform(get("/sm/validateToken")
                 .header("authorization", sigServ.generateSignature("hostUrl", "GET", "/sm/validateToken", null, "application/x-www-form-urlencoded", requestId))
                 .header("host", "hostUrl")
-                .header("(request-target)", "GET /validateToken")
+                //                .header("(request-target)", "GET /validateToken")
                 .header("original-date", nowDate)
                 .header("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)))
                 .header("x-request-id", requestId)
@@ -360,4 +359,11 @@ public class TestRestControllersIntegration {
                 .andExpect(jsonPath("$.code", is("ERROR")));
     }
 
+    
+    
+    
+    
+    
+    
+    
 }

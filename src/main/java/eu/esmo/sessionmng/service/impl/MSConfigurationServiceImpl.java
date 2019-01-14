@@ -80,16 +80,23 @@ public class MSConfigurationServiceImpl implements MSConfigurationService {
 
     @Override
     public Optional<PublicKey> getPublicKeyFromFingerPrint(String rsaFingerPrint) throws InvalidKeyException, IOException, NoSuchAlgorithmException, InvalidKeySpecException {
-        Optional<MSConfigurationResponse.MicroService> msMatch = Arrays.stream(getConfigurationJSON().getMs()).filter(msConfig -> {
-            return DigestUtils.sha256Hex(msConfig.getRsaPublicKeyBinary()).equals(rsaFingerPrint);
-        }).findFirst();
+        MSConfigurationResponse config = getConfigurationJSON();
+        if (config != null && config.getMs() != null) {
+            LOG.info("found metadata");
+            Optional<MSConfigurationResponse.MicroService> msMatch = Arrays.stream(getConfigurationJSON().getMs()).filter(msConfig -> {
+                return DigestUtils.sha256Hex(msConfig.getRsaPublicKeyBinary()).equals(rsaFingerPrint);
+            }).findFirst();
 
-        if (msMatch.isPresent()) {
-            byte[] decoded = Base64.getDecoder().decode(msMatch.get().getRsaPublicKeyBinary());
-            X509EncodedKeySpec keySpec = new X509EncodedKeySpec(decoded);
-            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-            return Optional.of(keyFactory.generatePublic(keySpec));
+            if (msMatch.isPresent()) {
+                byte[] decoded = Base64.getDecoder().decode(msMatch.get().getRsaPublicKeyBinary());
+                X509EncodedKeySpec keySpec = new X509EncodedKeySpec(decoded);
+                KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+                return Optional.of(keyFactory.generatePublic(keySpec));
+            }
+        }else{
+            LOG.error("error connecting to configMngr " + paramServ.getProperty("CONFIGURATION_MANAGER_URL") + "/metadata/microservices");
         }
+
         return Optional.empty();
     }
 

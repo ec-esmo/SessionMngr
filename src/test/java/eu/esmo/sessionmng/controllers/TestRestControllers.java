@@ -6,9 +6,12 @@
 package eu.esmo.sessionmng.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.esmo.sessionmng.enums.TypeEnum;
 import eu.esmo.sessionmng.model.TO.MngrSessionTO;
 import eu.esmo.sessionmng.model.dao.SessionRepository;
 import eu.esmo.sessionmng.model.dmo.MngrSession;
+import eu.esmo.sessionmng.pojo.AttributeSet;
+import eu.esmo.sessionmng.pojo.AttributeType;
 import eu.esmo.sessionmng.pojo.UpdateDataRequest;
 import eu.esmo.sessionmng.service.HttpSignatureService;
 import eu.esmo.sessionmng.service.SessionService;
@@ -78,7 +81,7 @@ public class TestRestControllers {
         mvc.perform(get("/sm/getSessionData?sessionId=somesession")
                 .header("authorization", sigServ.generateSignature("hostUrl", "GET", "/sm/getSessionData?sessionId=somesession", null, "application/x-www-form-urlencoded", requestId))
                 .header("host", "hostUrl")
-                .header("(request-target)", "GET /getSessionData?sessionId=somesession")
+                //                .header("(request-target)", "GET /getSessionData?sessionId=somesession")
                 .header("original-date", nowDate)
                 .header("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)))
                 .header("x-request-id", requestId)
@@ -103,7 +106,7 @@ public class TestRestControllers {
         mvc.perform(get("/sm/getSessionData?sessionId=somesession&variableName=var1")
                 .header("authorization", sigServ.generateSignature("hostUrl", "GET", "/sm/getSessionData?sessionId=somesession&variableName=var1", null, "application/x-www-form-urlencoded", requestId))
                 .header("host", "hostUrl")
-                .header("(request-target)", "GET /getSessionData?sessionId=somesession")
+                //                .header("(request-target)", "GET /getSessionData?sessionId=somesession")
                 .header("original-date", nowDate)
                 .header("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)))
                 .header("x-request-id", requestId)
@@ -128,7 +131,7 @@ public class TestRestControllers {
         mvc.perform(get("/sm/getSessionData?sessionId=somesession&variableName=var1")
                 .header("authorization", sigServ.generateSignature("hostUrl", "GET", "/sm/getSessionData?sessionId=somesession&variableName=var1", null, "application/x-www-form-urlencoded", requestId))
                 .header("host", "hostUrl")
-                .header("(request-target)", "GET /getSessionData?sessionId=somesession")
+                //                .header("(request-target)", "GET /getSessionData?sessionId=somesession")
                 .header("original-date", nowDate)
                 .header("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)))
                 .header("x-request-id", requestId)
@@ -155,16 +158,23 @@ public class TestRestControllers {
         postParams.put("variableName", "var1");
         postParams.put("dataObject", "dataObject");
 
-        UpdateDataRequest update = new UpdateDataRequest("sessionId", "var1", "dataObject");
+        AttributeType attributes = new AttributeType("name", "CurrentGivenName", "UTF-8", "en EN", false, new String[]{"NIKOS"});
+        AttributeSet attrSet = new AttributeSet("uuid", TypeEnum.Request, "issuer", "recipient", new AttributeType[]{attributes}, null);
+
         ObjectMapper mapper = new ObjectMapper();
-        String updateString = mapper.writeValueAsString(update);
+        String attrSetString = mapper.writeValueAsString(attrSet);
+
+        UpdateDataRequest updateReq = new UpdateDataRequest("sessionId", "idpRequest", attrSetString);
+//        UpdateDataRequest update = new UpdateDataRequest("sessionId", "var1", "dataObject");
+//        ObjectMapper mapper = new ObjectMapper();
+        String updateString = mapper.writeValueAsString(updateReq);
 
         byte[] digest = MessageDigest.getInstance("SHA-256").digest(updateString.getBytes()); // post parameters are added as uri parameters not in the body when form-encoding
 
         mvc.perform(post("/sm/updateSessionData")
-                .header("authorization", sigServ.generateSignature("hostUrl", "POST", "/sm/updateSessionData", update, "application/json;charset=UTF-8", requestId))
+                .header("authorization", sigServ.generateSignature("hostUrl", "POST", "/sm/updateSessionData", updateReq, "application/json;charset=UTF-8", requestId))
                 .header("host", "hostUrl")
-                .header("(request-target)", "POST /updateSessionData")
+                //                .header("(request-target)", "POST /updateSessionData")
                 .header("original-date", nowDate)
                 .header("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)))
                 .header("x-request-id", requestId)
@@ -174,15 +184,19 @@ public class TestRestControllers {
         //                        .param("variableName", "var1")
         //                        .param("dataObject", "dataObject")
         )
+                .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.code", is("OK")));
     }
 
     private class UpdateMissingStuff {
+
         private String sessionId;
         private String dataObject;
+
         public UpdateMissingStuff() {
         }
+
         public String getSessionId() {
             return sessionId;
         }
@@ -220,7 +234,7 @@ public class TestRestControllers {
         mvc.perform(post("/sm/updateSessionData")
                 .header("authorization", sigServ.generateSignature("hostUrl", "POST", "/sm/updateSessionData", update, "application/json;charset=UTF-8", requestId))
                 .header("host", "hostUrl")
-                .header("(request-target)", "POST /updateSessionData")
+                //                .header("(request-target)", "POST /updateSessionData")
                 .header("original-date", nowDate)
                 .header("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)))
                 .header("x-request-id", requestId)
@@ -251,7 +265,7 @@ public class TestRestControllers {
         mvc.perform(post("/sm/updateSessionData")
                 .header("authorization", sigServ.generateSignature("hostUrl", "POST", "/sm/updateSessionData", update, "application/json", requestId))
                 .header("host", "hostUrl")
-                .header("(request-target)", "POST /updateSessionData")
+                //                .header("(request-target)", "POST /updateSessionData")
                 .header("original-date", nowDate)
                 .header("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)))
                 .header("x-request-id", requestId)
@@ -277,7 +291,7 @@ public class TestRestControllers {
         mvc.perform(get("/sm/getSession?varName=varName&varValue=varValue")
                 .header("authorization", sigServ.generateSignature("hostUrl", "GET", "/sm/getSession?varName=varName&varValue=varValue", null, "application/x-www-form-urlencoded", requestId))
                 .header("host", "hostUrl")
-                .header("(request-target)", "GET /getSessionData?sessionId=somesession")
+                //                .header("(request-target)", "GET /getSessionData?sessionId=somesession")
                 .header("original-date", nowDate)
                 .header("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)))
                 .header("x-request-id", requestId)
@@ -302,7 +316,7 @@ public class TestRestControllers {
         mvc.perform(get("/sm/getSession?varName=varName&varValue=varValue")
                 .header("authorization", sigServ.generateSignature("hostUrl", "GET", "/sm/getSession?varName=varName&varValue=varValue", null, "application/x-www-form-urlencoded", requestId))
                 .header("host", "hostUrl")
-                .header("(request-target)", "GET /getSessionData?sessionId=somesession")
+                //                .header("(request-target)", "GET /getSessionData?sessionId=somesession")
                 .header("original-date", nowDate)
                 .header("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)))
                 .header("x-request-id", requestId)
@@ -326,7 +340,7 @@ public class TestRestControllers {
         mvc.perform(get("/sm/getSession?varName=varName&varValue=varValue")
                 .header("authorization", sigServ.generateSignature("hostUrl", "GET", "/sm/getSession?varName=varName&varValue=varValue", null, "application/x-www-form-urlencoded", requestId))
                 .header("host", "hostUrl")
-                .header("(request-target)", "GET /getSessionData?sessionId=somesession")
+                //                .header("(request-target)", "GET /getSessionData?sessionId=somesession")
                 .header("original-date", nowDate)
                 .header("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)))
                 .header("x-request-id", requestId)
