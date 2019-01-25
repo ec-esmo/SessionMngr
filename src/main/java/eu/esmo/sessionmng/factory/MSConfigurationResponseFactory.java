@@ -7,7 +7,7 @@ package eu.esmo.sessionmng.factory;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import eu.esmo.sessionmng.pojo.MSConfigurationResponse;
+import eu.esmo.sessionmng.pojo.MSConfigurationResponse.MicroService;
 import java.io.IOException;
 
 /**
@@ -16,10 +16,10 @@ import java.io.IOException;
  */
 public class MSConfigurationResponseFactory {
 
-    public static MSConfigurationResponse makeMSConfigResponseFromJSON(String json) throws IOException {
+    public static MicroService[] makeMSConfigResponseFromJSON(String json) throws IOException {
         ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        return mapper.readValue(json, MSConfigurationResponse.class);
+        return mapper.readValue(json, MicroService[].class);
     }
 
 }

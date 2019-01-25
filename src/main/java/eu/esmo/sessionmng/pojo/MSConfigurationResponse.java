@@ -35,7 +35,7 @@ public class MSConfigurationResponse {
 
         @JsonAlias({"msId", "msID"})
         private String msId;
-        private String[] authorizedMicroservices; // List of ms identifiers that will be authorised to contact this microservice (will be used by the SM when validating a token).
+        private String[] authorisedMicroservices; // List of ms identifiers that will be authorised to contact this microservice (will be used by the SM when validating a token).
         private String msType;
         private String rsaPublicKeyBinary;
         private PublishedAPI[] publishedAPI;
@@ -45,15 +45,15 @@ public class MSConfigurationResponse {
             this.msType = msType;
             this.rsaPublicKeyBinary = rsaPublicKeyBinary;
             this.publishedAPI = publishedAPI;
-            this.authorizedMicroservices= authorizedMicroservices;
+            this.authorisedMicroservices= authorizedMicroservices;
         }
 
-        public String[] getAuthorizedMicroservices() {
-            return authorizedMicroservices;
+        public String[] getAuthorisedMicroservices() {
+            return authorisedMicroservices;
         }
 
-        public void setAuthorizedMicroservices(String[] authorizedMicroservices) {
-            this.authorizedMicroservices = authorizedMicroservices;
+        public void setAuthorisedMicroservices(String[] authorisedMicroservices) {
+            this.authorisedMicroservices = authorisedMicroservices;
         }
 
         

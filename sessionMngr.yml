@@ -21,12 +21,12 @@ services:
         - 3307:3306     
 
     conf:
-      image: endimion13/test-conf:0.0.1  
+      image: endimion13/test-conf:0.0.2 
       ports:
         - 8070:8080       
     
     SessionManager:
-        image: endimion13/esmo-session-manager:0.0.1 
+        image: endimion13/esmo-session-manager:0.0.2
         environment:
             - KEYSTORE_PATH=/resources/testKeys/keystore.jks
             - KEY_PASS=selfsignedpass

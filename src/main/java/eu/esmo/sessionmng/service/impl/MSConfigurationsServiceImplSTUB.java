@@ -48,7 +48,7 @@ public class MSConfigurationsServiceImplSTUB implements MSConfigurationService {
     }
 
     @Override
-    public MSConfigurationResponse getConfigurationJSON() {
+    public MicroService[] getConfigurationJSON() {
 
         try {
             String configPath = StringUtils.isEmpty(paramServ.getProperty("CONFIG_JSON")) ? "configurationResponse.json" : paramServ.getProperty("CONFIG_JSON");
@@ -87,8 +87,8 @@ public class MSConfigurationsServiceImplSTUB implements MSConfigurationService {
     @Override
     public Optional<String> getMsIDfromRSAFingerprint(String rsaFingerPrint) throws IOException {
         String configPath = StringUtils.isEmpty(paramServ.getProperty("CONFIG_JSON")) ? "configurationResponse.json" : paramServ.getProperty("CONFIG_JSON");
-        MSConfigurationResponse configResp = MSConfigurationResponseFactory.makeMSConfigResponseFromJSON(getFile(configPath));
-        Optional<MicroService> msMatch = Arrays.stream(configResp.getMs()).filter(msConfig -> {
+        MicroService[] configResp = MSConfigurationResponseFactory.makeMSConfigResponseFromJSON(getFile(configPath));
+        Optional<MicroService> msMatch = Arrays.stream(configResp).filter(msConfig -> {
             return DigestUtils.sha256Hex(msConfig.getRsaPublicKeyBinary()).equals(rsaFingerPrint);
         }).findFirst();
 
@@ -102,8 +102,8 @@ public class MSConfigurationsServiceImplSTUB implements MSConfigurationService {
     @Override
     public Optional<PublicKey> getPublicKeyFromFingerPrint(String rsaFingerPrint) throws InvalidKeyException, IOException, NoSuchAlgorithmException, InvalidKeySpecException {
         String configPath = StringUtils.isEmpty(paramServ.getProperty("CONFIG_JSON")) ? "configurationResponse.json" : paramServ.getProperty("CONFIG_JSON");
-        MSConfigurationResponse configResp = MSConfigurationResponseFactory.makeMSConfigResponseFromJSON(getFile(configPath));
-        Optional<MicroService> msMatch = Arrays.stream(configResp.getMs()).filter(msConfig -> {
+        MicroService[] configResp = MSConfigurationResponseFactory.makeMSConfigResponseFromJSON(getFile(configPath));
+        Optional<MicroService> msMatch = Arrays.stream(configResp).filter(msConfig -> {
             return DigestUtils.sha256Hex(msConfig.getRsaPublicKeyBinary()).equals(rsaFingerPrint);
         }).findFirst();
 

@@ -20,7 +20,7 @@ import java.util.Optional;
 public interface MSConfigurationService {
     
 
-    public MSConfigurationResponse getConfigurationJSON();
+    public MSConfigurationResponse.MicroService[] getConfigurationJSON();
 
     public Optional<String> getMsIDfromRSAFingerprint(String rsaFingerPrint) throws IOException;
 

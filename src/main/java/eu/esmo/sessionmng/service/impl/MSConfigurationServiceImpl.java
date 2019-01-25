@@ -51,11 +51,11 @@ public class MSConfigurationServiceImpl implements MSConfigurationService {
     }
 
     @Override
-    public MSConfigurationResponse getConfigurationJSON() {
+    public MSConfigurationResponse.MicroService[] getConfigurationJSON() {
         try {
             String sessionMngrUrl = paramServ.getProperty("CONFIGURATION_MANAGER_URL");
             List<NameValuePair> getParams = new ArrayList();
-            return MSConfigurationResponseFactory.makeMSConfigResponseFromJSON(netServ.sendGet(sessionMngrUrl, "/metadata/microservices", getParams));
+            return MSConfigurationResponseFactory.makeMSConfigResponseFromJSON(netServ.sendGet(sessionMngrUrl, "/cm/metadata/microservices", getParams));
         } catch (IOException ex) {
             LOG.error(ex.getMessage());
             return null;
@@ -67,7 +67,7 @@ public class MSConfigurationServiceImpl implements MSConfigurationService {
 
     @Override
     public Optional<String> getMsIDfromRSAFingerprint(String rsaFingerPrint) throws IOException {
-        Optional<MSConfigurationResponse.MicroService> msMatch = Arrays.stream(getConfigurationJSON().getMs()).filter(msConfig -> {
+        Optional<MSConfigurationResponse.MicroService> msMatch = Arrays.stream(getConfigurationJSON()).filter(msConfig -> {
             return DigestUtils.sha256Hex(msConfig.getRsaPublicKeyBinary()).equals(rsaFingerPrint);
         }).findFirst();
 
@@ -80,10 +80,10 @@ public class MSConfigurationServiceImpl implements MSConfigurationService {
 
     @Override
     public Optional<PublicKey> getPublicKeyFromFingerPrint(String rsaFingerPrint) throws InvalidKeyException, IOException, NoSuchAlgorithmException, InvalidKeySpecException {
-        MSConfigurationResponse config = getConfigurationJSON();
-        if (config != null && config.getMs() != null) {
+        MSConfigurationResponse.MicroService[] config = getConfigurationJSON();
+        if (config != null) {
             LOG.info("found metadata");
-            Optional<MSConfigurationResponse.MicroService> msMatch = Arrays.stream(getConfigurationJSON().getMs()).filter(msConfig -> {
+            Optional<MSConfigurationResponse.MicroService> msMatch = Arrays.stream(getConfigurationJSON()).filter(msConfig -> {
                 return DigestUtils.sha256Hex(msConfig.getRsaPublicKeyBinary()).equals(rsaFingerPrint);
             }).findFirst();
 
@@ -93,7 +93,7 @@ public class MSConfigurationServiceImpl implements MSConfigurationService {
                 KeyFactory keyFactory = KeyFactory.getInstance("RSA");
                 return Optional.of(keyFactory.generatePublic(keySpec));
             }
-        }else{
+        } else {
             LOG.error("error connecting to configMngr " + paramServ.getProperty("CONFIGURATION_MANAGER_URL") + "/metadata/microservices");
         }
 
