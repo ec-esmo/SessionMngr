@@ -351,4 +351,31 @@ public class TestRestControllers {
 
     }
 
+    @Test
+    public void startSession() throws Exception {
+
+        Date date = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z");
+        String nowDate = formatter.format(date);
+        byte[] digest = MessageDigest.getInstance("SHA-256").digest("sessionId=sessionId".getBytes());
+        String requestId = UUID.randomUUID().toString();
+
+        Map<String, String> postParams = new HashMap();
+        postParams.put("sessionId", "sessionId");
+
+        mvc.perform(post("/sm/startSession")
+                .header("authorization", sigServ.generateSignature("hostUrl", "POST", "/sm/startSession", postParams, "application/x-www-form-urlencoded;charset=UTF-8", requestId))
+                .header("host", "hostUrl")
+                //                .header("(request-target)", "POST /startSession")
+                .header("original-date", nowDate)
+                .header("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)))
+                .header("x-request-id", requestId)
+                .header("content-type", "application/x-www-form-urlencoded")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .content("sessionId=sessionId".getBytes())
+        )
+                .andExpect(status().isCreated())
+                .andReturn();
+    }
+
 }

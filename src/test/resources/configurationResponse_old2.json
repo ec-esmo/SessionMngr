@@ -1,33 +1,32 @@
 
 [{
-        "msId": "SAMLms001",
-        "authorisedMicroservices": ["ACMms001", "ACMms002", "SMms001", "CMms001"],
-        "rsaPublicKeyBinary": "MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEA/O2wrcyMOVYD2Zr+xxY1Q+ghFci4TM6oipKs0CsXGOaKTOhDcCCWA3IjQoyxQADLS8uHZDSP8joHDl+TL5mGlL17VNN/x4z4ZgN0feVmB1jJd0ZYo+j40eQ5xgj3Aisq1sA+JxXZbXt0NAr4ieMAy5WN7wuGG+pGD3I/by/fStd1at7iC1Zkl5hgOiDpFmL6AuByZCqXWNkuQMQQjoXDBAzqRdo8mKsgJmpryKIYKfuKjGgg5UXb4Gh+Ft6MZKz06IhOgOEw7Z3/tS1yw4mCJDuqBR83ZpbD3MyaJoEVM5vGI3Ahmfm57Y97bAiaUBkjWLTvDdC6CBBjgHKAxnypgq7/BFuc0yR39SWO4vjtS3gsn0qs5hElRS9zgVDPVTL0nxSbYbp3WEfrKTNN06yDOuKZbD7aYSBx6lvSMyNt5MG9iONPHaPsNsVrZkCS3nmq/5LsNy7HT136tzj8qsTay9xOIuxVVGr5WER/a2yFedaXoYpc+b8R5AIzExB8GpRExPA2q3q36JEc312tTQqbohWyuSQchkTIa8htCi6DYdGys2BBFzM7JgPzz4zj+c2pM8Pek3Cekp8ke3sZ9oRZAXWBFZ+o1Qch67cCbhyJBXZg4eElZkQNhaQI7yTyNb4gbjCsdVe6LdPwS76H4KNVX0KRMZIZU0B/SKq0cTgTyc8CAwEAAQ==",
+        "msID": "SAMLms001",
+        "authorisedMicroservices": ["ACMms001,SAMLms001"],
+        "rsaPublicKeyBinary": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCqGKukO1De7zhZj6+H0qtjTkVxwTCpvKe4eCZ0FPqri0cb2JZfXJ/DgYSF6vUpwmJG8wVQZKjeGcjDOL5UlsuusFncCzWBQ7RKNUSesmQRMSGkVb1/3j+skZ6UtW+5u09lHNsj6tQ51s1SPrCBkedbNf0Tp0GbMJDyR4e9T04ZZwIDAQAB",
         "publishedAPI": 
                 [{
-                        "apiClass": "AP",  
-                        "apiCall": "query",
-                        "apiConnectionType": "post", 
-                        "apiEndpoint": "http://5.79.83.118:8050/SAML/AP/query"
+                        "apiClass": "AP",
+                        "apiCall": "acmResponse",
+                        "apiConnectionType": "post",
+                        "url": "https://example.com/esmo/SAMLms/001/DCARequest"
                     },
                     {
                         "apiClass": "SP",
                         "apiCall": "handleResponse",
                         "apiConnectionType": "post",
-                        "apiEndpoint": "http://5.79.83.118:8050/SAML/SP/handleResponse"
+                        "url": "https://example.com/esmo/SAMLms/001/SP_AuthnResponse"
                     },
                     {
                         "apiClass": "IDP",
-                        "apiCall": "authenticate",
+                        "apiCall": "handleResponse",
                         "apiConnectionType": "post",
-                        "apiEndpoint": "http://5.79.83.118:8050/SAML/IDP/authenticate"
+                        "url": "https://example.com/esmo/SAMLms/001/IDP_AuthnRequest"
                     }
                 ]
     },
-
     {
         "msID": "ACMms001",
-        "msType": "ACM",
+        "authorisedMicroservices": ["ACMms001,SAMLms001"],
         "rsaPublicKeyBinary": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAkvZf4Lm7dqp17tk/ICI+cCilI3yLfQraHy4pxFYDNn29l9eHnYRFnN9jBKKvOzSxf2zQkigNcHhIi96s7G4/xPL3rVaYepp/xfCKn5vkZeqg1PFOE0HqDKCnIbLxNdnHYDLICQrd1PRTdFHnwRpLouF6B3PCZpQL5XxX3WFzg2KZ2U1NIdVLJjWb3AY1SJ4kIYAOIwn6AZQPum4i5G4M9QQj3KGl164007TUx27rxzBVILpm+knxYjUiipqZ/5kiDdTxYBPR0qDVIhSl3hk9RhSI95s7unrll8rb3E8w1ORrfTQNg1UlpGgww3jZi3GLScLEK3ghwg5H5gL/2SSiEwIDAQAB",
         "publishedAPI": 
                 [{

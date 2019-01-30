@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.logging.Level;
 import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,7 +75,7 @@ public class RestControllers {
         return new SessionMngrResponse(ResponseCode.NEW, new MngrSessionTO(sessionId.toString(), new HashMap()), null, null);
     }
 
-    @RequestMapping(value = "/endSession", method = RequestMethod.DELETE, produces = "application/json")
+    @RequestMapping(value = "/endSession", method = {RequestMethod.DELETE, RequestMethod.GET}, produces = "application/json")
     @ApiOperation(value = "Terminates a session and deletes all the stored data"
             + "+ \"by setting the code to OK")
     public SessionMngrResponse endSession(@RequestParam String sessionId) {

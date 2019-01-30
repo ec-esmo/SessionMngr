@@ -41,7 +41,7 @@ public class TestMSConfigurationService {
     public void testReadConfnigJSON() {
         MSConfigurationResponse.MicroService[] resp = stubServ.getConfigurationJSON();
         assertEquals(resp[0].getMsId(), "SAMLms001");
-        assertEquals(resp[0].getMsType(), "SP_AP_IDP");
+//        assertEquals(resp[0].getMsType(), "SP_AP_IDP"); deprecated attribute in config file
         assertEquals(resp[0].getPublishedAPI()[0].getApiClass().toString(), "AP");
 
     }

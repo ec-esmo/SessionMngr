@@ -111,10 +111,6 @@ public class HttpSignatureServiceImpl implements HttpSignatureService {
         SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z");
         String nowDate = formatter.format(date);
         signatureHeaders.put("original-date", nowDate);
-
-        //multipart/form-data
-        //application/x-www-form-urlencoded
-        //application/json
         signatureHeaders.put("Content-Type", contentType);
 
         byte[] digest;
@@ -125,12 +121,11 @@ public class HttpSignatureServiceImpl implements HttpSignatureService {
             String updateString = mapper.writeValueAsString(postParams);
             digest = MessageDigest.getInstance("SHA-256").digest(updateString.getBytes());
         } else {
-//            if (postParams != null) {
-//                digest = MessageDigest.getInstance("SHA-256").digest(getParamsString((Map<String, String>) postParams).getBytes());
-//            } else {
+            if (postParams != null && contentType.contains("x-www-form-urlencoded") && postParams instanceof Map) {
+                digest = MessageDigest.getInstance("SHA-256").digest(getParamsString((Map<String, String>) postParams).getBytes());
+            } else {
                 digest = MessageDigest.getInstance("SHA-256").digest("".getBytes());
-
-//            }
+            }
         }
 
         signatureHeaders.put("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)));
@@ -141,9 +136,6 @@ public class HttpSignatureServiceImpl implements HttpSignatureService {
         signatureHeaders.put("(request-target)", method + " " + uri);
 
         Algorithm algorithm = Algorithm.RSA_SHA256;
-//        String keyId = "06f336b68ba82890576f92b7d564c709cea0c0f318a09b4fbc5a502a7c93f926";
-        // Here it is!
-//        Signer signer = new Signer(keyServ.getSigningKey(), new Signature(keyId, algorithm, null, "(request-target)", "host", "original-date", "digest", "x-request-id"));
         Signature signed = getSigner().sign(method, uri, signatureHeaders);
 
         return signed.toString();
