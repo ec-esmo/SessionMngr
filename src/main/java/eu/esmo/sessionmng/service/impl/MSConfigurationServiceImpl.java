@@ -13,8 +13,10 @@ import eu.esmo.sessionmng.service.ParameterService;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
+import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
@@ -81,23 +83,42 @@ public class MSConfigurationServiceImpl implements MSConfigurationService {
     @Override
     public Optional<PublicKey> getPublicKeyFromFingerPrint(String rsaFingerPrint) throws InvalidKeyException, IOException, NoSuchAlgorithmException, InvalidKeySpecException {
         MSConfigurationResponse.MicroService[] config = getConfigurationJSON();
+
         if (config != null) {
             LOG.info("found metadata");
             Optional<MSConfigurationResponse.MicroService> msMatch = Arrays.stream(getConfigurationJSON()).filter(msConfig -> {
-                return DigestUtils.sha256Hex(msConfig.getRsaPublicKeyBinary()).equals(rsaFingerPrint);
+                try {
+                    byte[] encodedBytes = getPublicKey(msConfig.getRsaPublicKeyBinary()).getEncoded();
+                    return DigestUtils.sha256Hex(encodedBytes).equals(rsaFingerPrint);
+                } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+                    LOG.error("error parsing msconfig public keys ");
+                    LOG.error(e.getMessage());
+                    return false;
+                }
             }).findFirst();
-
             if (msMatch.isPresent()) {
-                byte[] decoded = Base64.getDecoder().decode(msMatch.get().getRsaPublicKeyBinary());
-                X509EncodedKeySpec keySpec = new X509EncodedKeySpec(decoded);
-                KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-                return Optional.of(keyFactory.generatePublic(keySpec));
+                return Optional.of(getPublicKey(msMatch.get().getRsaPublicKeyBinary()));
             }
         } else {
             LOG.error("error connecting to configMngr " + paramServ.getProperty("CONFIGURATION_MANAGER_URL") + "/metadata/microservices");
         }
-
         return Optional.empty();
+    }
+
+    static byte[] getBinarySha256Fingerprint(byte[] data) {
+        try {
+            return MessageDigest.getInstance("SHA-256").digest(data);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public RSAPublicKey getPublicKey(String keyBytes) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        byte[] publicBytes = Base64.getDecoder().decode(keyBytes);
+        X509EncodedKeySpec keySpec = new X509EncodedKeySpec(publicBytes);
+        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+        return (RSAPublicKey) keyFactory.generatePublic(keySpec);
+
     }
 
 }

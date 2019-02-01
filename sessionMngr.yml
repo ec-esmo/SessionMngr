@@ -37,7 +37,8 @@ services:
             - ASYNC_SIGNATURE=true
             - EXPIRES=5
             - CONFIG_JSON=/resources/configurationResponse.json
-            - CONFIGURATION_MANAGER_URL=http://172.17.0.1:8070
+#            - CONFIGURATION_MANAGER_URL=http://172.17.0.1:8070
+            - CONFIGURATION_MANAGER_URL=http://5.79.83.118:8080/cm
             - MEMCACHED_HOST=172.17.0.1
             - MEMCACHED_PORT=11211
             - DATABASE_HOST=docker-mysql
