@@ -85,7 +85,7 @@ public class MSConfigurationsServiceImplSTUB implements MSConfigurationService {
     }
 
     @Override
-    public Optional<String> getMsIDfromRSAFingerprint(String rsaFingerPrint) throws IOException {
+    public Optional<String> getMsIDfromRSAFingerprint(String rsaFingerPrint) throws IOException , NoSuchAlgorithmException{
         String configPath = StringUtils.isEmpty(paramServ.getProperty("CONFIG_JSON")) ? "configurationResponse.json" : paramServ.getProperty("CONFIG_JSON");
         MicroService[] configResp = MSConfigurationResponseFactory.makeMSConfigResponseFromJSON(getFile(configPath));
         Optional<MicroService> msMatch = Arrays.stream(configResp).filter(msConfig -> {

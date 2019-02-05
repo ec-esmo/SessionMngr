@@ -179,7 +179,7 @@ public class FakeRestControllers {
                 response.setError("sender id is missing!");
             }
             response.setError("authorization header is missing!");
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             LOG.error(ex.getMessage());
             response.setError("error getting sender public key!");
             return response;

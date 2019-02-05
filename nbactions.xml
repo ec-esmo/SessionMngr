@@ -22,7 +22,7 @@
                 <Env.DATABASE_USER>root</Env.DATABASE_USER>
                 <Env.DATABASE_PASSWORD>example</Env.DATABASE_PASSWORD>
                 <Env.CONFIG_JSON>/home/nikos/NetBeansProjects/session-mng/src/main/resources/configurationResponse.json</Env.CONFIG_JSON>
-                <Env.CONFIGURATION_MANAGER_URL>http://localhost:8070</Env.CONFIGURATION_MANAGER_URL>
+                <Env.CONFIGURATION_MANAGER_URL>http://5.79.83.118:8080</Env.CONFIGURATION_MANAGER_URL>
                 <Env.KEYSTORE_PATH>/home/nikos/NetBeansProjects/esmo.gr.idp/src/test/resources/testKeys/keystore.jks</Env.KEYSTORE_PATH>
                 <Env.KEY_PASS>selfsignedpass</Env.KEY_PASS>
                 <Env.STORE_PASS>keystorepass</Env.STORE_PASS>

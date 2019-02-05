@@ -22,7 +22,7 @@ public interface MSConfigurationService {
 
     public MSConfigurationResponse.MicroService[] getConfigurationJSON();
 
-    public Optional<String> getMsIDfromRSAFingerprint(String rsaFingerPrint) throws IOException;
+    public Optional<String> getMsIDfromRSAFingerprint(String rsaFingerPrint) throws IOException, NoSuchAlgorithmException;
 
     public Optional<PublicKey> getPublicKeyFromFingerPrint(String rsaFingerPrint) throws InvalidKeyException, IOException, NoSuchAlgorithmException, InvalidKeySpecException;
 

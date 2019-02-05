@@ -8,6 +8,7 @@ package eu.esmo.sessionmng.service;
 import eu.esmo.sessionmng.service.impl.MSConfigurationsServiceImplSTUB;
 import eu.esmo.sessionmng.pojo.MSConfigurationResponse;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.util.Base64;
 import java.util.Optional;
@@ -47,7 +48,7 @@ public class TestMSConfigurationService {
     }
 
     @Test
-    public void testGetMsIDfromRSAFingerprint() throws IOException {
+    public void testGetMsIDfromRSAFingerprint() throws IOException, NoSuchAlgorithmException {
         String keyId = keyId = "06f336b68ba82890576f92b7d564c709cea0c0f318a09b4fbc5a502a7c93f926";
         Optional<String> msId = stubServ.getMsIDfromRSAFingerprint(keyId);
         assertEquals(msId.get(), "ACMms001");

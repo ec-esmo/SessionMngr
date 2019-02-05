@@ -26,7 +26,7 @@ services:
         - 8070:8080       
     
     SessionManager:
-        image: endimion13/esmo-session-manager:0.0.2
+        image: endimion13/esmo-session-manager:0.0.5
         environment:
             - KEYSTORE_PATH=/resources/testKeys/keystore.jks
             - KEY_PASS=selfsignedpass
@@ -38,7 +38,7 @@ services:
             - EXPIRES=5
             - CONFIG_JSON=/resources/configurationResponse.json
 #            - CONFIGURATION_MANAGER_URL=http://172.17.0.1:8070
-            - CONFIGURATION_MANAGER_URL=http://5.79.83.118:8080/cm
+            - CONFIGURATION_MANAGER_URL=http://5.79.83.118:8080
             - MEMCACHED_HOST=172.17.0.1
             - MEMCACHED_PORT=11211
             - DATABASE_HOST=docker-mysql

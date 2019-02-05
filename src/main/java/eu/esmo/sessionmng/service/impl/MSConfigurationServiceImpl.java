@@ -68,9 +68,15 @@ public class MSConfigurationServiceImpl implements MSConfigurationService {
     }
 
     @Override
-    public Optional<String> getMsIDfromRSAFingerprint(String rsaFingerPrint) throws IOException {
+    public Optional<String> getMsIDfromRSAFingerprint(String rsaFingerPrint) throws IOException, NoSuchAlgorithmException {
         Optional<MSConfigurationResponse.MicroService> msMatch = Arrays.stream(getConfigurationJSON()).filter(msConfig -> {
-            return DigestUtils.sha256Hex(msConfig.getRsaPublicKeyBinary()).equals(rsaFingerPrint);
+            try {
+                return DigestUtils.sha256Hex(getPublicKey(msConfig.getRsaPublicKeyBinary()).getEncoded()).equals(rsaFingerPrint);
+            } catch (Exception e) {
+                LOG.error("error parsing public key! " + msConfig.getRsaPublicKeyBinary());
+                LOG.error(e.getLocalizedMessage());
+                return false;
+            }
         }).findFirst();
 
         if (msMatch.isPresent()) {
@@ -89,6 +95,11 @@ public class MSConfigurationServiceImpl implements MSConfigurationService {
             Optional<MSConfigurationResponse.MicroService> msMatch = Arrays.stream(getConfigurationJSON()).filter(msConfig -> {
                 try {
                     byte[] encodedBytes = getPublicKey(msConfig.getRsaPublicKeyBinary()).getEncoded();
+//                    System.out.println(
+//                            "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCi7jZVwQFxQ2SY4lxjr05IexolQJJobwYzrvE5pk7AcQpG46kuJBzD8ziiqFFCGSNZ07cLWys+b5JmJ6kU44lKLVeGbEpgaO0OTBDLMk2fi5U83T8dezgWgaPFiy/N3sHPpcW2Y3ZePo0UbM7MLzv14TR+jxTOyrmwWwGwDJsz+wIDAQAB"
+//                            .equals(msConfig.getRsaPublicKeyBinary()));
+//                    
+//                    System.out.println(msConfig.getRsaPublicKeyBinary());
                     return DigestUtils.sha256Hex(encodedBytes).equals(rsaFingerPrint);
                 } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
                     LOG.error("error parsing msconfig public keys ");
