@@ -6,6 +6,7 @@
 package eu.esmo.sessionmng.model.dmo;
 
 import java.io.Serializable;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -24,6 +25,7 @@ public class SessionVariable implements Serializable {
     private long id;
 
     private String name;
+    @Column(columnDefinition = "TEXT") 
     private String value;
 
     public SessionVariable() {

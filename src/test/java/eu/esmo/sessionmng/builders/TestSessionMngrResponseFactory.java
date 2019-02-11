@@ -41,4 +41,14 @@ public class TestSessionMngrResponseFactory {
     
     }
     
+    @Test
+    public void testMarshallingUpdateSeessionStrings(){
+    
+     String testString = "{\"dataObject\": { \"sessionId\":\"6d409367-294d-400a-b83b-df261254b9d1\",\"dataObject\":{\"spRequest\":{\"issuer\":\"https://moodle.uji.es/saml/sp/metadata.xml\",\"type\":\"Request\",\"recipient\":null,\"id\":\"6c0f70a8-f32b-4535-b5f6-0d596c52813a\",\"attributes\":[{\"name\":\"http://eidas.europa.eu/attributes/naturalperson/CurrentGivenName\",\"friendlyName\":\"CurrentGivenName\",\"isMandatory\":true},{\"name\":\"http://eidas.europa.eu/attributes/naturalperson/PersonIdentifier\",\"friendlyName\":\"PersonIdentifier\",\"isMandatory\":true},{\"name\":\"http://eidas.europa.eu/attributes/naturalperson/CurrentFamilyName\",\"friendlyName\":\"FamilyName\",\"isMandatory\":true},{\"name\":\"http://eidas.europa.eu/attributes/naturalperson/DateOfBirth\",\"friendlyName\":\"DateOfBirth\",\"isMandatory\":true},{\"name\":\"eduPersonAffiliation\",\"isMandatory\":false}],\"properties\":{\"LoA\":\"http://eidas.europa.eu/LoA/substantial\",\"AuthnContext-Comparison\":\"minimum\",\"NameIDPolicy-AllowCreate\":\"true\",\"NameIDPolicy-Format\":\"urn:oasis:names:tc:SAML:2.0:nameid-format:persistent\",\"SPType\":\"public\",\"ProviderName\":\"Q2891006E_EA0018173\",\"IssueInstant\":\"2018-12-20T12:35:48Z\"}},\"spMetadata\":{\"entityId\":\"https://moodle.uji.es/saml/sp/metadata.xml\",\"defaultDisplayName\":\"UJI Virtual Learning Service\",\"location\":\"ES|Spain\",\"protocol\":\"SAML2-EIDAS\",\"microservice\":[\"SAMLms001\"],\"endpoints\":{\"type\":\"AssertionConsumerService\",\"method\":\"HTTP-POST\",\"url\":\"https://moodle.uji.es/saml/sp/acs.php\"},\"securityKeys\":[{\"keyType\":\"RSAPublicKey\",\"usage\":\"signing\",\"key\":\"MDAACaFgw...xFgy=\"},{\"keyType\":\"RSAPublicKey\",\"usage\":\"encryption\",\"key\":\"MDAACaFgw...xFgy=\"}],\"encryptResponses\":false,\"supportedEncryptionAlg\":[\"AES256\",\"AES512\"],\"signResponses\":true,\"supportedSigningAlg\":[\"RSA-SHA256\"]}}}}";
+    
+    
+    }
+    
+    
+    
 }

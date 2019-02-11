@@ -377,5 +377,58 @@ public class TestRestControllers {
                 .andExpect(status().isCreated())
                 .andReturn();
     }
+    
+    
+    
+    
+    
+    
+    
+      @Test
+    public void testUpdateWholeSessionDataExistingSessionNoSigRequired_FakeSM() throws Exception {
+        MngrSession existingSession = new MngrSession("sessionId", new HashSet());
+        when(sessionRep.findBySessionId("sessionId")).thenReturn(existingSession);
+
+        Date date = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z");
+        String nowDate = formatter.format(date);
+        String requestId = UUID.randomUUID().toString();
+
+        Map<String, String> postParams = new HashMap();
+        postParams.put("sessionId", "sessionId");
+        postParams.put("dataObject", "dataObject");
+
+        AttributeType attributes = new AttributeType("name", "CurrentGivenName", "UTF-8", "en EN", false, new String[]{"NIKOS"});
+        AttributeSet attrSet = new AttributeSet("uuid", TypeEnum.Request, "issuer", "recipient", new AttributeType[]{attributes}, null);
+
+        ObjectMapper mapper = new ObjectMapper();
+        String attrSetString = mapper.writeValueAsString(attrSet);
+
+        UpdateDataRequest updateReq = new UpdateDataRequest("sessionId", "idpRequest", attrSetString);
+
+        String updateString = mapper.writeValueAsString(updateReq);
+
+        byte[] digest = MessageDigest.getInstance("SHA-256").digest(updateString.getBytes()); // post parameters are added as uri parameters not in the body when form-encoding
+
+        mvc.perform(post("/fakeSm/updateSessionData")
+                .header("authorization", sigServ.generateSignature("hostUrl", "POST", "/sm/updateSessionData", updateReq, "application/json;charset=UTF-8", requestId))
+                .header("host", "hostUrl")
+                //                .header("(request-target)", "POST /updateSessionData")
+                .header("original-date", nowDate)
+                .header("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)))
+                .header("x-request-id", requestId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(updateString.getBytes())
+        )
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.code", is("OK")));
+    }
+
+    
+    
+    
+    
+    
 
 }

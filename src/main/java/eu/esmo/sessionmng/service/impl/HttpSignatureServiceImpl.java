@@ -266,6 +266,14 @@ public class HttpSignatureServiceImpl implements HttpSignatureService {
         Optional<PublicKey> pubKey = msConfigServ.getPublicKeyFromFingerPrint(fingerprint);
         if (pubKey.isPresent()) {
             Verifier verifier = new Verifier(pubKey.get(), sigToVerify);
+            headers.entrySet().forEach( e ->{
+                log.info(e.getKey()  + " -- " + e.getValue());
+            });
+            
+            log.info("URI " + uri);
+            log.info("Method " + method);
+            
+            
             return verifier.verify(method, uri, headers);
         } else {
             log.error("could not find sender key!");
@@ -292,6 +300,7 @@ public class HttpSignatureServiceImpl implements HttpSignatureService {
     private Signer getSigner() throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, UnsupportedEncodingException, IOException {
         if (this.signer == null) {
             String keyId = DigestUtils.sha256Hex(getX509PubKeytoRSABinaryFormat((PublicKey) this.keyServ.getHttpSigPublicKey()));
+            log.info("The keyId i am looking for is  " + keyId);
             signer = new Signer(keyServ.getSigningKey(), new Signature(keyId, algorithm, null, "(request-target)", "host", "original-date", "digest", "x-request-id"));
         }
         return signer;
