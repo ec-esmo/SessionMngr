@@ -59,7 +59,7 @@ public class TestRestControllersConfig {
         Mockito.when(paramServ().getProperty("KEY_PASS")).thenReturn("selfsignedpass");
         Mockito.when(paramServ().getProperty("STORE_PASS")).thenReturn("keystorepass");
         Mockito.when(paramServ().getProperty("JWT_CERT_ALIAS")).thenReturn("selfsigned");
-        Mockito.when(paramServ().getProperty("HTTPSIG_CERT_ALIAS")).thenReturn("selfsigned");
+        Mockito.when(paramServ().getProperty("HTTPSIG_CERT_ALIAS")).thenReturn("1");
         Mockito.when(paramServ().getProperty("ASYNC_SIGNATURE")).thenReturn("true");
         return new KeyStoreServiceImpl(paramServ());
     }

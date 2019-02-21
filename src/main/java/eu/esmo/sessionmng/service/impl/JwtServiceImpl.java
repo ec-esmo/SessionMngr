@@ -69,7 +69,7 @@ public class JwtServiceImpl implements JwtService {
                 .setExpiration(Date.from(expireDate.atZone(ZoneId.systemDefault())
                         .toInstant()));
 
-        return builder.signWith(keyServ.getSigningKey(), keyServ.getAlgorithm()).compact();
+        return builder.signWith(keyServ.getJwtSigningKey(), keyServ.getAlgorithm()).compact();
     }
 
     @Override

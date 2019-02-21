@@ -21,6 +21,7 @@ import io.swagger.annotations.ApiOperation;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
@@ -163,16 +164,16 @@ public class FakeRestControllers {
             if (authorization != null) {
                 Signature sigToVerify = Signature.fromString(authorization);
                 String fingerprint = sigToVerify.getKeyId();
-                Optional<String> requestSenderId = configServ.getMsIDfromRSAFingerprint(fingerprint);
-                if (requestSenderId.isPresent()) {
-                    LOG.debug("SenderId " + requestSenderId.get());
+                Set<String> requestSenderIds = configServ.getMsIDfromRSAFingerprint(fingerprint);
+                if (!requestSenderIds.isEmpty()) {
+                    LOG.debug("num of SenderIds " + requestSenderIds.size());
                     JwtValidationResponse valResp = jwtServ.validateJwt(token);
                     if (valResp.getCode().equals(ResponseCode.OK)) {
                         blacklistServ.addToBlacklist(valResp.getJti());
                     }
                     LOG.debug("Receiver " + valResp.getReceiver());
-                    if (!valResp.getReceiver().equals(requestSenderId.get())) {
-                        valResp.setError("sender id token missmatch!");
+                    if (!requestSenderIds.contains(valResp.getReceiver())) {
+                        valResp.setError("calculaded sender does not match the recipient:" + valResp.getReceiver() );
                     }
                     return SessionMngrResponseFactory.makeSessionMngrResponseFromValidationResponse(valResp);
                 }

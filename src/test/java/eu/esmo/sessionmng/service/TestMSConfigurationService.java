@@ -12,6 +12,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.util.Base64;
 import java.util.Optional;
+import java.util.Set;
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,9 +50,9 @@ public class TestMSConfigurationService {
 
     @Test
     public void testGetMsIDfromRSAFingerprint() throws IOException, NoSuchAlgorithmException {
-        String keyId = keyId = "06f336b68ba82890576f92b7d564c709cea0c0f318a09b4fbc5a502a7c93f926";
-        Optional<String> msId = stubServ.getMsIDfromRSAFingerprint(keyId);
-        assertEquals(msId.get(), "ACMms001");
+        String keyId =  "7a9ba747ab5ac50e640a07d90611ce612b7bde775457f2e57b804517a87c813b";
+        Set<String> msId = stubServ.getMsIDfromRSAFingerprint(keyId);
+        assertEquals(msId.contains("ACMms001"),true);
 
     }
 

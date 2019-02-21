@@ -51,8 +51,9 @@ public class TestJwtService {
         Key key = new SecretKeySpec(secretKey.getBytes("UTF-8"), 0, secretKey.length(), "HmacSHA256");
 
         when(keyServ.getAlgorithm()).thenReturn(SignatureAlgorithm.HS256);
-        when(keyServ.getSigningKey()).thenReturn(key);
+        when(keyServ.getHttpSigningKey()).thenReturn(key);
         when(keyServ.getJWTPublicKey()).thenReturn(key);
+        when(keyServ.getJwtSigningKey()).thenReturn(key);
 
 //        Map map = new HashMap();
 //        map.put("var1", "val1");
@@ -101,8 +102,9 @@ public class TestJwtService {
         String secretKey = "QjG+wP1CbAH2z4PWlWIDkxP4oRlgK2vos5/jXFfeBw8=";
         Key key = new SecretKeySpec(secretKey.getBytes("UTF-8"), 0, secretKey.length(), "HmacSHA256");
         when(keyServ.getAlgorithm()).thenReturn(SignatureAlgorithm.HS256);
-        when(keyServ.getSigningKey()).thenReturn(key);
+        when(keyServ.getHttpSigningKey()).thenReturn(key);
         when(keyServ.getJWTPublicKey()).thenReturn(key);
+        when(keyServ.getJwtSigningKey()).thenReturn(key);
 
         String jwt = jwtServ.makeJwt("sessionId", null, "esmoSessionMngr", "sender", "receiver", Long.valueOf(5));
         String jti = jwtServ.validateJwt(jwt).getJti();

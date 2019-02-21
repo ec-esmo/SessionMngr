@@ -56,7 +56,7 @@ public class TestKeystoreService {
         Mockito.when(paramServ.getProperty("ASYNC_SIGNATURE")).thenReturn("true");
         keyServ = new KeyStoreServiceImpl(paramServ);
 
-        Key key = keyServ.getSigningKey();
+        Key key = keyServ.getHttpSigningKey();
         key.getAlgorithm();
         key.getFormat();
         assertEquals(key.getAlgorithm(), "RSA");
@@ -81,7 +81,7 @@ public class TestKeystoreService {
         when(paramServ.getProperty("ASYNC_SIGNATURE")).thenReturn("false");
         when(paramServ.getProperty("SIGNING_SECRET")).thenReturn("thisisasecret");
         keyServ = new KeyStoreServiceImpl(paramServ);
-        Key key = keyServ.getSigningKey();
+        Key key = keyServ.getHttpSigningKey();
         assertEquals(key.getAlgorithm(), "HmacSHA256");
         assertEquals(key.getFormat(), "RAW");
 

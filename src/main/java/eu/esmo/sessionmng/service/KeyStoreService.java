@@ -20,7 +20,8 @@ public interface KeyStoreService {
 
     //Split this to http signature keys and jwt keys
     
-    public Key getSigningKey() throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException,UnsupportedEncodingException;
+    public Key getHttpSigningKey() throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException,UnsupportedEncodingException;
+    public Key getJwtSigningKey() throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException,UnsupportedEncodingException;
     public Key getJWTPublicKey() throws KeyStoreException, UnsupportedEncodingException;
     public Key getHttpSigPublicKey() throws KeyStoreException, UnsupportedEncodingException;
     public SignatureAlgorithm getAlgorithm();

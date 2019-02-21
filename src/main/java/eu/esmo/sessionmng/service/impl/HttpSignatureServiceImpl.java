@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.security.InvalidKeyException;
+import java.security.Key;
 import java.security.KeyStoreException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -65,13 +66,15 @@ public class HttpSignatureServiceImpl implements HttpSignatureService {
 
     private KeyStoreService keyServ;
 
+    private String keyId;
+
     @Autowired
     public HttpSignatureServiceImpl(KeyStoreService keyServ)
             throws InvalidKeySpecException, IOException, KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException {
         try {
             this.keyServ = keyServ;
-            String keyId = DigestUtils.sha256Hex(getX509PubKeytoRSABinaryFormat((PublicKey) this.keyServ.getHttpSigPublicKey()));
-            this.signer = new Signer(keyServ.getSigningKey(), new Signature(keyId, algorithm, null, "(request-target)", "host", "original-date", "digest", "x-request-id"));
+            this.keyId = DigestUtils.sha256Hex(this.keyServ.getHttpSigPublicKey().getEncoded());
+            this.signer = new Signer(keyServ.getHttpSigningKey(), new Signature(keyId, algorithm, null, "(request-target)", "host", "original-date", "digest", "x-request-id"));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -93,7 +96,8 @@ public class HttpSignatureServiceImpl implements HttpSignatureService {
         headers.put("x-request-id", UUID.randomUUID().toString());
 
         // Here it is!
-        final Signature signed = getSigner().sign(method, uri, headers);
+//        String fingerPrint = DigestUtils.sha256Hex(this.keyServ.getHttpSigPublicKey().getEncoded());
+        final Signature signed = getSigner(this.keyServ.getHttpSigningKey(), this.keyId).sign(method, uri, headers);
         return signed.toString();
     }
 
@@ -136,7 +140,8 @@ public class HttpSignatureServiceImpl implements HttpSignatureService {
         signatureHeaders.put("(request-target)", method + " " + uri);
 
         Algorithm algorithm = Algorithm.RSA_SHA256;
-        Signature signed = getSigner().sign(method, uri, signatureHeaders);
+
+        Signature signed = getSigner(this.keyServ.getHttpSigningKey(), this.keyId).sign(method, uri, signatureHeaders);
 
         return signed.toString();
 
@@ -266,14 +271,13 @@ public class HttpSignatureServiceImpl implements HttpSignatureService {
         Optional<PublicKey> pubKey = msConfigServ.getPublicKeyFromFingerPrint(fingerprint);
         if (pubKey.isPresent()) {
             Verifier verifier = new Verifier(pubKey.get(), sigToVerify);
-            headers.entrySet().forEach( e ->{
-                log.info(e.getKey()  + " -- " + e.getValue());
+            headers.entrySet().forEach(e -> {
+                log.info(e.getKey() + " -- " + e.getValue());
             });
-            
+
             log.info("URI " + uri);
             log.info("Method " + method);
-            
-            
+
             return verifier.verify(method, uri, headers);
         } else {
             log.error("could not find sender key!");
@@ -297,11 +301,9 @@ public class HttpSignatureServiceImpl implements HttpSignatureService {
                 : resultString;
     }
 
-    private Signer getSigner() throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, UnsupportedEncodingException, IOException {
+    private Signer getSigner(Key sigingKey, String keyId) throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, UnsupportedEncodingException, IOException {
         if (this.signer == null) {
-            String keyId = DigestUtils.sha256Hex(getX509PubKeytoRSABinaryFormat((PublicKey) this.keyServ.getHttpSigPublicKey()));
-            log.info("The keyId i am looking for is  " + keyId);
-            signer = new Signer(keyServ.getSigningKey(), new Signature(keyId, algorithm, null, "(request-target)", "host", "original-date", "digest", "x-request-id"));
+            signer = new Signer(sigingKey, new Signature(keyId, algorithm, null, "(request-target)", "host", "original-date", "digest", "x-request-id"));
         }
         return signer;
     }

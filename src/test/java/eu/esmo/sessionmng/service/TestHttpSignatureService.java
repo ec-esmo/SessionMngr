@@ -140,20 +140,20 @@ public class TestHttpSignatureService {
         when(req.getHeader("digest")).thenReturn("SHA-256=" + new String(Base64.encodeBase64(digest)));
         when(req.getHeader("x-request-id")).thenReturn(requestId);
 
-        String keyId = "06f336b68ba82890576f92b7d564c709cea0c0f318a09b4fbc5a502a7c93f926";
+        String keyId = "7a9ba747ab5ac50e640a07d90611ce612b7bde775457f2e57b804517a87c813b";
         ClassLoader classLoader = getClass().getClassLoader();
         String path = classLoader.getResource("testKeys/keystore.jks").getPath();
         Mockito.when(paramServ.getProperty("KEYSTORE_PATH")).thenReturn(path);
         Mockito.when(paramServ.getProperty("KEY_PASS")).thenReturn("selfsignedpass");
         Mockito.when(paramServ.getProperty("STORE_PASS")).thenReturn("keystorepass");
-        Mockito.when(paramServ.getProperty("HTTPSIG_CERT_ALIAS")).thenReturn("selfsigned");
+        Mockito.when(paramServ.getProperty("HTTPSIG_CERT_ALIAS")).thenReturn("1");
 
         Mockito.when(paramServ.getProperty("ASYNC_SIGNATURE")).thenReturn("true");
         keyServ = new KeyStoreServiceImpl(paramServ);
 
         Algorithm algorithm = Algorithm.RSA_SHA256;
         // Here it is!
-        Signer signer = new Signer(keyServ.getSigningKey(), new Signature(keyId, algorithm, null, "(request-target)", "host", "original-date", "digest", "x-request-id"));
+        Signer signer = new Signer(keyServ.getHttpSigningKey(), new Signature(keyId, algorithm, null, "(request-target)", "host", "original-date", "digest", "x-request-id"));
         Signature signed = signer.sign(method, uri, signatureHeaders);
 
         when(req.getHeader("authorization")).thenReturn(signed.toString());
@@ -204,20 +204,20 @@ public class TestHttpSignatureService {
         when(req.getHeader("digest")).thenReturn("SHA-256=" + new String(Base64.encodeBase64(digest)));
         when(req.getHeader("x-request-id")).thenReturn(requestId);
 
-        String keyId = "06f336b68ba82890576f92b7d564c709cea0c0f318a09b4fbc5a502a7c93f926";
+        String keyId = "7a9ba747ab5ac50e640a07d90611ce612b7bde775457f2e57b804517a87c813b";
         ClassLoader classLoader = getClass().getClassLoader();
         String path = classLoader.getResource("testKeys/keystore.jks").getPath();
         Mockito.when(paramServ.getProperty("KEYSTORE_PATH")).thenReturn(path);
         Mockito.when(paramServ.getProperty("KEY_PASS")).thenReturn("selfsignedpass");
         Mockito.when(paramServ.getProperty("STORE_PASS")).thenReturn("keystorepass");
-        Mockito.when(paramServ.getProperty("HTTPSIG_CERT_ALIAS")).thenReturn("selfsigned");
+        Mockito.when(paramServ.getProperty("HTTPSIG_CERT_ALIAS")).thenReturn("1");
 
         Mockito.when(paramServ.getProperty("ASYNC_SIGNATURE")).thenReturn("true");
         keyServ = new KeyStoreServiceImpl(paramServ);
 
         Algorithm algorithm = Algorithm.RSA_SHA256;
         // Here it is!
-        Signer signer = new Signer(keyServ.getSigningKey(), new Signature(keyId, algorithm, null, "(request-target)", "host", "original-date", "digest", "x-request-id"));
+        Signer signer = new Signer(keyServ.getHttpSigningKey(), new Signature(keyId, algorithm, null, "(request-target)", "host", "original-date", "digest", "x-request-id"));
         Signature signed = signer.sign(method, uri, signatureHeaders);
 
         when(req.getHeader("authorization")).thenReturn(signed.toString());
@@ -265,20 +265,20 @@ public class TestHttpSignatureService {
         when(req.getHeader("digest")).thenReturn("SHA-256=" + new String(Base64.encodeBase64(digest)));
         when(req.getHeader("x-request-id")).thenReturn(requestId);
 
-        String keyId = "06f336b68ba82890576f92b7d564c709cea0c0f318a09b4fbc5a502a7c93f926";
+        String keyId = "7a9ba747ab5ac50e640a07d90611ce612b7bde775457f2e57b804517a87c813b";
         ClassLoader classLoader = getClass().getClassLoader();
         String path = classLoader.getResource("testKeys/keystore.jks").getPath();
         Mockito.when(paramServ.getProperty("KEYSTORE_PATH")).thenReturn(path);
         Mockito.when(paramServ.getProperty("KEY_PASS")).thenReturn("selfsignedpass");
         Mockito.when(paramServ.getProperty("STORE_PASS")).thenReturn("keystorepass");
-        Mockito.when(paramServ.getProperty("HTTPSIG_CERT_ALIAS")).thenReturn("selfsigned");
+        Mockito.when(paramServ.getProperty("HTTPSIG_CERT_ALIAS")).thenReturn("1");
 
         Mockito.when(paramServ.getProperty("ASYNC_SIGNATURE")).thenReturn("true");
         keyServ = new KeyStoreServiceImpl(paramServ);
 
         Algorithm algorithm = Algorithm.RSA_SHA256;
         // Here it is!
-        Signer signer = new Signer(keyServ.getSigningKey(), new Signature(keyId, algorithm, null, "(request-target)", "host", "original-date", "digest", "x-request-id"));
+        Signer signer = new Signer(keyServ.getHttpSigningKey(), new Signature(keyId, algorithm, null, "(request-target)", "host", "original-date", "digest", "x-request-id"));
         Signature signed = signer.sign(method, uri, signatureHeaders);
 
         when(req.getHeader("authorization")).thenReturn(signed.toString());

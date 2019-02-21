@@ -22,8 +22,10 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.httpclient.NameValuePair;
 import org.slf4j.Logger;
@@ -68,8 +70,9 @@ public class MSConfigurationServiceImpl implements MSConfigurationService {
     }
 
     @Override
-    public Optional<String> getMsIDfromRSAFingerprint(String rsaFingerPrint) throws IOException, NoSuchAlgorithmException {
-        Optional<MSConfigurationResponse.MicroService> msMatch = Arrays.stream(getConfigurationJSON()).filter(msConfig -> {
+    public Set<String> getMsIDfromRSAFingerprint(String rsaFingerPrint) throws IOException, NoSuchAlgorithmException {
+        Set<String> matches = new HashSet<>();
+        Arrays.stream(getConfigurationJSON()).filter(msConfig -> {
             try {
                 return DigestUtils.sha256Hex(getPublicKey(msConfig.getRsaPublicKeyBinary()).getEncoded()).equals(rsaFingerPrint);
             } catch (Exception e) {
@@ -77,13 +80,11 @@ public class MSConfigurationServiceImpl implements MSConfigurationService {
                 LOG.error(e.getLocalizedMessage());
                 return false;
             }
-        }).findFirst();
+        }).forEach(ms -> {
+            matches.add(ms.getMsId());
+        });
 
-        if (msMatch.isPresent()) {
-            return Optional.of(msMatch.get().getMsId());
-        }
-
-        return Optional.empty();
+        return matches;
     }
 
     @Override

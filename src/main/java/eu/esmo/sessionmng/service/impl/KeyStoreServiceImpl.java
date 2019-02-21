@@ -33,7 +33,7 @@ import org.springframework.util.StringUtils;
 @Service
 public class KeyStoreServiceImpl implements KeyStoreService {
 
-    private final String certPath;
+     private final String certPath;
     private final String keyPass;
     private final String storePass;
     private final String jtwKeyAlias;
@@ -53,7 +53,7 @@ public class KeyStoreServiceImpl implements KeyStoreService {
         httpSigKeyAlias = this.paramServ.getProperty("HTTPSIG_CERT_ALIAS");
 
         keystore = KeyStore.getInstance(KeyStore.getDefaultType());
-        if (!StringUtils.isEmpty(paramServ.getProperty("ASYNC_SIGNATURE")) && Boolean.parseBoolean(paramServ.getProperty("ASYNC_SIGNATURE"))) {
+        if (!org.springframework.util.StringUtils.isEmpty(paramServ.getProperty("ASYNC_SIGNATURE")) && Boolean.parseBoolean(paramServ.getProperty("ASYNC_SIGNATURE"))) {
             File jwtCertFile = new File(certPath);
             InputStream certIS = new FileInputStream(jwtCertFile);
             keystore.load(certIS, storePass.toCharArray());
@@ -64,12 +64,24 @@ public class KeyStoreServiceImpl implements KeyStoreService {
 
     }
 
-    public Key getSigningKey() throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, UnsupportedEncodingException {
+    public Key getHttpSigningKey() throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, UnsupportedEncodingException {
         //"jwtkey"
         //return keystore.getKey(keyAlias, "keypassword".toCharArray());
         String asyncSignature = paramServ.getProperty("ASYNC_SIGNATURE");
-        if (!StringUtils.isEmpty(asyncSignature) && Boolean.valueOf(asyncSignature)) {
+        if (!org.springframework.util.StringUtils.isEmpty(asyncSignature) && Boolean.valueOf(asyncSignature)) {
             return keystore.getKey(httpSigKeyAlias, keyPass.toCharArray());
+        }
+        String secretKey = paramServ.getProperty("SIGNING_SECRET");
+        return new SecretKeySpec(secretKey.getBytes("UTF-8"), 0, secretKey.length(), "HmacSHA256");
+    }
+    
+    
+    public Key getJwtSigningKey() throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, UnsupportedEncodingException {
+        //"jwtkey"
+        //return keystore.getKey(keyAlias, "keypassword".toCharArray());
+        String asyncSignature = paramServ.getProperty("ASYNC_SIGNATURE");
+        if (!org.springframework.util.StringUtils.isEmpty(asyncSignature) && Boolean.valueOf(asyncSignature)) {
+            return keystore.getKey(jtwKeyAlias, keyPass.toCharArray());
         }
         String secretKey = paramServ.getProperty("SIGNING_SECRET");
         return new SecretKeySpec(secretKey.getBytes("UTF-8"), 0, secretKey.length(), "HmacSHA256");
@@ -78,7 +90,7 @@ public class KeyStoreServiceImpl implements KeyStoreService {
     public Key getJWTPublicKey() throws KeyStoreException, UnsupportedEncodingException {
         //"jwtkey"
         String asyncSignature = paramServ.getProperty("ASYNC_SIGNATURE");
-        if (!StringUtils.isEmpty(asyncSignature) && Boolean.valueOf(asyncSignature)) {
+        if (!org.springframework.util.StringUtils.isEmpty(asyncSignature) && Boolean.valueOf(asyncSignature)) {
             Certificate cert = keystore.getCertificate(jtwKeyAlias);
             return cert.getPublicKey();
         }
@@ -111,7 +123,7 @@ public class KeyStoreServiceImpl implements KeyStoreService {
 
     @Override
     public SignatureAlgorithm getAlgorithm() {
-        if (!StringUtils.isEmpty(paramServ.getProperty("ASYNC_SIGNATURE")) && Boolean.parseBoolean(paramServ.getProperty("ASYNC_SIGNATURE"))) {
+        if (!org.springframework.util.StringUtils.isEmpty(paramServ.getProperty("ASYNC_SIGNATURE")) && Boolean.parseBoolean(paramServ.getProperty("ASYNC_SIGNATURE"))) {
             return SignatureAlgorithm.RS256;
         }
         return SignatureAlgorithm.HS256;
