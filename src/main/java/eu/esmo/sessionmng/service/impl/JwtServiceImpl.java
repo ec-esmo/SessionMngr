@@ -12,8 +12,12 @@ import eu.esmo.sessionmng.service.JwtService;
 import eu.esmo.sessionmng.service.KeyStoreService;
 import eu.esmo.sessionmng.pojo.JwtValidationResponse;
 import eu.esmo.sessionmng.enums.ResponseCode;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import java.io.UnsupportedEncodingException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -94,10 +98,12 @@ public class JwtServiceImpl implements JwtService {
         } catch (KeyStoreException e) {
             LOG.error("Error Validating jtw, jti blacklisted ", e.getMessage());
             return new JwtValidationResponse(ResponseCode.ERROR, null, null, "JWT is blacklisted", null, null, null);
-
-        } catch (Exception e) {
+        } catch (MalformedJwtException | UnsupportedJwtException | SignatureException | UnsupportedEncodingException | IllegalArgumentException | NullPointerException e) {
             LOG.error("Error Validating jtw ", e.getMessage());
             return new JwtValidationResponse(ResponseCode.ERROR, null, null, "Error Validating JWT", null, null, null);
+        } catch (ExpiredJwtException e) {
+            LOG.error("Error Validating jtw ", e.getMessage());
+            return new JwtValidationResponse(ResponseCode.ERROR, null, null, "JWT is expired", null, null, null);
         }
         LOG.error("JWS was emptry ", jws);
         return new JwtValidationResponse(ResponseCode.ERROR, null, null, "JWT token is empty", null, null, null);
