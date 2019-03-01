@@ -59,7 +59,7 @@ public class MSConfigurationServiceImpl implements MSConfigurationService {
         try {
             String sessionMngrUrl = paramServ.getProperty("CONFIGURATION_MANAGER_URL");
             List<NameValuePair> getParams = new ArrayList();
-            return MSConfigurationResponseFactory.makeMSConfigResponseFromJSON(netServ.sendGet(sessionMngrUrl, "/cm/metadata/microservices", getParams));
+            return MSConfigurationResponseFactory.makeMSConfigResponseFromJSON(netServ.sendGet(sessionMngrUrl, "/cm/metadata/microservices", getParams,1));
         } catch (IOException ex) {
             LOG.error(ex.getMessage());
             return null;

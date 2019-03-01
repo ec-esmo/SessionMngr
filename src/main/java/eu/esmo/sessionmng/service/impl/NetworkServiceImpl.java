@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.esmo.sessionmng.service.HttpSignatureService;
 import eu.esmo.sessionmng.service.NetworkService;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.security.KeyStoreException;
 import java.security.MessageDigest;
@@ -19,7 +20,9 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.UUID;
 import org.apache.commons.httpclient.NameValuePair;
 import org.slf4j.Logger;
@@ -34,6 +37,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -44,7 +48,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Service
 public class NetworkServiceImpl implements NetworkService {
 
-    private HttpSignatureService sigServ;
+    private final HttpSignatureService sigServ;
     private final static Logger LOG = LoggerFactory.getLogger(NetworkServiceImpl.class);
 
     @Autowired
@@ -53,8 +57,54 @@ public class NetworkServiceImpl implements NetworkService {
     }
 
     @Override
+    public String sendPostBody(String hostUrl, String uri, Object postBody, String contentType, int attempt) throws IOException, NoSuchAlgorithmException {
+
+        Date date = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z", Locale.US);
+        formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
+        String nowDate = formatter.format(date);
+        String requestId = UUID.randomUUID().toString();
+
+        ObjectMapper mapper = new ObjectMapper();
+        String updateString = mapper.writeValueAsString(postBody);
+        byte[] digest = MessageDigest.getInstance("SHA-256").digest(updateString.getBytes()); // post parameters are added as uri parameters not in the body when form-encoding
+        String host = hostUrl.replace("http://", "").replace("https://", "");
+        try {
+            HttpHeaders requestHeaders = new HttpHeaders();
+            requestHeaders.add("authorization", sigServ.generateSignature(host, "POST", "/sm/updateSessionData", postBody, "application/json;charset=UTF-8", requestId));
+            requestHeaders.add("host", hostUrl);
+            requestHeaders.add("original-date", nowDate);
+            requestHeaders.add("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(MessageDigest.getInstance("SHA-256").digest(updateString.getBytes()))));
+            requestHeaders.add("x-request-id", requestId);
+            requestHeaders.setContentType(MediaType.APPLICATION_JSON);
+            requestHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(hostUrl + uri);
+            RestTemplate restTemplate = new RestTemplate();
+            HttpEntity<Object> requestEntity = new HttpEntity<>(postBody, requestHeaders);
+            try {
+                ResponseEntity<String> response
+                        = restTemplate.exchange(builder.toUriString(), HttpMethod.POST, requestEntity,
+                                String.class);
+                return response.getBody();
+            } catch (RestClientException e) {
+                LOG.info("request failed will retry");
+                if (attempt < 2) {
+                    return sendPostBody(hostUrl, uri, postBody, contentType, attempt + 1);
+                }
+            }
+        } catch (UnrecoverableKeyException e) {
+            LOG.info(e.getMessage());
+        } catch (KeyStoreException e) {
+            LOG.info(e.getMessage());
+        } catch (UnsupportedEncodingException e) {
+            LOG.info(e.getMessage());
+        }
+        return null;
+    }
+
+    @Override
     public String sendPostForm(String hostUrl, String uri,
-            List<NameValuePair> urlParameters) throws IOException, NoSuchAlgorithmException {
+            List<NameValuePair> urlParameters, int attempt) throws IOException, NoSuchAlgorithmException {
 
         Map<String, String> map = new HashMap();
         MultiValueMap<String, String> multiMap = new LinkedMultiValueMap<>();
@@ -86,52 +136,27 @@ public class NetworkServiceImpl implements NetworkService {
         }
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(multiMap, headers);
-        ResponseEntity<String> response = restTemplate.postForEntity(
-                hostUrl + uri, request, String.class);
-
-        assert (response.getStatusCode().equals(HttpStatus.CREATED) || response.getStatusCode().equals(HttpStatus.OK));
-        return response.getBody();
-    }
-
-    public String sendPostBody(String hostUrl, String uri, Object postBody, String contentType) throws IOException, NoSuchAlgorithmException {
-
-        Date date = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z");
-        String nowDate = formatter.format(date);
-        String requestId = UUID.randomUUID().toString();
-
-        ObjectMapper mapper = new ObjectMapper();
-        String updateString = mapper.writeValueAsString(postBody);
-        byte[] digest = MessageDigest.getInstance("SHA-256").digest(updateString.getBytes()); // post parameters are added as uri parameters not in the body when form-encoding
-        String host = hostUrl.replace("http://", "").replace("https://", "");
         try {
-            HttpHeaders requestHeaders = new HttpHeaders();
-            requestHeaders.add("authorization", sigServ.generateSignature(host, "POST", "/sm/updateSessionData", postBody, "application/json;charset=UTF-8", requestId));
-            requestHeaders.add("host", hostUrl);
-            requestHeaders.add("original-date", nowDate);
-            requestHeaders.add("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(MessageDigest.getInstance("SHA-256").digest(updateString.getBytes()))));
-            requestHeaders.add("x-request-id", requestId);
-            requestHeaders.setContentType(MediaType.APPLICATION_JSON);
-            requestHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(hostUrl + uri);
-            RestTemplate restTemplate = new RestTemplate();
-            HttpEntity<Object> requestEntity = new HttpEntity<>(postBody, requestHeaders);
-            ResponseEntity<String> response
-                    = restTemplate.exchange(builder.toUriString(), HttpMethod.POST, requestEntity,
-                            String.class);
+            ResponseEntity<String> response = restTemplate.postForEntity(
+                    hostUrl + uri, request, String.class);
             return response.getBody();
-        } catch (Exception e) {
-            LOG.info(e.getMessage());
+        } catch (RestClientException e) {
+            LOG.info("request failed will retry");
+            if (attempt < 2) {
+                return sendPostForm(hostUrl, uri,
+                        urlParameters, attempt + 1);
+            }
         }
         return null;
     }
 
     @Override
     public String sendGet(String hostUrl, String uri,
-            List<NameValuePair> urlParameters) throws IOException, NoSuchAlgorithmException {
+            List<NameValuePair> urlParameters, int attempt) throws IOException, NoSuchAlgorithmException {
 
         Date date = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z");
+        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z", Locale.US);
+        formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
         String nowDate = formatter.format(date);
         String requestId = UUID.randomUUID().toString();
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(hostUrl + uri);
@@ -161,18 +186,29 @@ public class NetworkServiceImpl implements NetworkService {
         }
 
         HttpEntity entity = new HttpEntity(requestHeaders);
-        ResponseEntity<String> response = restTemplate.exchange(
-                builder.toUriString(), HttpMethod.GET, entity, String.class);
-        return response.getBody();
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(
+                    builder.toUriString(), HttpMethod.GET, entity, String.class);
+            return response.getBody();
+        } catch (RestClientException e) {
+            if (attempt < 2) {
+                return sendGet(hostUrl, uri,
+                        urlParameters, attempt + 1);
+            }
+        }
+        return null;
+
     }
 
     private void addHeaders(HttpHeaders headers, String host, Date date, byte[] digestBytes, String uri, String requestId) throws NoSuchAlgorithmException {
-        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z");
+        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z", Locale.US);
+        formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
         String nowDate = formatter.format(date);
         headers.add("host", host);
         headers.add("original-date", nowDate);
         headers.add("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digestBytes)));
         headers.add("x-request-id", requestId);
+
     }
 
 }

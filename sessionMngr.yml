@@ -26,7 +26,7 @@ services:
         - 8070:8080       
     
     SessionManager:
-        image: endimion13/esmo-session-manager:0.1.0
+        image: endimion13/esmo-session-manager:0.1.1
         environment:
             - KEYSTORE_PATH=/resources/testKeys/keystore.jks
             - KEY_PASS=selfsignedpass

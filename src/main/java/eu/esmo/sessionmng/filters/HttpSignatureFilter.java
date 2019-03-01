@@ -52,18 +52,20 @@ public class HttpSignatureFilter extends GenericFilterBean {
 
         try {
 
-            HttpServletRequest currentRequest = (HttpServletRequest) request;
+            final HttpServletRequest currentRequest = (HttpServletRequest) request;
 
             if (currentRequest.getMethod().toLowerCase().equals("post")) {
                 MultiReadHttpServletRequest multiReadRequest = new MultiReadHttpServletRequest(currentRequest);
-                if (sigServ.verifySignature((HttpServletRequest) multiReadRequest, confServ).equals(HttpResponseEnum.AUTHORIZED)) {
+                boolean result = sigServ.verifySignature((HttpServletRequest) multiReadRequest, confServ).equals(HttpResponseEnum.AUTHORIZED);
+                if (result) {
                     chain.doFilter(multiReadRequest, response);
                 } else {
                     throw new ServletException("Error Validating Http Signature from request");
                 }
 
             } else {
-                if (sigServ.verifySignature((HttpServletRequest) request, confServ).equals(HttpResponseEnum.AUTHORIZED)) {
+                boolean result = sigServ.verifySignature((HttpServletRequest) request, confServ).equals(HttpResponseEnum.AUTHORIZED);
+                if (result) {
                     chain.doFilter(request, response);
                 } else {
                     throw new ServletException("Error Validating Http Signature from request");

@@ -195,7 +195,6 @@ public class TestHttpSignatureService {
         signatureHeaders.put("Accept", "*/*");
         signatureHeaders.put("x-request-id", requestId);
 
-        
         HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
         when(req.getHeaderNames()).thenReturn(Collections.enumeration(Arrays.asList(requiredHeaders)));
         when(req.getHeader("host")).thenReturn("https://www.esmoSMgr.com");
@@ -294,6 +293,43 @@ public class TestHttpSignatureService {
         HttpSignatureService httpSigServ = new HttpSignatureServiceImpl(keyServ);
         assertEquals(httpSigServ.verifySignature(req, msConfigServ), HttpResponseEnum.AUTHORIZED);
 
+    }
+
+    @Test
+    public void testsReceivedSignature() throws KeyStoreException, IOException, FileNotFoundException, NoSuchAlgorithmException, CertificateException, UnrecoverableKeyException, InvalidKeySpecException, UnsupportedEncodingException, UnrecoverableKeyException, NoSuchAlgorithmException {
+        String[] requiredHeaders = { "host", "original-date", "digest", "x-request-id"};
+        String signature = "Signature keyId=\"7a9ba747ab5ac50e640a07d90611ce612b7bde775457f2e57b804517a87c813b\",algorithm=\"rsa-sha256\",headers=\"(request-target) host original-date digest x-request-id\",signature=\"FNr3vmvWZiTNGc8NFs7UtTkbQn621Jgm3GSCVYkL+Mn7u2Mo6IQ5fJH6sr3j84zfi+Bis2a4xs4Mcwhj2RJC2QEgzGGTzNOwM2L1hcDH+9fBItZJQB1QIkgQ83G7X5bKgmYO6zzTdrhiCsOsPIwcLVDgv+5Oq5Q8j4vvc+LOgmQ=\"";
+        String keyId = "7a9ba747ab5ac50e640a07d90611ce612b7bde775457f2e57b804517a87c813b";
+        ClassLoader classLoader = getClass().getClassLoader();
+        String path = classLoader.getResource("testKeys/keystore.jks").getPath();
+        Mockito.when(paramServ.getProperty("KEYSTORE_PATH")).thenReturn(path);
+        Mockito.when(paramServ.getProperty("KEY_PASS")).thenReturn("selfsignedpass");
+        Mockito.when(paramServ.getProperty("STORE_PASS")).thenReturn("keystorepass");
+        Mockito.when(paramServ.getProperty("HTTPSIG_CERT_ALIAS")).thenReturn("1");
+
+        Mockito.when(paramServ.getProperty("ASYNC_SIGNATURE")).thenReturn("true");
+        keyServ = new KeyStoreServiceImpl(paramServ);
+
+        Algorithm algorithm = Algorithm.RSA_SHA256;
+        final String method = "GET";
+        final String uri = "/sm/generateToken?sessionId=9c024bf6-6f86-48d2-b531-3f9e684bdcf8&sender=ACMms001&receiver=SAMLms_0001&data=extraData";
+        MSConfigurationService msConfigServ = new MSConfigurationsServiceImplSTUB(paramServ);
+        HttpSignatureService httpSigServ = new HttpSignatureServiceImpl(keyServ);
+        HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
+        when(req.getHeader("authorization")).thenReturn(signature);
+        when(req.getHeaderNames()).thenReturn(Collections.enumeration(Arrays.asList(requiredHeaders)));
+        when(req.getHeader("host")).thenReturn("SessionManager:8080");
+        when(req.getHeader("original-date")).thenReturn("Thu, 28 Feb 2019 15:47:17 GMT");
+        when(req.getHeader("digest")).thenReturn("SHA-256=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=");
+        when(req.getHeader("x-request-id")).thenReturn("de898426-e566-451b-9be2-e1f2f38ba61b");
+        when(req.getMethod()).thenReturn(method);
+        when(req.getRequestURI()).thenReturn(uri);
+        when(req.getInputStream()).thenReturn(
+                new DelegatingServletInputStream(
+                        new ByteArrayInputStream("".getBytes(StandardCharsets.UTF_8))));
+
+        httpSigServ.verifySignature(req, msConfigServ);
+        assertEquals(true, true);
     }
 
 }

@@ -151,53 +151,43 @@ public class HttpSignatureServiceImpl implements HttpSignatureService {
     public HttpResponseEnum verifySignature(HttpServletRequest httpRequest, MSConfigurationService confServ) {
         String authorization = httpRequest.getHeader("authorization");
         if (authorization != null) {
-
-            Signature sigToVerify = Signature.fromString(authorization);
+            final Signature sigToVerify = Signature.fromString(authorization);
             log.info("HTTP Signature received: " + sigToVerify);
-
             /* check request contains all mandatory headers
              */
-//            log.info(httpRequest.getHeaderNames().toString());
-//            sigToVerify.getHeaders().iterator().forEachRemaining(header -> {
-//                log.info(header);
-//                log.info(httpRequest.getHeader(header));
-//            });
             boolean emptyRequiredHeader
                     = sigToVerify.getHeaders()
                             .stream()
                             .anyMatch(headerName -> {
                                 return StringUtils.isEmpty(httpRequest.getHeader(headerName)) && !(headerName.equals("(request-target)"));
                             });
-
             /* Verify that all the required headers are signed (i.e. are part of the http signature)
                 and that all the signed headers are present in the request
              */
             if (!sigToVerify.getHeaders().containsAll(Arrays.asList(requiredHeaders))
                     || emptyRequiredHeader) {
-
                 log.error("error header is missing!!!");
                 return HttpResponseEnum.HEADER_MISSING;
             }
 
-            Map<String, String> headers = new HashMap<String, String>();
+            final Map<String, String> headers = new HashMap<String, String>();
             Collections.list(httpRequest.getHeaderNames())
                     .stream().forEach(hName -> {
                         headers.put(hName, httpRequest.getHeader(hName));
                     });
 
-            String clientTime = StringUtils.isEmpty(httpRequest.getHeader("date"))
+            final String clientTime = StringUtils.isEmpty(httpRequest.getHeader("date"))
                     ? httpRequest.getHeader("original-date") : httpRequest.getHeader("date");
 
             try {
                 //TODO blacklist requestIds to remove replay attacks?
-
 //                String requestId = UUID.fromString(httpRequest.getHeader("x-request-id")).toString();
                 if (!hasValidRequestTime(clientTime)) {
                     return HttpResponseEnum.BAD_REQUEST;
                 }
-                byte[] requestBodyRaw = IOUtils.toByteArray(httpRequest.getInputStream());
-                byte[] digest = MessageDigest.getInstance("SHA-256").digest(requestBodyRaw);
-                String digestCalculated = new String(Base64.getEncoder().encodeToString(digest));
+                final byte[] requestBodyRaw = IOUtils.toByteArray(httpRequest.getInputStream());
+                final byte[] digest = MessageDigest.getInstance("SHA-256").digest(requestBodyRaw);
+                final String digestCalculated = new String(Base64.getEncoder().encodeToString(digest));
 
                 if (!areDigestsEqual(httpRequest.getHeader("digest"), digestCalculated)) {
                     log.error("Digest missmatch");
@@ -249,6 +239,7 @@ public class HttpSignatureServiceImpl implements HttpSignatureService {
         final Date timeClient = format.parse(receivedTime);
         long diff = Math.abs(timeClient.getTime() - timeServer.getTime());
         long diffMinutes = diff / (60 * 1000) % 60;
+//        return true;
         return diffMinutes < DATE_DIFF_ALLOWED;
     }
 
@@ -268,16 +259,16 @@ public class HttpSignatureServiceImpl implements HttpSignatureService {
     public boolean isSignatureValid(Signature sigToVerify,
             MSConfigurationService msConfigServ, String method, String uri, Map<String, String> headers) throws InvalidKeyException, IOException, NoSuchAlgorithmException, InvalidKeySpecException, SignatureException {
         String fingerprint = sigToVerify.getKeyId();
-        Optional<PublicKey> pubKey = msConfigServ.getPublicKeyFromFingerPrint(fingerprint);
+        final Optional<PublicKey> pubKey = msConfigServ.getPublicKeyFromFingerPrint(fingerprint);
+        headers.entrySet().forEach(e -> {
+            log.info(e.getKey() + ":-->" + e.getValue());
+        });
+        log.info("URI " + uri);
+        log.info("Method " + method);
+        log.info(headers.get("original-date") + "Original-date");
+        
         if (pubKey.isPresent()) {
-            Verifier verifier = new Verifier(pubKey.get(), sigToVerify);
-            headers.entrySet().forEach(e -> {
-                log.info(e.getKey() + " -- " + e.getValue());
-            });
-
-            log.info("URI " + uri);
-            log.info("Method " + method);
-
+            final Verifier verifier = new Verifier(pubKey.get(), sigToVerify);
             return verifier.verify(method, uri, headers);
         } else {
             log.error("could not find sender key!");
