@@ -27,7 +27,7 @@
                 <Env.KEY_PASS>selfsignedpass</Env.KEY_PASS>
                 <Env.STORE_PASS>keystorepass</Env.STORE_PASS>
                 <Env.JWT_CERT_ALIAS>selfsigned</Env.JWT_CERT_ALIAS>
-                <Env.HTTPSIG_CERT_ALIAS>selfsigned</Env.HTTPSIG_CERT_ALIAS>
+                <Env.HTTPSIG_CERT_ALIAS>1</Env.HTTPSIG_CERT_ALIAS>
             </properties>
         </action>
         <action>

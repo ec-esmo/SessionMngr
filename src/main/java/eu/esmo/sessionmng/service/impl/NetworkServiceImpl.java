@@ -7,6 +7,7 @@ package eu.esmo.sessionmng.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.esmo.sessionmng.service.HttpSignatureService;
+import eu.esmo.sessionmng.service.KeyStoreService;
 import eu.esmo.sessionmng.service.NetworkService;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -15,6 +16,7 @@ import java.security.KeyStoreException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
+import java.security.spec.InvalidKeySpecException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -24,6 +26,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.UUID;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.httpclient.NameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +40,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -52,8 +56,8 @@ public class NetworkServiceImpl implements NetworkService {
     private final static Logger LOG = LoggerFactory.getLogger(NetworkServiceImpl.class);
 
     @Autowired
-    public NetworkServiceImpl(HttpSignatureService sigServ) {
-        this.sigServ = sigServ;
+    public NetworkServiceImpl(KeyStoreService keyServ) throws KeyStoreException, UnsupportedEncodingException, NoSuchAlgorithmException, UnrecoverableKeyException, InvalidKeySpecException, IOException {
+        this.sigServ = new HttpSignatureServiceImpl(DigestUtils.sha256Hex(keyServ.getHttpSigPublicKey().getEncoded()), keyServ.getHttpSigningKey());
     }
 
     @Override
@@ -179,7 +183,9 @@ public class NetworkServiceImpl implements NetworkService {
             requestHeaders.add("x-request-id", requestId);
             URL url = new URL(builder.toUriString());
 
-            requestHeaders.add("authorization", sigServ.generateSignature(host, "GET", url.getPath() + "?" + url.getQuery(), null, "application/x-www-form-urlencoded", requestId));
+            String getURL = StringUtils.isEmpty(url.getQuery())?url.getPath():url.getPath() + "?" + url.getQuery();
+            
+            requestHeaders.add("authorization", sigServ.generateSignature(host, "GET", getURL, null, "application/x-www-form-urlencoded", requestId));
         } catch (IOException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException e) {
             LOG.error("could not generate signature!!");
             LOG.error(e.getMessage());

@@ -9,18 +9,27 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import eu.esmo.sessionmng.service.impl.JwtServiceImpl;
 import eu.esmo.sessionmng.pojo.JwtValidationResponse;
 import eu.esmo.sessionmng.enums.ResponseCode;
+import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.Key;
+import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
 import javax.crypto.spec.SecretKeySpec;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import static org.mockito.Mockito.when;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -109,10 +118,30 @@ public class TestJwtService {
         String jwt = jwtServ.makeJwt("sessionId", null, "esmoSessionMngr", "sender", "receiver", Long.valueOf(5));
         String jti = jwtServ.validateJwt(jwt).getJti();
         assertEquals(jwtServ.validateJwt(jwt).getCode(), ResponseCode.OK);
-        
+
         when(blacklistServ.isBlacklisted(jti)).thenReturn(true);
         assertEquals(jwtServ.validateJwt(jwt).getCode(), ResponseCode.ERROR);
 
+    }
+
+//    @Test
+    public void testJwtReceipientGen() throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, UnrecoverableKeyException {
+
+        String jws = "eyJhbGciOiJSUzI1NiJ9.eyJzZXNzaW9uSWQiOiI3Y2YwNGM5NC0wNmE2LTQ4MmYtODY0YS0zMjk2OWU1NTU1MDMiLCJzZW5kZXIiOiJJZFBtczAwMSIsInJlY2VpdmVyIjoiQUNNbXMwMDEiLCJpc3MiOiIiLCJqdGkiOiJjNzQ1NTNjYy1lNDUwLTQ3NTMtODAwMC0zNWQzYTVlZjNiNTIiLCJpYXQiOjE1NTE3ODM4MjYsImV4cCI6MTU1MTc4NDQyNn0.WIWMWFMMGe_0PNxZ5H0-7AW7e6WUBGO1R--dfBuVSUPMcOxVdiA-wQjy8ccj1HxnXYEQMXnkEQpmsSdYoBKNzhkiKNwg0LUlMVOFK-dGwD8moRQk6HxmNU1KbYyg8zFTQqFSqrFz5JVMT_crIfvoxBs060HqCazqkH_A_MtP0arTkCpz7TJ32pfAcT4QhBuI_TnzdTuBpQLwBEPMLpfDfBlGYHNB5qsIsOQ45ip7jvaD-eMpTFrkIdCEjb7q2M4EewJpu8jblr9bzqNlgfirbpDXrcNs7gk3Y4VpUxnzaOmkmRNmsBKkOSvWw7gjj5RGs0wD_wvRUX-290TC6XlQvw";
+
+        ClassLoader classLoader = getClass().getClassLoader();
+        String path = classLoader.getResource("testKeys/keystore.jks").getPath();
+        KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
+
+        File jwtCertFile = new File(path);
+        InputStream certIS = new FileInputStream(jwtCertFile);
+        keystore.load(certIS, "keystorepass".toCharArray());
+        Certificate cert = keystore.getCertificate("selfsigned");
+        String sender = Jwts.parser().setSigningKey(cert.getPublicKey()).parseClaimsJws(jws).getBody().get("sender", String.class);
+        String receiver = Jwts.parser().setSigningKey(cert.getPublicKey()).parseClaimsJws(jws).getBody().get("receiver", String.class);
+        
+        assertEquals(sender,"IdPms001");
+        assertEquals(receiver,"ACMms001");
     }
 
 }

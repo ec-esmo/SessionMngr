@@ -20,13 +20,13 @@ services:
       ports:
         - 3307:3306     
 
-    conf:
-      image: endimion13/test-conf:0.0.2 
-      ports:
-        - 8070:8080       
+#    ConfManager:
+#        image: mvjatos/cm:noEWP.2
+#        ports:
+#          - 8080:8080      
     
     SessionManager:
-        image: endimion13/esmo-session-manager:0.1.1
+        image: endimion13/esmo-session-manager:0.1.4
         environment:
             - KEYSTORE_PATH=/resources/testKeys/keystore.jks
             - KEY_PASS=selfsignedpass
@@ -38,7 +38,8 @@ services:
             - EXPIRES=5
             - CONFIG_JSON=/resources/configurationResponse.json
 #            - CONFIGURATION_MANAGER_URL=http://172.17.0.1:8070
-            - CONFIGURATION_MANAGER_URL=http://5.79.83.118:8080
+#            - CONFIGURATION_MANAGER_URL=http://dss1.aegean.gr:8080
+            - CONFIGURATION_MANAGER_URL=http://172.17.0.1:8080
             - MEMCACHED_HOST=172.17.0.1
             - MEMCACHED_PORT=11211
             - DATABASE_HOST=docker-mysql
@@ -57,7 +58,19 @@ services:
           - docker-mysql 
         
 
-
+    ACM:
+        image: endimion13/esmo-acm-gr:0.0.4
+        ports:
+            - 8070:8070
+        environment:
+            - SP_MS=test
+            - IDP_MS=test
+        depends_on:
+        #    - ConfManager
+            - SessionManager
+        links:
+         #   - ConfManager:ConfManager
+            - SessionManager:SessionManager
 
 #- env.KEY_PASS=selfsignedpass
 #- Env.STORE_PASS=keystorepass

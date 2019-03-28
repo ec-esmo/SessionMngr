@@ -23,6 +23,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 import java.util.UUID;
 import javax.crypto.spec.SecretKeySpec;
 import static org.hamcrest.Matchers.is;
@@ -74,8 +76,7 @@ public class TestRestControllersIntegration {
 
     @Autowired
     private HttpSignatureService sigServ;
-    
-    
+
     @Autowired
     private NetworkService netServ;
 
@@ -83,7 +84,8 @@ public class TestRestControllersIntegration {
     public void testsStartSession() throws Exception {
 
         Date date = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z");
+        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z", Locale.US);
+        formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
         String nowDate = formatter.format(date);
         byte[] digest = MessageDigest.getInstance("SHA-256").digest("".getBytes());
         String requestId = UUID.randomUUID().toString();
@@ -112,7 +114,8 @@ public class TestRestControllersIntegration {
     public void deleteExistingSession() throws Exception {
 
         Date date = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z");
+        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z", Locale.US);
+        formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
         String nowDate = formatter.format(date);
         byte[] digest = MessageDigest.getInstance("SHA-256").digest("".getBytes());
         String requestId = UUID.randomUUID().toString();
@@ -148,7 +151,8 @@ public class TestRestControllersIntegration {
     public void testUpdateSessionDataExistingSession() throws Exception {
 
         Date date = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z");
+        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z", Locale.US);
+        formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
         String nowDate = formatter.format(date);
         byte[] digest = MessageDigest.getInstance("SHA-256").digest("".getBytes());
         String requestId = UUID.randomUUID().toString();
@@ -204,7 +208,8 @@ public class TestRestControllersIntegration {
         when(paramServ.getProperty("EXPIRES")).thenReturn("5");
 
         Date date = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z");
+        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z", Locale.US);
+        formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
         String nowDate = formatter.format(date);
         byte[] digest = MessageDigest.getInstance("SHA-256").digest("".getBytes());
         String requestId = UUID.randomUUID().toString();
@@ -223,10 +228,15 @@ public class TestRestControllersIntegration {
         SessionMngrResponse resp = mapper.readValue(result.getResponse().getContentAsString(), SessionMngrResponse.class);
         String sessionId = resp.getSessionData().getSessionId();
 
+        date = new Date();
+        formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z", Locale.US);
+        formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
+        nowDate = formatter.format(date);
+
         MvcResult jwtResult = mvc.perform(get("/sm/generateToken")
                 .header("authorization", sigServ.generateSignature("hostUrl", "GET", "/sm/generateToken", null, "application/x-www-form-urlencoded", requestId))
                 .header("host", "hostUrl")
-//                .header("(request-target)", "GET /generateToken")
+                //                .header("(request-target)", "GET /generateToken")
                 .header("original-date", nowDate)
                 .header("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)))
                 .header("x-request-id", requestId)
@@ -258,7 +268,8 @@ public class TestRestControllersIntegration {
 //        when(keyServ.getSigningKey()).thenReturn(key);
 //        when(keyServ.getJWTPublicKey()).thenReturn(key);
         Date date = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z");
+        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z", Locale.US);
+        formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
         String nowDate = formatter.format(date);
         byte[] digest = MessageDigest.getInstance("SHA-256").digest("".getBytes());
         String requestId = UUID.randomUUID().toString();
@@ -291,7 +302,8 @@ public class TestRestControllersIntegration {
     @Test
     public void validateToken() throws JsonProcessingException, UnsupportedEncodingException, KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, Exception {
         Date date = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z");
+        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z", Locale.US);
+        formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
         String nowDate = formatter.format(date);
         byte[] digest = MessageDigest.getInstance("SHA-256").digest("".getBytes());
         String requestId = UUID.randomUUID().toString();
@@ -325,7 +337,8 @@ public class TestRestControllersIntegration {
 //        when(keyServ.getJWTPublicKey()).thenReturn(key);
 //        String jwt = jwtServ.makeJwt("sessionId", "extraData", "ISSUER", "sender", "ACMms001", Long.valueOf(5));
         Date date = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z");
+        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z", Locale.US);
+        formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
         String nowDate = formatter.format(date);
         byte[] digest = MessageDigest.getInstance("SHA-256").digest("".getBytes());
         String requestId = UUID.randomUUID().toString();
@@ -359,11 +372,4 @@ public class TestRestControllersIntegration {
                 .andExpect(jsonPath("$.code", is("ERROR")));
     }
 
-    
-    
-    
-    
-    
-    
-    
 }

@@ -53,7 +53,7 @@ import org.tomitribe.auth.signatures.Verifier;
  *
  * @author nikos
  */
-@Service
+//@Service
 public class HttpSignatureServiceImpl implements HttpSignatureService {
 
     private Algorithm algorithm = Algorithm.RSA_SHA256;
@@ -64,19 +64,17 @@ public class HttpSignatureServiceImpl implements HttpSignatureService {
     private static final String DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss z";
     private static final int DATE_DIFF_ALLOWED = 5;
 
-    private KeyStoreService keyServ;
-
+    private Key siginingKey;
     private String keyId;
 
-    @Autowired
-    public HttpSignatureServiceImpl(KeyStoreService keyServ)
+    public HttpSignatureServiceImpl(String keyId, Key signingKey)
             throws InvalidKeySpecException, IOException, KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException {
         try {
-            this.keyServ = keyServ;
-            this.keyId = DigestUtils.sha256Hex(this.keyServ.getHttpSigPublicKey().getEncoded());
-            this.signer = new Signer(keyServ.getHttpSigningKey(), new Signature(keyId, algorithm, null, "(request-target)", "host", "original-date", "digest", "x-request-id"));
+            this.keyId = keyId;
+            this.siginingKey = signingKey;
+            this.signer = new Signer(this.siginingKey, new Signature(this.keyId, algorithm, null, "(request-target)", "host", "original-date", "digest", "x-request-id"));
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
     }
 
@@ -97,7 +95,7 @@ public class HttpSignatureServiceImpl implements HttpSignatureService {
 
         // Here it is!
 //        String fingerPrint = DigestUtils.sha256Hex(this.keyServ.getHttpSigPublicKey().getEncoded());
-        final Signature signed = getSigner(this.keyServ.getHttpSigningKey(), this.keyId).sign(method, uri, headers);
+        final Signature signed = getSigner(this.siginingKey, this.keyId).sign(method, uri, headers);
         return signed.toString();
     }
 
@@ -105,21 +103,20 @@ public class HttpSignatureServiceImpl implements HttpSignatureService {
         return Base64.getEncoder().encodeToString(key.getEncoded());
     }
 
+    @Override
     public String generateSignature(String hostUrl, String method, String uri, Object postParams, String contentType, String requestId)
             throws NoSuchAlgorithmException, KeyStoreException, UnrecoverableKeyException, UnsupportedEncodingException, IOException {
 
-        final String[] requiredHeaders = {"(request-target)", "host", "original-date", "digest", "x-request-id"};
-        final Map<String, String> signatureHeaders = new HashMap<String, String>();
+        final Map<String, String> signatureHeaders = new HashMap<>();
         signatureHeaders.put("host", hostUrl);
         Date date = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z");
+        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z", Locale.US);
+        formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
         String nowDate = formatter.format(date);
         signatureHeaders.put("original-date", nowDate);
         signatureHeaders.put("Content-Type", contentType);
 
         byte[] digest;
-        //only when the request is json encoded are the post params added to the body of the request
-        // else they eventually become encoded to the url
         if (postParams != null && contentType.contains("application/json")) {
             ObjectMapper mapper = new ObjectMapper();
             String updateString = mapper.writeValueAsString(postParams);
@@ -131,20 +128,16 @@ public class HttpSignatureServiceImpl implements HttpSignatureService {
                 digest = MessageDigest.getInstance("SHA-256").digest("".getBytes());
             }
         }
-
         signatureHeaders.put("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)));
-
         signatureHeaders.put("Accept", "*/*");
         signatureHeaders.put("Content-Length", Integer.toString(digest.length));
         signatureHeaders.put("x-request-id", requestId);
         signatureHeaders.put("(request-target)", method + " " + uri);
 
         Algorithm algorithm = Algorithm.RSA_SHA256;
-
-        Signature signed = getSigner(this.keyServ.getHttpSigningKey(), this.keyId).sign(method, uri, signatureHeaders);
-
+        Signer signer = new Signer(this.siginingKey, new Signature(this.keyId, algorithm, null, "(request-target)", "host", "original-date", "digest", "x-request-id"));
+        Signature signed = signer.sign(method, uri, signatureHeaders); //getSigner(this.siginingKey, this.keyId).sign(method, uri, signatureHeaders);
         return signed.toString();
-
     }
 
     @Override
@@ -266,7 +259,7 @@ public class HttpSignatureServiceImpl implements HttpSignatureService {
         log.info("URI " + uri);
         log.info("Method " + method);
         log.info(headers.get("original-date") + "Original-date");
-        
+
         if (pubKey.isPresent()) {
             final Verifier verifier = new Verifier(pubKey.get(), sigToVerify);
             return verifier.verify(method, uri, headers);

@@ -112,7 +112,7 @@ public class MSConfigurationServiceImpl implements MSConfigurationService {
                 return Optional.of(getPublicKey(msMatch.get().getRsaPublicKeyBinary()));
             }
         } else {
-            LOG.error("error connecting to configMngr " + paramServ.getProperty("CONFIGURATION_MANAGER_URL") + "/metadata/microservices");
+            LOG.error("error connecting to configMngr " + paramServ.getProperty("CONFIGURATION_MANAGER_URL") + "/cm/metadata/microservices");
         }
         return Optional.empty();
     }

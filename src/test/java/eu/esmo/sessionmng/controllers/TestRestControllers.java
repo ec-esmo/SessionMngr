@@ -20,7 +20,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.UUID;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
@@ -74,7 +76,8 @@ public class TestRestControllers {
         when(sessionServ.findBySessionId("somesession")).thenReturn(session);
 
         Date date = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z");
+        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z", Locale.US);
+        formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
         String nowDate = formatter.format(date);
         byte[] digest = MessageDigest.getInstance("SHA-256").digest("".getBytes());
         String requestId = UUID.randomUUID().toString();
@@ -98,7 +101,8 @@ public class TestRestControllers {
         when(sessionServ.getValueByVariableAndId("somesession", "var1")).thenReturn("val1");
 
         Date date = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z");
+        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z", Locale.US);
+        formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
         String nowDate = formatter.format(date);
         byte[] digest = MessageDigest.getInstance("SHA-256").digest("".getBytes());
         String requestId = UUID.randomUUID().toString();
@@ -123,7 +127,8 @@ public class TestRestControllers {
         when(sessionServ.getValueByVariableAndId("somesession", "var1")).thenReturn(null);
 
         Date date = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z");
+        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z", Locale.US);
+        formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
         String nowDate = formatter.format(date);
         byte[] digest = MessageDigest.getInstance("SHA-256").digest("".getBytes());
         String requestId = UUID.randomUUID().toString();
@@ -149,7 +154,8 @@ public class TestRestControllers {
         when(sessionRep.findBySessionId("sessionId")).thenReturn(existingSession);
 
         Date date = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z");
+        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z", Locale.US);
+        formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
         String nowDate = formatter.format(date);
         String requestId = UUID.randomUUID().toString();
 
@@ -219,8 +225,9 @@ public class TestRestControllers {
         MngrSession existingSession = new MngrSession("sessionId", new HashSet());
         when(sessionRep.findBySessionId("sessionId")).thenReturn(existingSession);
 
-        Date date = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z");
+       Date date = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z", Locale.US);
+        formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
         String nowDate = formatter.format(date);
         String requestId = UUID.randomUUID().toString();
 
@@ -252,7 +259,8 @@ public class TestRestControllers {
         doThrow(new ChangeSetPersister.NotFoundException()).when(sessionServ).updateSessionVariable("somesession", "var1", "dataObject");
 
         Date date = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z");
+        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z", Locale.US);
+        formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
         String nowDate = formatter.format(date);
         String requestId = UUID.randomUUID().toString();
 
@@ -284,7 +292,8 @@ public class TestRestControllers {
         when(sessionServ.getSessionIdByVariableAndValue("varName", "varValue")).thenReturn(sessionIdOpt);
 
         Date date = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z");
+        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z", Locale.US);
+        formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
         String nowDate = formatter.format(date);
         byte[] digest = MessageDigest.getInstance("SHA-256").digest("".getBytes());
         String requestId = UUID.randomUUID().toString();
@@ -309,7 +318,8 @@ public class TestRestControllers {
         when(sessionServ.getSessionIdByVariableAndValue("varName", "varValue")).thenReturn(sessionIdOpt);
 
         Date date = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z");
+        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z", Locale.US);
+        formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
         String nowDate = formatter.format(date);
         byte[] digest = MessageDigest.getInstance("SHA-256").digest("".getBytes());
         String requestId = UUID.randomUUID().toString();
@@ -332,8 +342,9 @@ public class TestRestControllers {
 
         doThrow(new ArithmeticException()).when(sessionServ).getSessionIdByVariableAndValue("varName", "varValue");
 
-        Date date = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z");
+       Date date = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z", Locale.US);
+        formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
         String nowDate = formatter.format(date);
         byte[] digest = MessageDigest.getInstance("SHA-256").digest("".getBytes());
         String requestId = UUID.randomUUID().toString();
@@ -355,7 +366,8 @@ public class TestRestControllers {
     public void startSession() throws Exception {
 
         Date date = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z");
+        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z", Locale.US);
+        formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
         String nowDate = formatter.format(date);
         byte[] digest = MessageDigest.getInstance("SHA-256").digest("sessionId=sessionId".getBytes());
         String requestId = UUID.randomUUID().toString();
@@ -377,20 +389,15 @@ public class TestRestControllers {
                 .andExpect(status().isCreated())
                 .andReturn();
     }
-    
-    
-    
-    
-    
-    
-    
-      @Test
+
+    @Test
     public void testUpdateWholeSessionDataExistingSessionNoSigRequired_FakeSM() throws Exception {
         MngrSession existingSession = new MngrSession("sessionId", new HashSet());
         when(sessionRep.findBySessionId("sessionId")).thenReturn(existingSession);
 
-        Date date = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z");
+       Date date = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z", Locale.US);
+        formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
         String nowDate = formatter.format(date);
         String requestId = UUID.randomUUID().toString();
 
@@ -424,11 +431,5 @@ public class TestRestControllers {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.code", is("OK")));
     }
-
-    
-    
-    
-    
-    
 
 }

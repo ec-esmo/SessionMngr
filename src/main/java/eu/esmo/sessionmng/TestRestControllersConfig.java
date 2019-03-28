@@ -18,6 +18,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -47,7 +48,7 @@ public class TestRestControllersConfig {
     @Primary
     public HttpSignatureService sigServ() throws InvalidKeySpecException, IOException, KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, CertificateException {
 //        MSConfigurationService msConfigServ = new MSConfigurationsServiceImplSTUB(paramServ);
-        return new HttpSignatureServiceImpl(keyStoreService());
+        return new HttpSignatureServiceImpl(DigestUtils.sha256Hex(keyStoreService().getHttpSigPublicKey().getEncoded()),keyStoreService().getHttpSigningKey());
     }
 
     @Bean

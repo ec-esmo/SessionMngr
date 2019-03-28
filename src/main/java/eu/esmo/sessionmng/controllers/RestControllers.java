@@ -166,13 +166,15 @@ public class RestControllers {
                 String fingerprint = sigToVerify.getKeyId();
                 Set<String> requestSenderId = configServ.getMsIDfromRSAFingerprint(fingerprint);
                 if (!requestSenderId.isEmpty()) {
-                    LOG.debug("num of SenderIds matching " + requestSenderId.size());
+                    LOG.info("got jwt: " + token);
+                    LOG.info("num of SenderIds matching " + requestSenderId.size());
                     JwtValidationResponse valResp = jwtServ.validateJwt(token);
                     if (valResp.getCode().equals(ResponseCode.OK)) {
                         blacklistServ.addToBlacklist(valResp.getJti());
                     }
-                    LOG.debug("Receiver " + valResp.getReceiver());
+                    LOG.info("Receiver " + valResp.getReceiver());
                     if (!requestSenderId.contains(valResp.getReceiver())) {
+                        requestSenderId.stream().forEach( matchingId ->{LOG.info("matching id from fingerprint" + matchingId);} );
                         valResp.setError("calcualted matching sender ids do not include the jwt recipient! " + valResp.getReceiver());
                     }
                     return SessionMngrResponseFactory.makeSessionMngrResponseFromValidationResponse(valResp);

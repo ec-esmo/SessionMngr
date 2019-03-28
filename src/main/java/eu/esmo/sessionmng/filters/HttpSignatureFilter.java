@@ -7,7 +7,9 @@ package eu.esmo.sessionmng.filters;
 
 import eu.esmo.sessionmng.enums.HttpResponseEnum;
 import eu.esmo.sessionmng.service.HttpSignatureService;
+import eu.esmo.sessionmng.service.KeyStoreService;
 import eu.esmo.sessionmng.service.MSConfigurationService;
+import eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -17,6 +19,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
+import java.security.spec.InvalidKeySpecException;
 import javax.servlet.FilterChain;
 import javax.servlet.ReadListener;
 import javax.servlet.ServletException;
@@ -25,6 +28,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.compress.utils.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,8 +46,8 @@ public class HttpSignatureFilter extends GenericFilterBean {
     private final Logger Logger = LoggerFactory.getLogger(HttpSignatureFilter.class);
 
     @Autowired
-    public HttpSignatureFilter(HttpSignatureService sigServ, MSConfigurationService confServ) {
-        this.sigServ = sigServ;
+    public HttpSignatureFilter(KeyStoreService keysServ, MSConfigurationService confServ) throws KeyStoreException, UnsupportedEncodingException, NoSuchAlgorithmException, UnrecoverableKeyException, InvalidKeySpecException, IOException{
+        this.sigServ = new HttpSignatureServiceImpl(DigestUtils.sha256Hex(keysServ.getHttpSigPublicKey().getEncoded()), keysServ.getHttpSigningKey());
         this.confServ = confServ;
     }
 
