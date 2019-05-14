@@ -5,14 +5,15 @@
  */
 package eu.esmo.sessionmng.service;
 
-import eu.esmo.sessionmng.service.impl.MSConfigurationsServiceImplSTUB;
 import eu.esmo.sessionmng.pojo.MSConfigurationResponse;
+import eu.esmo.sessionmng.service.impl.MSConfigurationsServiceImplSTUB;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.util.Base64;
 import java.util.Optional;
 import java.util.Set;
+import org.apache.commons.codec.digest.DigestUtils;
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,9 +51,9 @@ public class TestMSConfigurationService {
 
     @Test
     public void testGetMsIDfromRSAFingerprint() throws IOException, NoSuchAlgorithmException {
-        String keyId =  "7a9ba747ab5ac50e640a07d90611ce612b7bde775457f2e57b804517a87c813b";
+        String keyId = "7a9ba747ab5ac50e640a07d90611ce612b7bde775457f2e57b804517a87c813b";
         Set<String> msId = stubServ.getMsIDfromRSAFingerprint(keyId);
-        assertEquals(msId.contains("ACMms001"),true);
+        assertEquals(msId.contains("ACMms001"), true);
 
     }
 
@@ -67,6 +68,15 @@ public class TestMSConfigurationService {
             e.printStackTrace();
         }
 
+    }
+
+    @Test
+    public void testFingerPringGeneration() {
+        String keyBytes = "MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEA/O2wrcyMOVYD2Zr+xxY1Q+ghFci4TM6oipKs0CsXGOaKTOhDcCCWA3IjQoyxQADLS8uHZDSP8joHDl+TL5mGlL17VNN/x4z4ZgN0feVmB1jJd0ZYo+j40eQ5xgj3Aisq1sA+JxXZbXt0NAr4ieMAy5WN7wuGG+pGD3I/by/fStd1at7iC1Zkl5hgOiDpFmL6AuByZCqXWNkuQMQQjoXDBAzqRdo8mKsgJmpryKIYKfuKjGgg5UXb4Gh+Ft6MZKz06IhOgOEw7Z3/tS1yw4mCJDuqBR83ZpbD3MyaJoEVM5vGI3Ahmfm57Y97bAiaUBkjWLTvDdC6CBBjgHKAxnypgq7/BFuc0yR39SWO4vjtS3gsn0qs5hElRS9zgVDPVTL0nxSbYbp3WEfrKTNN06yDOuKZbD7aYSBx6lvSMyNt5MG9iONPHaPsNsVrZkCS3nmq/5LsNy7HT136tzj8qsTay9xOIuxVVGr5WER/a2yFedaXoYpc+b8R5AIzExB8GpRExPA2q3q36JEc312tTQqbohWyuSQchkTIa8htCi6DYdGys2BBFzM7JgPzz4zj+c2pM8Pek3Cekp8ke3sZ9oRZAXWBFZ+o1Qch67cCbhyJBXZg4eElZkQNhaQI7yTyNb4gbjCsdVe6LdPwS76H4KNVX0KRMZIZU0B/SKq0cTgTyc8CAwEAAQ==";
+        byte[] publicBytes = Base64.getDecoder().decode(keyBytes);
+        String fingerPrint = DigestUtils.sha256Hex(publicBytes);
+
+        System.out.println(fingerPrint);
     }
 
 }

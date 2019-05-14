@@ -50,6 +50,7 @@ services:
             
         volumes:
             - /home/nikos/NetBeansProjects/esmo.gr.idp/src/test/resources:/resources
+            - /home/nikos/esmo-sm-logs:/logs
         links:
             - docker-mysql:mysql   
         ports:

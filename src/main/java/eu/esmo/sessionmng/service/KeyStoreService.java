@@ -11,6 +11,7 @@ import java.security.Key;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
+import java.security.spec.InvalidKeySpecException;
 
 /**
  *
@@ -19,10 +20,15 @@ import java.security.UnrecoverableKeyException;
 public interface KeyStoreService {
 
     //Split this to http signature keys and jwt keys
-    
-    public Key getHttpSigningKey() throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException,UnsupportedEncodingException;
-    public Key getJwtSigningKey() throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException,UnsupportedEncodingException;
+    public Key getHttpSigningKey() throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, UnsupportedEncodingException;
+
+    public Key getJwtSigningKey() throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, UnsupportedEncodingException;
+
     public Key getJWTPublicKey() throws KeyStoreException, UnsupportedEncodingException;
+
     public Key getHttpSigPublicKey() throws KeyStoreException, UnsupportedEncodingException;
+
     public SignatureAlgorithm getAlgorithm();
+
+    public String getFingerPrintFromStringPubKey(String pubkey) throws NoSuchAlgorithmException, InvalidKeySpecException;
 }

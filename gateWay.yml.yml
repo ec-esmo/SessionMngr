@@ -1,0 +1,147 @@
+version: '2'
+volumes:
+  # volume to store mysql database data  
+  data_sql:   
+
+
+
+services:
+    Memcached:
+      image: sameersbn/memcached:1.5.6
+      ports:
+        - 11211:11211
+#      restart: always
+
+    docker-mysql:
+      image: mysql
+#      command: --default-authentication-plugin=mysql_native_password
+      #restart: always
+      environment:
+        MYSQL_ROOT_PASSWORD: example
+        MYSQL_PASSWORD: example
+        MYSQL_DATABASE: sessionMngr
+      ports:
+        - 3307:3306     
+
+    ConfManager:
+        image: mvjatos/cm:noEWP.2
+        ports:
+          - 8080:8080      
+    
+    SessionManager:
+        image: endimion13/esmo-session-manager:0.1.4
+        environment:
+            - KEYSTORE_PATH=/resources/testKeys/keystore.jks
+            - KEY_PASS=selfsignedpass
+            - STORE_PASS=keystorepass
+            - JWT_CERT_ALIAS=selfsigned
+            - HTTPSIG_CERT_ALIAS=selfsigned
+            - SIGNING_SECRET=QjG+wP1CbAH2z4PWlWIDkxP4oRlgK2vos5/jXFfeBw8=
+            - ASYNC_SIGNATURE=true
+            - EXPIRES=5
+            - CONFIG_JSON=/resources/configurationResponse.json
+            - CONFIGURATION_MANAGER_URL=http://dss1.aegean.gr:8080
+            - MEMCACHED_HOST=172.17.0.1
+            - MEMCACHED_PORT=11211
+            - DATABASE_HOST=docker-mysql
+            - DATABASE_USER=root
+            - DATABASE_PASSWORD=example
+            - DATABASE_NAME=sessionMngr
+            - DATABASE_PORT=3306
+            
+        volumes:
+            - ~/resources:/resources
+        links:
+            - docker-mysql:mysql   
+        ports:
+          - 8090:8080
+        depends_on:
+          - docker-mysql 
+        
+
+    ACM:
+        image: acm-ms:0.0.9
+        ports:
+            - 8070:8070
+        environment:
+          - SESSION_MANAGER_URL=http://SessionManager:8080
+          - CONFIGURATION_MANAGER_URL=http://ConfManager:8080
+          - ACM_MS_NAME=ACMms001
+        depends_on:
+            - ConfManager
+            - SessionManager
+        links:
+            - ConfManager:ConfManager
+            - SessionManager:SessionManager
+    
+    
+    
+    esmoGrAP:
+        container_name: esmoGrAP
+        image: endimion13/esmo-gr-ap:0.0.4
+        environment:
+            - ASYNC_SIGNATURE=true
+            - URL_ENCODED=true
+            - KEY_PASS=selfsignedpass
+            - STORE_PASS=keystorepass
+            - JWT_CERT_ALIAS=selfsigned
+            - HTTPSIG_CERT_ALIAS=1
+            - ESMO_SERVICE_DESCRIPTION=UAegean Identity Provider
+            - ESMO_EXPOSE_URL=https://aegean.gr/esmo/gw/idp/authenticate
+            - ESMO_DEFAULT_NAME=UAegean Attribute Provider
+            - ESMO_SUPPORTED_SIG_ALGORITHMS=RSA-SHA256
+            - ESMO_SUPPORTED_ENC_ALGORITHMS=RSA-SHA256
+            - SESSION_MANAGER_URL=http://dss1.aegean.gr:8090
+            - KEYSTORE_PATH=resources/testKeys/keystore.jks
+            - CONFIGURATION_MANAGER_URL=http://dss1.aegean.gr:8080
+            - ACM_NAME=ACMms001
+            - ACM_URL=http://dss1.aegean.gr:8070
+            - AP_MS_NAME=APms001
+            - REDIRECT_JWT_SENDER=APms001
+            - REDIRECT_JWT_RECEIVER=ACMms001
+            - SUPPORTED_CLAIMS=eduPersonAffiliation,primaryAffiliation,schacHomeOrganization,mail,schacExpiryDate,mobile,eduPersonPrincipalName,eduPersonPrincipalNamePrior,displayName,sn,givenName
+            - MINEDU_TOKEN_USERNAME=uaegean
+            - MINEDU_TOKEN_PASSWORD=k6v5sS4l1s!%
+            - MINEDU_TOKEN_GRANTTYPE=password
+            - MINEDU_QUERYID_URL=https://gateway.interoperability.gr/academicId/1.0.1/queryID
+            - MINEDU_QUERY_BY_AMKA=https://gateway.interoperability.gr/academicId/1.0.1/student
+        volumes:
+            - ~/resources:/resources
+            - ./logs:/logs
+        ports:
+          - 8093:8080
+          
+          
+          
+    IdPMS:
+        image: endimion13/esmo-idp-gr:0.1.7
+        environment:
+            - KEYSTORE_PATH=/resources/testKeys/keystore.jks
+            - KEY_PASS=selfsignedpass
+            - STORE_PASS=keystorepass
+            - JWT_CERT_ALIAS=selfsigned
+            - HTTPSIG_CERT_ALIAS=1
+            - SIGNING_SECRET=QjG+wP1CbAH2z4PWlWIDkxP4oRlgK2vos5/jXFfeBw8=
+            - ASYNC_SIGNATURE=true
+            - EXPIRES=5
+            - CONFIG_JSON=/resources/configurationResponse.json
+            - ACM_ID=ACMms001
+            - SESSION_MANAGER_URL=http://dss1.aegean.gr:8090
+            - CONFIGURATION_MANAGER_URL=http://dss1.aegean.gr:8080
+            - MEMCACHED_HOST=172.17.0.1
+            - MEMCACHED_PORT=11211
+            - ESMO_SUPPORTED_SIG_ALGORITHMS=RSA
+            - ESMO_SUPPORTED_ENC_ALGORITHMS=RSA
+            - REDIRECT_JWT_SENDER=IdPms001
+            - REDIRECT_JWT_RECEIVER=ACMms001
+            - SP_CONFIG_REPOSITORY=/configEidas/
+            - EIDAS_PROPERTIES=CurrentFamilyName,CurrentGivenName,DateOfBirth,PersonIdentifier
+            - SP_COUNTRY=GR
+
+        volumes:
+            - ./resources:/resources
+            - ./webappConfig:/webappConfig
+            - ./configEidas:/configEidas
+            - ./logs:/logs
+        ports:
+          - 8092:8080

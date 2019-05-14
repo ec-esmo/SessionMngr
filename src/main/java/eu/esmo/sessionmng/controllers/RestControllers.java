@@ -167,7 +167,7 @@ public class RestControllers {
                 Set<String> requestSenderId = configServ.getMsIDfromRSAFingerprint(fingerprint);
                 if (!requestSenderId.isEmpty()) {
                     LOG.info("got jwt: " + token);
-                    LOG.info("num of SenderIds matching " + requestSenderId.size());
+                    LOG.info("num of Sender Ids matching " + requestSenderId.size());
                     JwtValidationResponse valResp = jwtServ.validateJwt(token);
                     if (valResp.getCode().equals(ResponseCode.OK)) {
                         blacklistServ.addToBlacklist(valResp.getJti());
