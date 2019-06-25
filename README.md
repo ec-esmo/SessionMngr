@@ -1,0 +1,2 @@
+# SessionMngr
+Session Manager microservice
