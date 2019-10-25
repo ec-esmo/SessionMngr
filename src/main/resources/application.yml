@@ -10,7 +10,18 @@ spring:
     hibernate:
       ddlAuto: create
     show-sql: true
-
+  server:
+    port: 
+      8443
+    ssl:
+      enabled:
+        true  
+      key-store: /resources/certificate.pfx
+      key-store-password: panathinaikos
+      key-store-type: PKCS12
+    http:
+      port:
+        8080
 ---
 spring:
   profiles: container
@@ -19,3 +30,15 @@ spring:
     username: ${DATABASE_USER}
     password: ${DATABASE_PASSWORD}
     initialize: true
+  server:
+    port: 
+      8443
+    ssl:
+      enabled:
+        true  
+      key-store: /resources/certificate.pfx
+      key-store-password: panathinaikos
+      key-store-type: PKCS12
+    http:
+      port:
+        8080

@@ -6,7 +6,9 @@
 package eu.esmo.sessionmng.model.dmo;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Set;
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -29,6 +31,9 @@ public class MngrSession implements Serializable {
 
     private String sessionId;
 
+    @Basic
+    private LocalDateTime created;
+
     //Unidirectional mapping
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "variable_id")
@@ -37,15 +42,17 @@ public class MngrSession implements Serializable {
     public MngrSession() {
     }
 
-    public MngrSession(long id, String sessionId, Set<SessionVariable> variable) {
+    public MngrSession(long id, LocalDateTime created, String sessionId, Set<SessionVariable> variable) {
         this.id = id;
         this.sessionId = sessionId;
         this.variable = variable;
+        this.created = created;
     }
 
-    public MngrSession(String sessionId, Set<SessionVariable> variable) {
+    public MngrSession(String sessionId, Set<SessionVariable> variable, LocalDateTime created) {
         this.sessionId = sessionId;
         this.variable = variable;
+        this.created = created;
     }
 
     public Set<SessionVariable> getVariable() {
@@ -70,6 +77,14 @@ public class MngrSession implements Serializable {
 
     public void setSessionId(String sessionId) {
         this.sessionId = sessionId;
+    }
+
+    public LocalDateTime getCreated() {
+        return created;
+    }
+
+    public void setCreated(LocalDateTime created) {
+        this.created = created;
     }
 
 }

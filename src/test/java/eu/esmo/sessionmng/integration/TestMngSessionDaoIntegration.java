@@ -5,25 +5,26 @@
  */
 package eu.esmo.sessionmng.integration;
 
-import javax.transaction.Transactional;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import eu.esmo.sessionmng.model.dao.SessionRepository;
 import eu.esmo.sessionmng.model.dmo.MngrSession;
 import eu.esmo.sessionmng.model.dmo.SessionVariable;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Resource;
+import javax.transaction.Transactional;
 import org.assertj.core.util.Arrays;
 import org.junit.Assert;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  *
@@ -45,7 +46,7 @@ public class TestMngSessionDaoIntegration {
         sessionRepo.save(session);
         SessionVariable var = new SessionVariable("var1", "value1");
         Set set = new HashSet<>(Arrays.asList(new SessionVariable[]{var}));
-        session = new MngrSession("ID1", set);
+        session = new MngrSession("ID1", set, LocalDateTime.now());
         sessionRepo.save(session);
     }
 
@@ -55,7 +56,7 @@ public class TestMngSessionDaoIntegration {
         final String UUID = "uuid2";
         SessionVariable var = new SessionVariable("var1", "value1");
         Set set = new HashSet<>(Arrays.asList(new SessionVariable[]{var}));
-        MngrSession expected = new MngrSession(UUID, set);
+        MngrSession expected = new MngrSession(UUID, set, LocalDateTime.now());
         sessionRepo.save(expected);
         MngrSession received = sessionRepo.findBySessionId(UUID);
         assertNotNull(received);
@@ -71,7 +72,7 @@ public class TestMngSessionDaoIntegration {
         SessionVariable var = new SessionVariable("var1", VALUE);
         SessionVariable var2 = new SessionVariable("var2", "value2");
         Set set = new HashSet<>(Arrays.asList(new SessionVariable[]{var, var2}));
-        MngrSession expected = new MngrSession(UUID, set);
+        MngrSession expected = new MngrSession(UUID, set, LocalDateTime.now());
         sessionRepo.save(expected);
 
         String received = sessionRepo.getValueByVariableAndId(UUID, VARIABLE);
@@ -94,10 +95,10 @@ public class TestMngSessionDaoIntegration {
         Set set = new HashSet<>(Arrays.asList(new SessionVariable[]{var}));
         Set set2 = new HashSet<>(Arrays.asList(new SessionVariable[]{var2}));
 
-        MngrSession first = new MngrSession(UUID1, set);
+        MngrSession first = new MngrSession(UUID1, set, LocalDateTime.now());
         sessionRepo.save(first);
 
-        MngrSession second = new MngrSession(UUID2, set2);
+        MngrSession second = new MngrSession(UUID2, set2, LocalDateTime.now());
         sessionRepo.save(second);
 
         String received = sessionRepo.getValueByVariableAndId(UUID1, VARIABLE_NAME);
@@ -112,7 +113,7 @@ public class TestMngSessionDaoIntegration {
         sessionRepo.save(session);
         SessionVariable var = new SessionVariable("var1", "value1");
         Set set = new HashSet<>(Arrays.asList(new SessionVariable[]{var}));
-        session = new MngrSession("ID1", set);
+        session = new MngrSession("ID1", set, LocalDateTime.now());
         sessionRepo.save(session);
 
         Map<String, String> variableMap = new HashMap();
@@ -132,7 +133,7 @@ public class TestMngSessionDaoIntegration {
         MngrSession session = new MngrSession();
         SessionVariable var = new SessionVariable("var1", "value1");
         Set set = new HashSet<>(Arrays.asList(new SessionVariable[]{var}));
-        session = new MngrSession("ID1", set);
+        session = new MngrSession("ID1", set, LocalDateTime.now());
         sessionRepo.save(session);
         assertEquals(sessionRepo.getSessionIdByVariableAndValue("var1", "value1").get().iterator().next(), "ID1");
     }
@@ -143,7 +144,7 @@ public class TestMngSessionDaoIntegration {
         MngrSession session = new MngrSession();
         SessionVariable var = new SessionVariable("var1", "value1");
         Set set = new HashSet<>(Arrays.asList(new SessionVariable[]{var}));
-        session = new MngrSession("ID1", set);
+        session = new MngrSession("ID1", set, LocalDateTime.now());
         sessionRepo.save(session);
         assertEquals(sessionRepo.getSessionIdByVariableAndValue("var1", "value2"), Optional.empty());
     }
@@ -154,7 +155,7 @@ public class TestMngSessionDaoIntegration {
         MngrSession session = new MngrSession();
         SessionVariable var = new SessionVariable("var2", "value1");
         Set set = new HashSet<>(Arrays.asList(new SessionVariable[]{var}));
-        session = new MngrSession("ID1", set);
+        session = new MngrSession("ID1", set, LocalDateTime.now());
         sessionRepo.save(session);
         assertEquals(sessionRepo.getSessionIdByVariableAndValue("var1", "value1"), Optional.empty());
     }
@@ -165,13 +166,13 @@ public class TestMngSessionDaoIntegration {
         MngrSession session = new MngrSession();
         SessionVariable var = new SessionVariable("var1", "value1");
         Set set = new HashSet<>(Arrays.asList(new SessionVariable[]{var}));
-        session = new MngrSession("ID1", set);
+        session = new MngrSession("ID1", set, LocalDateTime.now());
         sessionRepo.save(session);
 
         MngrSession session2 = new MngrSession();
         SessionVariable var2 = new SessionVariable("var1", "value1");
         Set set2 = new HashSet<>(Arrays.asList(new SessionVariable[]{var2}));
-        session2 = new MngrSession("ID2", set2);
+        session2 = new MngrSession("ID2", set2, LocalDateTime.now());
         sessionRepo.save(session2);
 
         Assert.assertTrue(sessionRepo.getSessionIdByVariableAndValue("var1", "value1").get().contains("ID1"));

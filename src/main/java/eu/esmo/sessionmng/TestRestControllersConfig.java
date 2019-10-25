@@ -7,11 +7,9 @@ package eu.esmo.sessionmng;
 
 import eu.esmo.sessionmng.service.HttpSignatureService;
 import eu.esmo.sessionmng.service.KeyStoreService;
-import eu.esmo.sessionmng.service.MSConfigurationService;
 import eu.esmo.sessionmng.service.ParameterService;
 import eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl;
 import eu.esmo.sessionmng.service.impl.KeyStoreServiceImpl;
-import eu.esmo.sessionmng.service.impl.MSConfigurationsServiceImplSTUB;
 import java.io.IOException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -48,7 +46,7 @@ public class TestRestControllersConfig {
     @Primary
     public HttpSignatureService sigServ() throws InvalidKeySpecException, IOException, KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, CertificateException {
 //        MSConfigurationService msConfigServ = new MSConfigurationsServiceImplSTUB(paramServ);
-        return new HttpSignatureServiceImpl(DigestUtils.sha256Hex(keyStoreService().getHttpSigPublicKey().getEncoded()),keyStoreService().getHttpSigningKey());
+        return new HttpSignatureServiceImpl(DigestUtils.sha256Hex(keyStoreService().getHttpSigPublicKey().getEncoded()), keyStoreService().getHttpSigningKey());
     }
 
     @Bean
@@ -61,7 +59,9 @@ public class TestRestControllersConfig {
         Mockito.when(paramServ().getProperty("STORE_PASS")).thenReturn("keystorepass");
         Mockito.when(paramServ().getProperty("JWT_CERT_ALIAS")).thenReturn("selfsigned");
         Mockito.when(paramServ().getProperty("HTTPSIG_CERT_ALIAS")).thenReturn("1");
+//        Mockito.when(paramServ().getProperty("HTTPSIG_CERT_ALIAS")).thenReturn("selfsigned");
         Mockito.when(paramServ().getProperty("ASYNC_SIGNATURE")).thenReturn("true");
+        Mockito.when(paramServ().getProperty("CONFIGURATION_MANAGER_URL")).thenReturn("http://localhost:8080");
         return new KeyStoreServiceImpl(paramServ());
     }
 }

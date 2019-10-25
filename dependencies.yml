@@ -20,8 +20,17 @@ services:
       ports:
         - 3307:3306     
 
-    conf:
-      image: endimion13/test-conf:0.0.1  
-      ports:
-        - 8070:8080  
-    
+    ConfManager:
+        image: mvjatos/cm:0.0.5
+        environment:
+            - KEYSTORE_PATH=/resources/testKeys/keystore.jks
+            - KEY_PASS=selfsignedpass
+            - STORE_PASS=keystorepass
+            - HTTPSIG_CERT_ALIAS=selfsigned
+            - SIGNING_SECRET=QjG+wP1CbAH2z4PWlWIDkxP4oRlgK2vos5/jXFfeBw8=
+            - ASYNC_SIGNATURE=true
+        ports:
+          - 8080:8080      
+        volumes:
+          - /home/nikos/esmo/confResources:/resources
+

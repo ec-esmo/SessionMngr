@@ -17,6 +17,7 @@ import eu.esmo.sessionmng.service.HttpSignatureService;
 import eu.esmo.sessionmng.service.SessionService;
 import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -150,7 +151,7 @@ public class TestRestControllers {
 
     @Test
     public void testUpdateSessionDataExistingSession() throws Exception {
-        MngrSession existingSession = new MngrSession("sessionId", new HashSet());
+        MngrSession existingSession = new MngrSession("sessionId", new HashSet(), LocalDateTime.now());
         when(sessionRep.findBySessionId("sessionId")).thenReturn(existingSession);
 
         Date date = new Date();
@@ -222,10 +223,10 @@ public class TestRestControllers {
 
     @Test
     public void testUpdateSessionDataExistingSessionNoVariableName() throws Exception {
-        MngrSession existingSession = new MngrSession("sessionId", new HashSet());
+        MngrSession existingSession = new MngrSession("sessionId", new HashSet(), LocalDateTime.now());
         when(sessionRep.findBySessionId("sessionId")).thenReturn(existingSession);
 
-       Date date = new Date();
+        Date date = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z", Locale.US);
         formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
         String nowDate = formatter.format(date);
@@ -342,7 +343,7 @@ public class TestRestControllers {
 
         doThrow(new ArithmeticException()).when(sessionServ).getSessionIdByVariableAndValue("varName", "varValue");
 
-       Date date = new Date();
+        Date date = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z", Locale.US);
         formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
         String nowDate = formatter.format(date);
@@ -392,10 +393,10 @@ public class TestRestControllers {
 
     @Test
     public void testUpdateWholeSessionDataExistingSessionNoSigRequired_FakeSM() throws Exception {
-        MngrSession existingSession = new MngrSession("sessionId", new HashSet());
+        MngrSession existingSession = new MngrSession("sessionId", new HashSet(), LocalDateTime.now());
         when(sessionRep.findBySessionId("sessionId")).thenReturn(existingSession);
 
-       Date date = new Date();
+        Date date = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z", Locale.US);
         formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
         String nowDate = formatter.format(date);

@@ -9,6 +9,7 @@ import eu.esmo.sessionmng.model.dmo.MngrSession;
 import eu.esmo.sessionmng.model.dmo.SessionVariable;
 import eu.esmo.sessionmng.service.SessionService;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import javax.transaction.Transactional;
@@ -42,11 +43,11 @@ public class TestSessionServiceIntegration {
         MngrSession session = new MngrSession();
         SessionVariable var = new SessionVariable("var1", "value1");
         Set set = new HashSet<>(Arrays.asList(new SessionVariable[]{var}));
-        session = new MngrSession("ID1", set);
+        session = new MngrSession("ID1", set, LocalDateTime.now());
         sessionServ.save(session);
 
         Assert.assertTrue(sessionServ.getSessionIdByVariableAndValue("var1", "value1").get().contains("ID1"));
-        sessionServ.replaceSession("ID1",  "{ \"key1\":\"value1\"}");
+        sessionServ.replaceSession("ID1", "{ \"key1\":\"value1\"}");
         assertEquals(sessionServ.getValueByVariableAndId("ID1", "var1"), null);
         assertEquals(sessionServ.getValueByVariableAndId("ID1", "key1"), "value1");
     }

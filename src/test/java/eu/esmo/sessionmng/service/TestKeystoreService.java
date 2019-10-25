@@ -99,8 +99,10 @@ public class TestKeystoreService {
 
         inputPKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxEaxtwgIlJlJ4/4sIXkd6vxDzKFxhQMoSV6jJsAxE5EnixdE9RY6p7ieQ0OweA9+TEaj+yugbWo/nR9TFmBpr5R0JC9A4XZ9uzGmPKlBCyRDAGuOA2Sp0KGkJHSQ5/s7IHujr5LZdo1v09QvfHPtSe+3+fzFhP/N67F20PO4n2dlE3tOEFdfZpNS7kLNQpQ+kRd6iUxDu2JwC+VfTV0SJsre8X+XtjrZDKJiq170JTpo1xcspq7IUveYaDTrDuCNpGSxKXm647+1wmUkCBdfcXB5w64UV/XW3vpis/EmgxhzTtMUG2Tj3M0BpSqNE5TWE6HP8DLscL1LlYLa4UBZRQIDAQAB";
         System.out.println(keyServ.getFingerPrintFromStringPubKey(inputPKey.replaceAll(" ", "")));
-
         assertEquals("29967df09f05d915400f1df2127c4887ec3529c616908a492fd433d95e8bddaf", keyServ.getFingerPrintFromStringPubKey(inputPKey.replaceAll(" ", "")));
+
+        inputPKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAkvZf4Lm7dqp17tk/ICI+cCilI3yLfQraHy4pxFYDNn29l9eHnYRFnN9jBKKvOzSxf2zQkigNcHhIi96s7G4/xPL3rVaYepp/xfCKn5vkZeqg1PFOE0HqDKCnIbLxNdnHYDLICQrd1PRTdFHnwRpLouF6B3PCZpQL5XxX3WFzg2KZ2U1NIdVLJjWb3AY1SJ4kIYAOIwn6AZQPum4i5G4M9QQj3KGl164007TUx27rxzBVILpm+knxYjUiipqZ/5kiDdTxYBPR0qDVIhSl3hk9RhSI95s7unrll8rb3E8w1ORrfTQNg1UlpGgww3jZi3GLScLEK3ghwg5H5gL/2SSiEwIDAQAB";
+        System.out.println(keyServ.getFingerPrintFromStringPubKey(inputPKey.replaceAll(" ", "")));
 
     }
 

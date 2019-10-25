@@ -10,6 +10,7 @@ import eu.esmo.sessionmng.model.dmo.MngrSession;
 import eu.esmo.sessionmng.model.dmo.SessionVariable;
 import eu.esmo.sessionmng.service.impl.SessionServiceImpl;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -46,7 +47,7 @@ public class TestSessionService {
         SessionVariable v2 = new SessionVariable("var2", "val2");
         variables.add(v2);
         variables.add(v1);
-        MngrSession validSession = new MngrSession("sessionId", variables);
+        MngrSession validSession = new MngrSession("sessionId", variables, LocalDateTime.now());
 
         when(sessionRepo.findBySessionId(VALID_SESSION)).thenReturn(validSession);
         when(sessionRepo.findBySessionId(INVALID_SESSION)).thenReturn(null);
@@ -82,7 +83,7 @@ public class TestSessionService {
 
     @Test(expected = ChangeSetPersister.NotFoundException.class)
     public void testReplaceSessionVarialbeErrorSession() throws ChangeSetPersister.NotFoundException, IOException {
-        sessionServ.replaceSession(INVALID_SESSION,  "");
+        sessionServ.replaceSession(INVALID_SESSION, "");
     }
 
 //    @Test
@@ -95,11 +96,10 @@ public class TestSessionService {
 //        variables.add(v1);
 //        MngrSession replacableSession = new MngrSession("replacableSession", variables);
 //        when(sessionRepo.findBySessionId("replacableSession")).thenReturn(replacableSession);
-//        
+//
 //        assertEquals(sessionServ.getValueByVariableAndId("replacableSession", "var1"),"val1");
 //        sessionServ.replaceSession("replacableSession", "data", "thisIsReplaced");
 //        assertEquals(sessionServ.getValueByVariableAndId("replacableSession", "var1"),null);
-//        
+//
 //    }
-
 }

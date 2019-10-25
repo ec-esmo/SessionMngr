@@ -18,7 +18,9 @@ import eu.esmo.sessionmng.model.dmo.MngrSession;
 import eu.esmo.sessionmng.model.dmo.SessionVariable;
 import eu.esmo.sessionmng.service.SessionService;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -27,8 +29,10 @@ import javax.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
+import realAES.realAES;
 
 @Transactional
 @Service
@@ -36,16 +40,25 @@ public class SessionServiceImpl implements SessionService {
 
 //    @Autowired
     private final SessionRepository sessionRepo;
+    private final realAES aesEncrypt;
+    private final String decryptedKey;
 
     private final static Logger LOG = LoggerFactory.getLogger(SessionServiceImpl.class);
 
     @Autowired
+    private Environment env;
+
+    @Autowired
     public SessionServiceImpl(SessionRepository sessionRepo) {
         this.sessionRepo = sessionRepo;
+        this.aesEncrypt = new realAES();
+        String ecryptedKey = env.getProperty("encrypted.key");
+        decryptedKey = aesEncrypt.aesDecrypt(ecryptedKey, "SieBcx3RlfgJ3b5e5SkZTrHPkKDFEfYSsJ/N1UbCtFU=");
     }
 
     @Override
     public List<MngrSession> findAll() {
+
         return sessionRepo.findAll();
     }
 
@@ -99,7 +112,7 @@ public class SessionServiceImpl implements SessionService {
     @Override
     @Transactional
     public void makeNewSession(String sessionId) {
-        MngrSession session = new MngrSession(sessionId, new HashSet());
+        MngrSession session = new MngrSession(sessionId, new HashSet(), LocalDateTime.now());
         this.save(session);
     }
 
@@ -134,7 +147,7 @@ public class SessionServiceImpl implements SessionService {
     public void replaceSession(String sessionId, String newValuesMap) throws ChangeSetPersister.NotFoundException, IOException {
         if (sessionRepo.findBySessionId(sessionId) != null) {
             this.sessionRepo.deleteBySessionId(sessionId);
-            MngrSession session = new MngrSession(sessionId, new HashSet());
+            MngrSession session = new MngrSession(sessionId, new HashSet(), LocalDateTime.now());
             ObjectMapper mapper = new ObjectMapper();
             Map<String, String> map = mapper.readValue(newValuesMap, Map.class);
 
@@ -142,7 +155,7 @@ public class SessionServiceImpl implements SessionService {
                 SessionVariable newVariable;
                 try {
                     if (entry.getValue() instanceof String) {
-                        newVariable = new SessionVariable(entry.getKey(),entry.getValue());
+                        newVariable = new SessionVariable(entry.getKey(), entry.getValue());
                     } else {
                         newVariable = new SessionVariable(entry.getKey(), mapper.writeValueAsString(entry.getValue()));
                     }
@@ -157,6 +170,37 @@ public class SessionServiceImpl implements SessionService {
             throw new ChangeSetPersister.NotFoundException();
         }
 
+    }
+
+    private String decryptData(String encryptedData) {
+        return this.aesEncrypt.aesDecrypt(encryptedData, decryptedKey);
+    }
+
+    private String encryptData(String plaintextData) {
+        return this.aesEncrypt.aesEncrypt(plaintextData, decryptedKey);
+    }
+
+    public MngrSessionTO encryptMngrSessionTO(MngrSessionTO session) {
+        MngrSessionTO encrypted = new MngrSessionTO();
+        encrypted.setSessionId(session.getSessionId());
+        Map<String, String> encVariables = new HashMap<>();
+        ((Map<String, String>) session.getSessionVariables()).entrySet()
+                .stream().forEach(entry -> {
+                    encVariables.put(encryptData(entry.getKey()), encryptData(entry.getValue()));
+                });
+        encrypted.setSessionVariables(encVariables);
+        return encrypted;
+    }
+
+    public MngrSessionTO decryptMngrSessionTO(MngrSessionTO encrypted) {
+        MngrSessionTO session = new MngrSessionTO();
+        session.setSessionId(decryptData(encrypted.getSessionId()));
+        Map<String, String> decVariables = new HashMap();
+        ((Map<String, String>) encrypted.getSessionVariables()).entrySet().forEach(entry -> {
+            decVariables.put(decryptData(entry.getKey()), decryptData(entry.getValue()));
+        });
+        session.setSessionVariables(decVariables);
+        return session;
     }
 
 }
