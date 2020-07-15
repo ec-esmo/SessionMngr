@@ -22,12 +22,13 @@
                 <Env.DATABASE_USER>root</Env.DATABASE_USER>
                 <Env.DATABASE_PASSWORD>example</Env.DATABASE_PASSWORD>
                 <Env.CONFIG_JSON>/home/nikos/NetBeansProjects/session-mng/src/main/resources/configurationResponse.json</Env.CONFIG_JSON>
-                <Env.CONFIGURATION_MANAGER_URL>http://5.79.83.118:8080</Env.CONFIGURATION_MANAGER_URL>
-                <Env.KEYSTORE_PATH>/home/nikos/NetBeansProjects/esmo.gr.idp/src/test/resources/testKeys/keystore.jks</Env.KEYSTORE_PATH>
+                <Env.CONFIGURATION_MANAGER_URL>http://esmo-gateway.eu:8080</Env.CONFIGURATION_MANAGER_URL>
+                <Env.KEYSTORE_PATH>/media/nikos/LENOVO/backup2/nikos/NetBeansProjects/session-mng/src/test/resources/testKeys/keystore.jks</Env.KEYSTORE_PATH>
                 <Env.KEY_PASS>selfsignedpass</Env.KEY_PASS>
                 <Env.STORE_PASS>keystorepass</Env.STORE_PASS>
                 <Env.JWT_CERT_ALIAS>selfsigned</Env.JWT_CERT_ALIAS>
                 <Env.HTTPSIG_CERT_ALIAS>1</Env.HTTPSIG_CERT_ALIAS>
+                <skipTests>true</skipTests>
             </properties>
         </action>
         <action>
@@ -38,6 +39,10 @@
             <goals>
                 <goal>test</goal>
             </goals>
+            <properties>
+                <Env.MEMCACHED_HOST>localhost</Env.MEMCACHED_HOST>
+                <Env.MEMCACHED_PORT>11111</Env.MEMCACHED_PORT>
+            </properties>
         </action>
         <action>
             <actionName>test.single</actionName>
@@ -50,6 +55,8 @@
             </goals>
             <properties>
                 <test>${packageClassName}</test>
+                <Env.MEMCACHED_HOST>localhost</Env.MEMCACHED_HOST>
+                <Env.MEMCACHED_PORT>11111</Env.MEMCACHED_PORT>
                 
             </properties>
         </action>
@@ -64,6 +71,24 @@
             </goals>
             <properties>
                 <Env.server.http.port>8080</Env.server.http.port>
+            </properties>
+        </action>
+        <action>
+            <actionName>debug.test.single</actionName>
+            <packagings>
+                <packaging>*</packaging>
+            </packagings>
+            <goals>
+                <goal>test-compile</goal>
+                <goal>surefire:test</goal>
+            </goals>
+            <properties>
+                <test>${packageClassName}</test>
+                <forkMode>once</forkMode>
+                <maven.surefire.debug>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address}</maven.surefire.debug>
+                <jpda.listen>true</jpda.listen>
+                <Env.MEMCACHED_HOST>localhost</Env.MEMCACHED_HOST>
+                <Env.MEMCACHED_PORT>11111</Env.MEMCACHED_PORT>
             </properties>
         </action>
     </actions>

@@ -46,7 +46,7 @@ public class HttpSignatureFilter extends GenericFilterBean {
     private final Logger Logger = LoggerFactory.getLogger(HttpSignatureFilter.class);
 
     @Autowired
-    public HttpSignatureFilter(KeyStoreService keysServ, MSConfigurationService confServ) throws KeyStoreException, UnsupportedEncodingException, NoSuchAlgorithmException, UnrecoverableKeyException, InvalidKeySpecException, IOException{
+    public HttpSignatureFilter(KeyStoreService keysServ, MSConfigurationService confServ) throws KeyStoreException, UnsupportedEncodingException, NoSuchAlgorithmException, UnrecoverableKeyException, InvalidKeySpecException, IOException {
         this.sigServ = new HttpSignatureServiceImpl(DigestUtils.sha256Hex(keysServ.getHttpSigPublicKey().getEncoded()), keysServ.getHttpSigningKey());
         this.confServ = confServ;
     }

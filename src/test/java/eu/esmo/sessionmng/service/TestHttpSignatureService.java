@@ -75,7 +75,7 @@ public class TestHttpSignatureService {
 
     @Test
     public void testSignature() throws IOException, InvalidKeySpecException, KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException {
-        HttpSignatureService httpSigServ = new HttpSignatureServiceImpl(DigestUtils.sha256Hex(keyServ.getHttpSigPublicKey().getEncoded()),keyServ.getHttpSigningKey() );
+        HttpSignatureService httpSigServ = new HttpSignatureServiceImpl(DigestUtils.sha256Hex(keyServ.getHttpSigPublicKey().getEncoded()), keyServ.getHttpSigningKey());
         System.out.println(httpSigServ.getFakeSignature());
         assertEquals(true, true);
     }
@@ -88,7 +88,7 @@ public class TestHttpSignatureService {
         when(req.getHeader("authorization")).thenReturn("Signature keyId=\"06f336b68ba82890576f92b7d564c709cea0c0f318a09b4fbc5a502a7c93f926\",algorithm=\"rsa-sha256\",headers=\"(request-target)\",signature=\"XlSBIdp8aiElD70VqwLpCjWulg0Pk3Z7ipMMV1bO8Jls6d8sYAu+3BDu/gIzrycc/k5LA473hH6ymVDcQWEl4bVmLS3tll5fciyMsbPFlYELsW2tpw466NlqvMxRdwMheWQC3JPv6WzISdforc2gh6yJoRFtKGi4VaP6EwS80lLgFceoRNJn2c1Z7hpe/9norY01CVZNwX/lCViHkXHxmjcYD7MYdyOxg4QGI9isG7HUPZJlVV3zRj7EOG7iEIG0p+esjU6H07C5s2wk1o7+ywDam7mXMufG90rrXN+F1tPpu/K1wjSmtENUgKOo5RjzHtBXLT8I1vDhv0sThTm+7g==\"");
 
         MSConfigurationService msConfigServ = new MSConfigurationsServiceImplSTUB(paramServ);
-        HttpSignatureService httpSigServ = new HttpSignatureServiceImpl(DigestUtils.sha256Hex(keyServ.getHttpSigPublicKey().getEncoded()),keyServ.getHttpSigningKey());
+        HttpSignatureService httpSigServ = new HttpSignatureServiceImpl(DigestUtils.sha256Hex(keyServ.getHttpSigPublicKey().getEncoded()), keyServ.getHttpSigningKey());
         assertEquals(httpSigServ.verifySignature(req, msConfigServ), HttpResponseEnum.HEADER_MISSING);
 
     }
@@ -106,7 +106,7 @@ public class TestHttpSignatureService {
         when(req.getHeader("x-request-id")).thenReturn("x-request-id");
 
         MSConfigurationService msConfigServ = new MSConfigurationsServiceImplSTUB(paramServ);
-        HttpSignatureService httpSigServ = new HttpSignatureServiceImpl(DigestUtils.sha256Hex(keyServ.getHttpSigPublicKey().getEncoded()),keyServ.getHttpSigningKey());
+        HttpSignatureService httpSigServ = new HttpSignatureServiceImpl(DigestUtils.sha256Hex(keyServ.getHttpSigPublicKey().getEncoded()), keyServ.getHttpSigningKey());
         assertEquals(httpSigServ.verifySignature(req, msConfigServ), HttpResponseEnum.HEADER_MISSING);
     }
 
@@ -127,7 +127,7 @@ public class TestHttpSignatureService {
         String requestId = UUID.randomUUID().toString();
         String[] requiredHeaders = {"(request-target)", "host", "original-date", "digest", "x-request-id"};
 
-        byte[] digest = MessageDigest.getInstance("SHA-256").digest("var1=value1".getBytes());
+        byte[] digest = MessageDigest.getInstance("SHA-256").digest("".getBytes());
         signatureHeaders.put("digest", "SHA-256=" + new String(Base64.encodeBase64(digest)));
         signatureHeaders.put("Accept", "*/*");
         signatureHeaders.put("Content-Length", "18");
@@ -163,10 +163,10 @@ public class TestHttpSignatureService {
         when(req.getRequestURI()).thenReturn(uri);
         when(req.getInputStream()).thenReturn(
                 new DelegatingServletInputStream(
-                        new ByteArrayInputStream("var1=value1".getBytes(StandardCharsets.UTF_8))));
+                        new ByteArrayInputStream("".getBytes(StandardCharsets.UTF_8))));
         System.out.println(signed.toString());
         MSConfigurationService msConfigServ = new MSConfigurationsServiceImplSTUB(paramServ);
-        HttpSignatureService httpSigServ = new HttpSignatureServiceImpl(DigestUtils.sha256Hex(keyServ.getHttpSigPublicKey().getEncoded()),keyServ.getHttpSigningKey());
+        HttpSignatureService httpSigServ = new HttpSignatureServiceImpl(DigestUtils.sha256Hex(keyServ.getHttpSigPublicKey().getEncoded()), keyServ.getHttpSigningKey());
         assertEquals(httpSigServ.verifySignature(req, msConfigServ), HttpResponseEnum.AUTHORIZED);
 
     }
@@ -229,7 +229,7 @@ public class TestHttpSignatureService {
                         new ByteArrayInputStream(updateString.getBytes(StandardCharsets.UTF_8))));
         System.out.println(signed.toString());
         MSConfigurationService msConfigServ = new MSConfigurationsServiceImplSTUB(paramServ);
-        HttpSignatureService httpSigServ = new HttpSignatureServiceImpl(DigestUtils.sha256Hex(keyServ.getHttpSigPublicKey().getEncoded()),keyServ.getHttpSigningKey());
+        HttpSignatureService httpSigServ = new HttpSignatureServiceImpl(DigestUtils.sha256Hex(keyServ.getHttpSigPublicKey().getEncoded()), keyServ.getHttpSigningKey());
         assertEquals(httpSigServ.verifySignature(req, msConfigServ), HttpResponseEnum.AUTHORIZED);
 
     }
@@ -291,14 +291,14 @@ public class TestHttpSignatureService {
         System.out.println(signed.toString());
 
         MSConfigurationService msConfigServ = new MSConfigurationsServiceImplSTUB(paramServ);
-        HttpSignatureService httpSigServ = new HttpSignatureServiceImpl(DigestUtils.sha256Hex(keyServ.getHttpSigPublicKey().getEncoded()),keyServ.getHttpSigningKey());
+        HttpSignatureService httpSigServ = new HttpSignatureServiceImpl(DigestUtils.sha256Hex(keyServ.getHttpSigPublicKey().getEncoded()), keyServ.getHttpSigningKey());
         assertEquals(httpSigServ.verifySignature(req, msConfigServ), HttpResponseEnum.AUTHORIZED);
 
     }
 
     @Test
     public void testsReceivedSignature() throws KeyStoreException, IOException, FileNotFoundException, NoSuchAlgorithmException, CertificateException, UnrecoverableKeyException, InvalidKeySpecException, UnsupportedEncodingException, UnrecoverableKeyException, NoSuchAlgorithmException {
-        String[] requiredHeaders = { "host", "original-date", "digest", "x-request-id"};
+        String[] requiredHeaders = {"host", "original-date", "digest", "x-request-id"};
         String signature = "Signature keyId=\"7a9ba747ab5ac50e640a07d90611ce612b7bde775457f2e57b804517a87c813b\",algorithm=\"rsa-sha256\",headers=\"(request-target) host original-date digest x-request-id\",signature=\"FNr3vmvWZiTNGc8NFs7UtTkbQn621Jgm3GSCVYkL+Mn7u2Mo6IQ5fJH6sr3j84zfi+Bis2a4xs4Mcwhj2RJC2QEgzGGTzNOwM2L1hcDH+9fBItZJQB1QIkgQ83G7X5bKgmYO6zzTdrhiCsOsPIwcLVDgv+5Oq5Q8j4vvc+LOgmQ=\"";
         String keyId = "7a9ba747ab5ac50e640a07d90611ce612b7bde775457f2e57b804517a87c813b";
         ClassLoader classLoader = getClass().getClassLoader();
@@ -315,7 +315,7 @@ public class TestHttpSignatureService {
         final String method = "GET";
         final String uri = "/sm/generateToken?sessionId=9c024bf6-6f86-48d2-b531-3f9e684bdcf8&sender=ACMms001&receiver=SAMLms_0001&data=extraData";
         MSConfigurationService msConfigServ = new MSConfigurationsServiceImplSTUB(paramServ);
-        HttpSignatureService httpSigServ = new HttpSignatureServiceImpl(DigestUtils.sha256Hex(keyServ.getHttpSigPublicKey().getEncoded()),keyServ.getHttpSigningKey());
+        HttpSignatureService httpSigServ = new HttpSignatureServiceImpl(DigestUtils.sha256Hex(keyServ.getHttpSigPublicKey().getEncoded()), keyServ.getHttpSigningKey());
         HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
         when(req.getHeader("authorization")).thenReturn(signature);
         when(req.getHeaderNames()).thenReturn(Collections.enumeration(Arrays.asList(requiredHeaders)));

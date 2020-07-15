@@ -34,7 +34,7 @@ public class MemCacheConfig {
     private ParameterService paramServ;
 
     private final static Logger log = LoggerFactory.getLogger(MemCacheConfig.class);
-    private String _memcachedHost = "172.17.0.1";// when running in docker bridge mode the address of memchached becomse the the 
+    private String _memcachedHost = "172.17.0.1";// when running in docker bridge mode the address of memchached becomse the the
     // default brider for more info look at https://stackoverflow.com/questions/24319662/from-inside-of-a-docker-container-how-do-i-connect-to-the-localhost-of-the-mach
     //"127.0.0.1"; //Machine where memcached is running
     private int _memcachedPort = 11211;    //Port on which memcached is running
@@ -49,7 +49,7 @@ public class MemCacheConfig {
         } catch (NumberFormatException e) {
             log.error(e.getMessage());
             this._memcachedPort = 11211;
-            this._memcachedHost="172.17.0.1";
+            this._memcachedHost = "172.17.0.1";
         }
 
     }
@@ -73,7 +73,7 @@ public class MemCacheConfig {
         }
 
         SSMCache dummy = createNewCache(_memcachedHost, _memcachedPort,
-                "dummyCache", 0);
+                "sessionCache", 0);
         cacheList.add(dummy);
         //Adding cache list to cache manager
         ssmCacheManager.setCaches(cacheList);

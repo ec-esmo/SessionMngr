@@ -5,18 +5,18 @@
  */
 package eu.esmo.sessionmng.controllers;
 
+import eu.esmo.sessionmng.enums.ResponseCode;
 import eu.esmo.sessionmng.factory.MngrSessionFactory;
 import eu.esmo.sessionmng.factory.SessionMngrResponseFactory;
 import eu.esmo.sessionmng.model.TO.MngrSessionTO;
-import eu.esmo.sessionmng.service.BlackListService;
-import eu.esmo.sessionmng.service.JwtService;
-import eu.esmo.sessionmng.service.ParameterService;
-import eu.esmo.sessionmng.service.SessionService;
 import eu.esmo.sessionmng.pojo.JwtValidationResponse;
-import eu.esmo.sessionmng.enums.ResponseCode;
 import eu.esmo.sessionmng.pojo.SessionMngrResponse;
 import eu.esmo.sessionmng.pojo.UpdateDataRequest;
+import eu.esmo.sessionmng.service.BlackListService;
+import eu.esmo.sessionmng.service.JwtService;
 import eu.esmo.sessionmng.service.MSConfigurationService;
+import eu.esmo.sessionmng.service.ParameterService;
+import eu.esmo.sessionmng.service.SessionService;
 import io.swagger.annotations.ApiOperation;
 import java.io.IOException;
 import java.util.HashMap;
@@ -91,7 +91,7 @@ public class RestControllers {
             + "then the whole data stored in this session will be replaced with the passed dataObject, in that case the dataObject must be a dictionary"
             + "containing paris of key, values e.g. {key1:value1, key2:value2} with keys and values strings (the latter may be json)"
             + " Responds by setting code = OK ", response = SessionMngrResponse.class)
-    public SessionMngrResponse updateSessionData(@RequestBody(required=false) UpdateDataRequest updateRequest, HttpServletRequest req) {
+    public SessionMngrResponse updateSessionData(@RequestBody(required = false) UpdateDataRequest updateRequest, HttpServletRequest req) {
 
         String sessionId = updateRequest.getSessionId();
         String variableName = updateRequest.getVariableName();
@@ -174,7 +174,9 @@ public class RestControllers {
                     }
                     LOG.info("Receiver " + valResp.getReceiver());
                     if (!requestSenderId.contains(valResp.getReceiver())) {
-                        requestSenderId.stream().forEach( matchingId ->{LOG.info("matching id from fingerprint" + matchingId);} );
+                        requestSenderId.stream().forEach(matchingId -> {
+                            LOG.info("matching id from fingerprint" + matchingId);
+                        });
                         valResp.setError("calcualted matching sender ids do not include the jwt recipient! " + valResp.getReceiver());
                     }
                     return SessionMngrResponseFactory.makeSessionMngrResponseFromValidationResponse(valResp);

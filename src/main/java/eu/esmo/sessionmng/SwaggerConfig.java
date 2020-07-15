@@ -36,8 +36,8 @@ public class SwaggerConfig {
 
     private ApiInfo apiInfo() {
         return new ApiInfo(
-                "ESMO GW Session Manager API",
-                "The API for handling Session and JWT generation inside the ESMO GW",
+                "SEAL GW Session Manager API",
+                "The API for handling Session and JWT generation inside the SEAL GW",
                 "API TOS",
                 "Terms of service",
                 new Contact("Nikos Triantafyllou", "www.example.com", "triantafyllou.ni@aegean.gr"),

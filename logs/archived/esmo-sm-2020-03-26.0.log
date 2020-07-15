@@ -1,0 +1,472 @@
+2020-03-26 07:44:18,518 INFO org.springframework.boot.StartupInfoLogger [main] Starting SessionMngApplication on nikos with PID 20194 (/media/nikos/LENOVO/backup2/nikos/NetBeansProjects/session-mng/target/classes started by nikos in /media/nikos/LENOVO/backup2/nikos/NetBeansProjects/session-mng)
+2020-03-26 07:44:18,551 INFO org.springframework.boot.SpringApplication [main] No active profile set, falling back to default profiles: default
+2020-03-26 07:44:18,666 INFO org.springframework.context.support.AbstractApplicationContext [main] Refreshing org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext@7f36662c: startup date [Thu Mar 26 07:44:18 EET 2020]; root of context hierarchy
+2020-03-26 07:44:22,083 INFO org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker [main] Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$731dc9e6] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2020-03-26 07:44:23,433 INFO org.springframework.boot.web.embedded.tomcat.TomcatWebServer [main] Tomcat initialized with port(s): 8443 (http) 8090 (http)
+2020-03-26 07:44:23,463 INFO org.apache.juli.logging.DirectJDKLog [main] Initializing ProtocolHandler ["http-nio-8443"]
+2020-03-26 07:44:23,479 INFO org.apache.juli.logging.DirectJDKLog [main] Initializing ProtocolHandler ["http-nio-8090"]
+2020-03-26 07:44:23,491 INFO org.apache.juli.logging.DirectJDKLog [main] Using a shared selector for servlet write/read
+2020-03-26 07:44:23,494 INFO org.apache.juli.logging.DirectJDKLog [main] Starting service [Tomcat]
+2020-03-26 07:44:23,497 INFO org.apache.juli.logging.DirectJDKLog [main] Starting Servlet Engine: Apache Tomcat/8.5.34
+2020-03-26 07:44:23,515 INFO org.apache.juli.logging.DirectJDKLog [localhost-startStop-1] The APR based Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: [/usr/java/packages/lib/amd64:/usr/lib/x86_64-linux-gnu/jni:/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu:/usr/lib/jni:/lib:/usr/lib]
+2020-03-26 07:44:23,716 INFO org.apache.juli.logging.DirectJDKLog [localhost-startStop-1] Initializing Spring embedded WebApplicationContext
+2020-03-26 07:44:23,717 INFO org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext [localhost-startStop-1] Root WebApplicationContext: initialization completed in 5051 ms
+2020-03-26 07:44:24,011 INFO org.springframework.boot.web.servlet.AbstractFilterRegistrationBean [localhost-startStop-1] Mapping filter: 'characterEncodingFilter' to: [/*]
+2020-03-26 07:44:24,025 INFO org.springframework.boot.web.servlet.AbstractFilterRegistrationBean [localhost-startStop-1] Mapping filter: 'hiddenHttpMethodFilter' to: [/*]
+2020-03-26 07:44:24,026 INFO org.springframework.boot.web.servlet.AbstractFilterRegistrationBean [localhost-startStop-1] Mapping filter: 'httpPutFormContentFilter' to: [/*]
+2020-03-26 07:44:24,028 INFO org.springframework.boot.web.servlet.AbstractFilterRegistrationBean [localhost-startStop-1] Mapping filter: 'requestContextFilter' to: [/*]
+2020-03-26 07:44:24,031 INFO org.springframework.boot.web.servlet.AbstractFilterRegistrationBean [localhost-startStop-1] Mapping filter: 'springSecurityFilterChain' to: [/*]
+2020-03-26 07:44:24,032 INFO org.springframework.boot.web.servlet.ServletRegistrationBean [localhost-startStop-1] Servlet dispatcherServlet mapped to [/]
+2020-03-26 07:44:24,326 INFO com.zaxxer.hikari.HikariDataSource [main] HikariPool-1 - Starting...
+2020-03-26 07:44:25,176 INFO com.zaxxer.hikari.HikariDataSource [main] HikariPool-1 - Start completed.
+2020-03-26 07:44:25,853 INFO org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean [main] Building JPA container EntityManagerFactory for persistence unit 'default'
+2020-03-26 07:44:25,989 INFO org.hibernate.jpa.internal.util.LogHelper [main] HHH000204: Processing PersistenceUnitInfo [
+	name: default
+	...]
+2020-03-26 07:44:26,425 INFO org.hibernate.Version [main] HHH000412: Hibernate Core {5.2.17.Final}
+2020-03-26 07:44:26,428 INFO org.hibernate.cfg.Environment [main] HHH000206: hibernate.properties not found
+2020-03-26 07:44:26,556 INFO org.hibernate.annotations.common.reflection.java.JavaReflectionManager [main] HCANN000001: Hibernate Commons Annotations {5.0.1.Final}
+2020-03-26 07:44:27,158 INFO org.hibernate.dialect.Dialect [main] HHH000400: Using dialect: org.hibernate.dialect.MySQL5Dialect
+2020-03-26 07:44:28,988 INFO org.hibernate.tool.schema.internal.SchemaCreatorImpl [main] HHH000476: Executing import script 'org.hibernate.tool.schema.internal.exec.ScriptSourceInputNonExistentImpl@390a07a0'
+2020-03-26 07:44:28,997 INFO org.springframework.orm.jpa.AbstractEntityManagerFactoryBean [main] Initialized JPA EntityManagerFactory for persistence unit 'default'
+2020-03-26 07:44:30,322 INFO org.hibernate.hql.internal.QueryTranslatorFactoryInitiator [main] HHH000397: Using ASTQueryTranslatorFactory
+2020-03-26 07:44:30,966 ERROR eu.esmo.sessionmng.service.impl.SessionServiceImpl [main] null
+2020-03-26 07:44:31,345 INFO com.google.code.ssm.config.DefaultAddressProvider [main] Defined values 172.17.0.1:11211 will be used as memcached addresses
+2020-03-26 07:44:31,595 INFO com.google.code.ssm.config.DefaultAddressProvider [main] Defined values 172.17.0.1:11211 will be used as memcached addresses
+2020-03-26 07:44:32,462 WARN org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration$JpaWebMvcConfiguration [main] spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2020-03-26 07:44:32,660 INFO org.springframework.web.servlet.handler.AbstractHandlerMethodMapping$MappingRegistry [main] Mapped "{[/fakeSm/startSession],methods=[POST],consumes=[application/x-www-form-urlencoded],produces=[application/json]}" onto public eu.esmo.sessionmng.pojo.SessionMngrResponse eu.esmo.sessionmng.controllers.FakeRestControllers.startSession()
+2020-03-26 07:44:32,663 INFO org.springframework.web.servlet.handler.AbstractHandlerMethodMapping$MappingRegistry [main] Mapped "{[/fakeSm/endSession],methods=[DELETE || GET],produces=[application/json]}" onto public eu.esmo.sessionmng.pojo.SessionMngrResponse eu.esmo.sessionmng.controllers.FakeRestControllers.endSession(java.lang.String)
+2020-03-26 07:44:32,664 INFO org.springframework.web.servlet.handler.AbstractHandlerMethodMapping$MappingRegistry [main] Mapped "{[/fakeSm/updateSessionData],methods=[POST],consumes=[application/json],produces=[application/json]}" onto public eu.esmo.sessionmng.pojo.SessionMngrResponse eu.esmo.sessionmng.controllers.FakeRestControllers.updateSessionData(eu.esmo.sessionmng.pojo.UpdateDataRequest,javax.servlet.http.HttpServletRequest)
+2020-03-26 07:44:32,670 INFO org.springframework.web.servlet.handler.AbstractHandlerMethodMapping$MappingRegistry [main] Mapped "{[/fakeSm/getSessionData],methods=[GET],produces=[application/json]}" onto public eu.esmo.sessionmng.pojo.SessionMngrResponse eu.esmo.sessionmng.controllers.FakeRestControllers.getSessionData(java.lang.String,java.lang.String)
+2020-03-26 07:44:32,671 INFO org.springframework.web.servlet.handler.AbstractHandlerMethodMapping$MappingRegistry [main] Mapped "{[/fakeSm/generateToken],methods=[GET],produces=[application/json]}" onto public eu.esmo.sessionmng.pojo.SessionMngrResponse eu.esmo.sessionmng.controllers.FakeRestControllers.generateToken(java.lang.String,java.lang.String,java.lang.String,java.lang.String)
+2020-03-26 07:44:32,672 INFO org.springframework.web.servlet.handler.AbstractHandlerMethodMapping$MappingRegistry [main] Mapped "{[/fakeSm/validateToken],methods=[GET],produces=[application/json]}" onto public eu.esmo.sessionmng.pojo.SessionMngrResponse eu.esmo.sessionmng.controllers.FakeRestControllers.validateToken(java.lang.String,javax.servlet.http.HttpServletRequest)
+2020-03-26 07:44:32,676 INFO org.springframework.web.servlet.handler.AbstractHandlerMethodMapping$MappingRegistry [main] Mapped "{[/fakeSm/getSession],methods=[GET],produces=[application/json]}" onto public eu.esmo.sessionmng.pojo.SessionMngrResponse eu.esmo.sessionmng.controllers.FakeRestControllers.getSessionFromIdPUUUID(java.lang.String,java.lang.String)
+2020-03-26 07:44:32,678 INFO org.springframework.web.servlet.handler.AbstractHandlerMethodMapping$MappingRegistry [main] Mapped "{[/loglevel/{loglevel}],methods=[POST]}" onto public java.lang.String eu.esmo.sessionmng.controllers.LoggerControllers.loglevel(java.lang.String,java.lang.String) throws java.lang.Exception
+2020-03-26 07:44:32,684 INFO org.springframework.web.servlet.handler.AbstractHandlerMethodMapping$MappingRegistry [main] Mapped "{[/sm/startSession],methods=[POST],consumes=[application/x-www-form-urlencoded],produces=[application/json]}" onto public eu.esmo.sessionmng.pojo.SessionMngrResponse eu.esmo.sessionmng.controllers.RestControllers.startSession()
+2020-03-26 07:44:32,685 INFO org.springframework.web.servlet.handler.AbstractHandlerMethodMapping$MappingRegistry [main] Mapped "{[/sm/endSession],methods=[DELETE || GET],produces=[application/json]}" onto public eu.esmo.sessionmng.pojo.SessionMngrResponse eu.esmo.sessionmng.controllers.RestControllers.endSession(java.lang.String)
+2020-03-26 07:44:32,687 INFO org.springframework.web.servlet.handler.AbstractHandlerMethodMapping$MappingRegistry [main] Mapped "{[/sm/updateSessionData],methods=[POST],consumes=[application/json],produces=[application/json]}" onto public eu.esmo.sessionmng.pojo.SessionMngrResponse eu.esmo.sessionmng.controllers.RestControllers.updateSessionData(eu.esmo.sessionmng.pojo.UpdateDataRequest,javax.servlet.http.HttpServletRequest)
+2020-03-26 07:44:32,694 INFO org.springframework.web.servlet.handler.AbstractHandlerMethodMapping$MappingRegistry [main] Mapped "{[/sm/getSessionData],methods=[GET],produces=[application/json]}" onto public eu.esmo.sessionmng.pojo.SessionMngrResponse eu.esmo.sessionmng.controllers.RestControllers.getSessionData(java.lang.String,java.lang.String)
+2020-03-26 07:44:32,697 INFO org.springframework.web.servlet.handler.AbstractHandlerMethodMapping$MappingRegistry [main] Mapped "{[/sm/generateToken],methods=[GET],produces=[application/json]}" onto public eu.esmo.sessionmng.pojo.SessionMngrResponse eu.esmo.sessionmng.controllers.RestControllers.generateToken(java.lang.String,java.lang.String,java.lang.String,java.lang.String)
+2020-03-26 07:44:32,698 INFO org.springframework.web.servlet.handler.AbstractHandlerMethodMapping$MappingRegistry [main] Mapped "{[/sm/validateToken],methods=[GET],produces=[application/json]}" onto public eu.esmo.sessionmng.pojo.SessionMngrResponse eu.esmo.sessionmng.controllers.RestControllers.validateToken(java.lang.String,javax.servlet.http.HttpServletRequest)
+2020-03-26 07:44:32,699 INFO org.springframework.web.servlet.handler.AbstractHandlerMethodMapping$MappingRegistry [main] Mapped "{[/sm/getSession],methods=[GET],produces=[application/json]}" onto public eu.esmo.sessionmng.pojo.SessionMngrResponse eu.esmo.sessionmng.controllers.RestControllers.getSessionFromIdPUUUID(java.lang.String,java.lang.String)
+2020-03-26 07:44:32,728 INFO org.springframework.web.servlet.handler.AbstractHandlerMethodMapping$MappingRegistry [main] Mapped "{[/swagger-resources/configuration/security]}" onto public org.springframework.http.ResponseEntity<springfox.documentation.swagger.web.SecurityConfiguration> springfox.documentation.swagger.web.ApiResourceController.securityConfiguration()
+2020-03-26 07:44:32,729 INFO org.springframework.web.servlet.handler.AbstractHandlerMethodMapping$MappingRegistry [main] Mapped "{[/swagger-resources/configuration/ui]}" onto public org.springframework.http.ResponseEntity<springfox.documentation.swagger.web.UiConfiguration> springfox.documentation.swagger.web.ApiResourceController.uiConfiguration()
+2020-03-26 07:44:32,732 INFO org.springframework.web.servlet.handler.AbstractHandlerMethodMapping$MappingRegistry [main] Mapped "{[/swagger-resources]}" onto public org.springframework.http.ResponseEntity<java.util.List<springfox.documentation.swagger.web.SwaggerResource>> springfox.documentation.swagger.web.ApiResourceController.swaggerResources()
+2020-03-26 07:44:32,738 INFO org.springframework.web.servlet.handler.AbstractHandlerMethodMapping$MappingRegistry [main] Mapped "{[/error],produces=[text/html]}" onto public org.springframework.web.servlet.ModelAndView org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController.errorHtml(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)
+2020-03-26 07:44:32,739 INFO org.springframework.web.servlet.handler.AbstractHandlerMethodMapping$MappingRegistry [main] Mapped "{[/error]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.lang.Object>> org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController.error(javax.servlet.http.HttpServletRequest)
+2020-03-26 07:44:33,068 INFO springfox.documentation.spring.web.PropertySourcedRequestMappingHandlerMapping [main] Mapped URL path [/v2/api-docs] onto method [public org.springframework.http.ResponseEntity<springfox.documentation.spring.web.json.Json> springfox.documentation.swagger2.web.Swagger2Controller.getDocumentation(java.lang.String,javax.servlet.http.HttpServletRequest)]
+2020-03-26 07:44:33,265 INFO org.springframework.web.servlet.handler.AbstractUrlHandlerMapping [main] Mapped URL path [/**/favicon.ico] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2020-03-26 07:44:33,719 INFO org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter [main] Looking for @ControllerAdvice: org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext@7f36662c: startup date [Thu Mar 26 07:44:18 EET 2020]; root of context hierarchy
+2020-03-26 07:44:33,841 INFO org.springframework.web.servlet.handler.AbstractUrlHandlerMapping [main] Mapped URL path [/webjars/**] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2020-03-26 07:44:33,842 INFO org.springframework.web.servlet.handler.AbstractUrlHandlerMapping [main] Mapped URL path [/**] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2020-03-26 07:44:34,445 INFO org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration [main] 
+
+Using generated security password: d982f7dd-435a-4aa9-b500-327f879e78ff
+
+2020-03-26 07:44:34,878 INFO org.springframework.security.web.DefaultSecurityFilterChain [main] Creating filter chain: Ant [pattern='/sm/**'], [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@1da61a29, org.springframework.security.web.context.SecurityContextPersistenceFilter@3c1d6ef0, org.springframework.security.web.header.HeaderWriterFilter@4cb59398, org.springframework.security.web.authentication.logout.LogoutFilter@6bfc5296, eu.esmo.sessionmng.filters.HttpSignatureFilter@47cf922d, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@2e2c9e24, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@4e53c6ef, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@6b64921f, org.springframework.security.web.session.SessionManagementFilter@95aeee4, org.springframework.security.web.access.ExceptionTranslationFilter@279e85eb]
+2020-03-26 07:44:35,001 INFO org.springframework.jmx.export.MBeanExporter [main] Registering beans for JMX exposure on startup
+2020-03-26 07:44:35,004 INFO org.springframework.jmx.export.MBeanExporter [main] Bean with name 'dataSource' has been autodetected for JMX exposure
+2020-03-26 07:44:35,013 INFO org.springframework.jmx.export.MBeanExporter [main] Located MBean 'dataSource': registering with JMX server as MBean [com.zaxxer.hikari:name=dataSource,type=HikariDataSource]
+2020-03-26 07:44:35,021 INFO org.springframework.context.support.DefaultLifecycleProcessor$LifecycleGroup [main] Starting beans in phase 2147483647
+2020-03-26 07:44:35,022 INFO springfox.documentation.spring.web.plugins.DocumentationPluginsBootstrapper [main] Context refreshed
+2020-03-26 07:44:35,069 INFO springfox.documentation.spring.web.plugins.DocumentationPluginsBootstrapper [main] Found 1 custom documentation plugin(s)
+2020-03-26 07:44:35,131 INFO springfox.documentation.spring.web.scanners.ApiListingReferenceScanner [main] Scanning for api listing references
+2020-03-26 07:44:36,026 INFO springfox.documentation.spring.web.readers.operation.CachingOperationNameGenerator [main] Generating unique operation named: endSessionUsingDELETE_1
+2020-03-26 07:44:36,030 INFO springfox.documentation.spring.web.readers.operation.CachingOperationNameGenerator [main] Generating unique operation named: endSessionUsingGET_1
+2020-03-26 07:44:36,039 INFO springfox.documentation.spring.web.readers.operation.CachingOperationNameGenerator [main] Generating unique operation named: generateTokenUsingGET_1
+2020-03-26 07:44:36,058 INFO springfox.documentation.spring.web.readers.operation.CachingOperationNameGenerator [main] Generating unique operation named: getSessionDataUsingGET_1
+2020-03-26 07:44:36,081 INFO springfox.documentation.spring.web.readers.operation.CachingOperationNameGenerator [main] Generating unique operation named: getSessionFromIdPUUUIDUsingGET_1
+2020-03-26 07:44:36,095 INFO springfox.documentation.spring.web.readers.operation.CachingOperationNameGenerator [main] Generating unique operation named: startSessionUsingPOST_1
+2020-03-26 07:44:36,109 INFO springfox.documentation.spring.web.readers.operation.CachingOperationNameGenerator [main] Generating unique operation named: updateSessionDataUsingPOST_1
+2020-03-26 07:44:36,117 INFO springfox.documentation.spring.web.readers.operation.CachingOperationNameGenerator [main] Generating unique operation named: validateTokenUsingGET_1
+2020-03-26 07:44:36,179 INFO org.apache.juli.logging.DirectJDKLog [main] Starting ProtocolHandler ["http-nio-8443"]
+2020-03-26 07:44:36,180 INFO org.apache.juli.logging.DirectJDKLog [main] Using a shared selector for servlet write/read
+2020-03-26 07:44:36,257 INFO org.apache.juli.logging.DirectJDKLog [main] Starting ProtocolHandler ["http-nio-8090"]
+2020-03-26 07:44:36,386 INFO org.springframework.boot.web.embedded.tomcat.TomcatWebServer [main] Tomcat started on port(s): 8443 (http) 8090 (http) with context path ''
+2020-03-26 07:44:36,395 INFO org.springframework.boot.StartupInfoLogger [main] Started SessionMngApplication in 19.225 seconds (JVM running for 20.634)
+2020-03-26 07:44:58,235 INFO org.apache.juli.logging.DirectJDKLog [http-nio-8090-exec-1] Initializing Spring FrameworkServlet 'dispatcherServlet'
+2020-03-26 07:44:58,235 INFO org.springframework.web.servlet.FrameworkServlet [http-nio-8090-exec-1] FrameworkServlet 'dispatcherServlet': initialization started
+2020-03-26 07:44:58,263 INFO org.springframework.web.servlet.FrameworkServlet [http-nio-8090-exec-1] FrameworkServlet 'dispatcherServlet': initialization completed in 27 ms
+2020-03-26 07:44:58,297 INFO eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl [http-nio-8090-exec-1] HTTP Signature received: Signature keyId="d9db7614221d9d397f98d44f90eb15db5a4e0d842ffadfd7f1651963ccb22437",algorithm="rsa-sha256",headers="(request-target) date digest host original-date x-request-id",signature="Kcn2hbz1HtZEGMvCfNJ4qwfSSIznbejTTBTSYyRdV/MR6vW9yB0a47gwqB4lHeWZiPnk+DsEjk8LUNB8uBilO9fYyjIeRpZhnydOC5KNfE5d+zCwPfrtGbPbVYhrk/0lo2cYsCaNukhbJxYTBVigGBWIw10MswYwARYKP6w4VEY="
+2020-03-26 07:44:58,307 INFO eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl [http-nio-8090-exec-1] Extracted SHA-256 digest: 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
+2020-03-26 07:44:58,864 INFO eu.esmo.sessionmng.service.impl.MSConfigurationServiceImpl [http-nio-8090-exec-1] found metadata
+2020-03-26 07:44:58,934 INFO eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl [http-nio-8090-exec-1] date:-->Thu, 26 Mar 2020 05:44:58 GMT
+2020-03-26 07:44:58,934 INFO eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl [http-nio-8090-exec-1] authorization:-->keyId="d9db7614221d9d397f98d44f90eb15db5a4e0d842ffadfd7f1651963ccb22437",algorithm="rsa-sha256",headers="(request-target) date digest host original-date x-request-id",signature="Kcn2hbz1HtZEGMvCfNJ4qwfSSIznbejTTBTSYyRdV/MR6vW9yB0a47gwqB4lHeWZiPnk+DsEjk8LUNB8uBilO9fYyjIeRpZhnydOC5KNfE5d+zCwPfrtGbPbVYhrk/0lo2cYsCaNukhbJxYTBVigGBWIw10MswYwARYKP6w4VEY="
+2020-03-26 07:44:58,935 INFO eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl [http-nio-8090-exec-1] x-request-id:-->123
+2020-03-26 07:44:58,935 INFO eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl [http-nio-8090-exec-1] original-date:-->Thu, 26 Mar 2020 05:44:58 GMT
+2020-03-26 07:44:58,936 INFO eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl [http-nio-8090-exec-1] digest:-->SHA-256=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
+2020-03-26 07:44:58,938 INFO eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl [http-nio-8090-exec-1] host:-->localhost
+2020-03-26 07:44:58,938 INFO eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl [http-nio-8090-exec-1] connection:-->close
+2020-03-26 07:44:58,939 INFO eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl [http-nio-8090-exec-1] URI /sm/startSession
+2020-03-26 07:44:58,939 INFO eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl [http-nio-8090-exec-1] Method get
+2020-03-26 07:44:58,940 INFO eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl [http-nio-8090-exec-1] Thu, 26 Mar 2020 05:44:58 GMTOriginal-date
+2020-03-26 07:44:58,949 ERROR org.apache.juli.logging.DirectJDKLog [http-nio-8090-exec-1] Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception
+java.lang.IllegalStateException: java.security.SignatureException: Signature length not correct: got 128 but was expecting 256
+	at org.tomitribe.auth.signatures.Verifier$Asymmetric.verify(Verifier.java:120)
+	at org.tomitribe.auth.signatures.Verifier.<init>(Verifier.java:67)
+	at org.tomitribe.auth.signatures.Verifier.<init>(Verifier.java:42)
+	at eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl.isSignatureValid(HttpSignatureServiceImpl.java:260)
+	at eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl.verifySignature(HttpSignatureServiceImpl.java:193)
+	at eu.esmo.sessionmng.filters.HttpSignatureFilter.doFilter(HttpSignatureFilter.java:71)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:334)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:334)
+	at org.springframework.security.web.header.HeaderWriterFilter.doFilterInternal(HeaderWriterFilter.java:66)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:334)
+	at org.springframework.security.web.context.SecurityContextPersistenceFilter.doFilter(SecurityContextPersistenceFilter.java:105)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:334)
+	at org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter.doFilterInternal(WebAsyncManagerIntegrationFilter.java:56)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:334)
+	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:215)
+	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:178)
+	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:357)
+	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:270)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:99)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.HttpPutFormContentFilter.doFilterInternal(HttpPutFormContentFilter.java:109)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.HiddenHttpMethodFilter.doFilterInternal(HiddenHttpMethodFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:200)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:198)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:96)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:493)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:140)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:81)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:87)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:342)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:800)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:66)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:806)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1498)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:49)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	at java.lang.Thread.run(Thread.java:748)
+Caused by: java.security.SignatureException: Signature length not correct: got 128 but was expecting 256
+	at sun.security.rsa.RSASignature.engineVerify(RSASignature.java:189)
+	at java.security.Signature$Delegate.engineVerify(Signature.java:1222)
+	at java.security.Signature.verify(Signature.java:655)
+	at org.tomitribe.auth.signatures.Verifier$Asymmetric.verify(Verifier.java:112)
+	... 54 common frames omitted
+2020-03-26 07:45:58,502 INFO eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl [http-nio-8090-exec-2] HTTP Signature received: Signature keyId="d9db7614221d9d397f98d44f90eb15db5a4e0d842ffadfd7f1651963ccb22437",algorithm="rsa-sha256",headers="(request-target) date digest host original-date x-request-id",signature="Wge5+N0vHlLfJFd0ZS7J2HWAmL4GvYvT+vM8NP+Q62IoEPQN92nY364vg/6E3U6WDfo26Hn4PntqpvpimXWVGGaEGMyGE0MAHg0QauCgpgCUdpNKvHfDYOeI8f+rklp2sAQ0xLPZfg566Ty51JKLuyQEHE+QUnfZ4Qq2xDip5cY="
+2020-03-26 07:45:58,503 INFO eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl [http-nio-8090-exec-2] Extracted SHA-256 digest: 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
+2020-03-26 07:46:07,726 INFO eu.esmo.sessionmng.service.impl.MSConfigurationServiceImpl [http-nio-8090-exec-2] found metadata
+2020-03-26 07:46:21,393 INFO eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl [http-nio-8090-exec-2] date:-->Thu, 26 Mar 2020 05:45:58 GMT
+2020-03-26 07:46:21,397 INFO eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl [http-nio-8090-exec-2] authorization:-->keyId="d9db7614221d9d397f98d44f90eb15db5a4e0d842ffadfd7f1651963ccb22437",algorithm="rsa-sha256",headers="(request-target) date digest host original-date x-request-id",signature="Wge5+N0vHlLfJFd0ZS7J2HWAmL4GvYvT+vM8NP+Q62IoEPQN92nY364vg/6E3U6WDfo26Hn4PntqpvpimXWVGGaEGMyGE0MAHg0QauCgpgCUdpNKvHfDYOeI8f+rklp2sAQ0xLPZfg566Ty51JKLuyQEHE+QUnfZ4Qq2xDip5cY="
+2020-03-26 07:46:21,400 INFO eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl [http-nio-8090-exec-2] x-request-id:-->123
+2020-03-26 07:46:21,403 INFO eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl [http-nio-8090-exec-2] original-date:-->Thu, 26 Mar 2020 05:45:58 GMT
+2020-03-26 07:46:21,407 INFO eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl [http-nio-8090-exec-2] digest:-->SHA-256=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
+2020-03-26 07:46:21,410 INFO eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl [http-nio-8090-exec-2] host:-->localhost
+2020-03-26 07:46:21,412 INFO eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl [http-nio-8090-exec-2] connection:-->close
+2020-03-26 07:46:23,329 INFO eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl [http-nio-8090-exec-2] URI /sm/startSession
+2020-03-26 07:46:28,401 INFO eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl [http-nio-8090-exec-2] Method get
+2020-03-26 07:46:33,992 INFO eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl [http-nio-8090-exec-2] Thu, 26 Mar 2020 05:45:58 GMTOriginal-date
+2020-03-26 07:46:59,308 ERROR org.apache.juli.logging.DirectJDKLog [http-nio-8090-exec-2] Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception
+java.lang.IllegalStateException: java.security.SignatureException: Signature length not correct: got 128 but was expecting 256
+	at org.tomitribe.auth.signatures.Verifier$Asymmetric.verify(Verifier.java:120)
+	at org.tomitribe.auth.signatures.Verifier.<init>(Verifier.java:67)
+	at org.tomitribe.auth.signatures.Verifier.<init>(Verifier.java:42)
+	at eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl.isSignatureValid(HttpSignatureServiceImpl.java:260)
+	at eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl.verifySignature(HttpSignatureServiceImpl.java:193)
+	at eu.esmo.sessionmng.filters.HttpSignatureFilter.doFilter(HttpSignatureFilter.java:71)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:334)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:334)
+	at org.springframework.security.web.header.HeaderWriterFilter.doFilterInternal(HeaderWriterFilter.java:66)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:334)
+	at org.springframework.security.web.context.SecurityContextPersistenceFilter.doFilter(SecurityContextPersistenceFilter.java:105)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:334)
+	at org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter.doFilterInternal(WebAsyncManagerIntegrationFilter.java:56)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:334)
+	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:215)
+	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:178)
+	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:357)
+	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:270)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:99)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.HttpPutFormContentFilter.doFilterInternal(HttpPutFormContentFilter.java:109)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.HiddenHttpMethodFilter.doFilterInternal(HiddenHttpMethodFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:200)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:198)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:96)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:493)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:140)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:81)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:87)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:342)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:800)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:66)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:806)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1498)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:49)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	at java.lang.Thread.run(Thread.java:748)
+Caused by: java.security.SignatureException: Signature length not correct: got 128 but was expecting 256
+	at sun.security.rsa.RSASignature.engineVerify(RSASignature.java:189)
+	at java.security.Signature$Delegate.engineVerify(Signature.java:1222)
+	at java.security.Signature.verify(Signature.java:655)
+	at org.tomitribe.auth.signatures.Verifier$Asymmetric.verify(Verifier.java:112)
+	... 54 common frames omitted
+2020-03-26 08:06:53,875 INFO org.springframework.boot.StartupInfoLogger [main] Starting SessionMngApplication on nikos with PID 24117 (/media/nikos/LENOVO/backup2/nikos/NetBeansProjects/session-mng/target/classes started by nikos in /media/nikos/LENOVO/backup2/nikos/NetBeansProjects/session-mng)
+2020-03-26 08:06:53,901 INFO org.springframework.boot.SpringApplication [main] No active profile set, falling back to default profiles: default
+2020-03-26 08:06:54,110 INFO org.springframework.context.support.AbstractApplicationContext [main] Refreshing org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext@7ac0e420: startup date [Thu Mar 26 08:06:54 EET 2020]; root of context hierarchy
+2020-03-26 08:06:58,886 INFO org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker [main] Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$145b36f1] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2020-03-26 08:07:00,004 INFO org.springframework.boot.web.embedded.tomcat.TomcatWebServer [main] Tomcat initialized with port(s): 8443 (http) 8090 (http)
+2020-03-26 08:07:00,117 INFO org.apache.juli.logging.DirectJDKLog [main] Initializing ProtocolHandler ["http-nio-8443"]
+2020-03-26 08:07:00,234 INFO org.apache.juli.logging.DirectJDKLog [main] Initializing ProtocolHandler ["http-nio-8090"]
+2020-03-26 08:07:00,404 INFO org.apache.juli.logging.DirectJDKLog [main] Using a shared selector for servlet write/read
+2020-03-26 08:07:00,422 INFO org.apache.juli.logging.DirectJDKLog [main] Starting service [Tomcat]
+2020-03-26 08:07:00,425 INFO org.apache.juli.logging.DirectJDKLog [main] Starting Servlet Engine: Apache Tomcat/8.5.34
+2020-03-26 08:07:00,499 INFO org.apache.juli.logging.DirectJDKLog [localhost-startStop-1] The APR based Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: [/usr/java/packages/lib/amd64:/usr/lib/x86_64-linux-gnu/jni:/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu:/usr/lib/jni:/lib:/usr/lib]
+2020-03-26 08:07:00,852 INFO org.apache.juli.logging.DirectJDKLog [localhost-startStop-1] Initializing Spring embedded WebApplicationContext
+2020-03-26 08:07:00,853 INFO org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext [localhost-startStop-1] Root WebApplicationContext: initialization completed in 6742 ms
+2020-03-26 08:07:01,116 INFO org.springframework.boot.web.servlet.AbstractFilterRegistrationBean [localhost-startStop-1] Mapping filter: 'characterEncodingFilter' to: [/*]
+2020-03-26 08:07:01,117 INFO org.springframework.boot.web.servlet.AbstractFilterRegistrationBean [localhost-startStop-1] Mapping filter: 'hiddenHttpMethodFilter' to: [/*]
+2020-03-26 08:07:01,117 INFO org.springframework.boot.web.servlet.AbstractFilterRegistrationBean [localhost-startStop-1] Mapping filter: 'httpPutFormContentFilter' to: [/*]
+2020-03-26 08:07:01,123 INFO org.springframework.boot.web.servlet.AbstractFilterRegistrationBean [localhost-startStop-1] Mapping filter: 'requestContextFilter' to: [/*]
+2020-03-26 08:07:01,124 INFO org.springframework.boot.web.servlet.AbstractFilterRegistrationBean [localhost-startStop-1] Mapping filter: 'springSecurityFilterChain' to: [/*]
+2020-03-26 08:07:01,124 INFO org.springframework.boot.web.servlet.ServletRegistrationBean [localhost-startStop-1] Servlet dispatcherServlet mapped to [/]
+2020-03-26 08:07:01,370 INFO com.zaxxer.hikari.HikariDataSource [main] HikariPool-1 - Starting...
+2020-03-26 08:07:02,180 INFO com.zaxxer.hikari.HikariDataSource [main] HikariPool-1 - Start completed.
+2020-03-26 08:07:02,821 INFO org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean [main] Building JPA container EntityManagerFactory for persistence unit 'default'
+2020-03-26 08:07:02,913 INFO org.hibernate.jpa.internal.util.LogHelper [main] HHH000204: Processing PersistenceUnitInfo [
+	name: default
+	...]
+2020-03-26 08:07:03,240 INFO org.hibernate.Version [main] HHH000412: Hibernate Core {5.2.17.Final}
+2020-03-26 08:07:03,244 INFO org.hibernate.cfg.Environment [main] HHH000206: hibernate.properties not found
+2020-03-26 08:07:03,331 INFO org.hibernate.annotations.common.reflection.java.JavaReflectionManager [main] HCANN000001: Hibernate Commons Annotations {5.0.1.Final}
+2020-03-26 08:07:03,927 INFO org.hibernate.dialect.Dialect [main] HHH000400: Using dialect: org.hibernate.dialect.MySQL5Dialect
+2020-03-26 08:07:05,049 INFO org.hibernate.tool.schema.internal.SchemaCreatorImpl [main] HHH000476: Executing import script 'org.hibernate.tool.schema.internal.exec.ScriptSourceInputNonExistentImpl@225ddf5f'
+2020-03-26 08:07:05,058 INFO org.springframework.orm.jpa.AbstractEntityManagerFactoryBean [main] Initialized JPA EntityManagerFactory for persistence unit 'default'
+2020-03-26 08:07:06,184 INFO org.hibernate.hql.internal.QueryTranslatorFactoryInitiator [main] HHH000397: Using ASTQueryTranslatorFactory
+2020-03-26 08:07:06,475 ERROR eu.esmo.sessionmng.service.impl.SessionServiceImpl [main] null
+2020-03-26 08:07:06,767 INFO com.google.code.ssm.config.DefaultAddressProvider [main] Defined values 172.17.0.1:11211 will be used as memcached addresses
+2020-03-26 08:07:06,833 INFO com.google.code.ssm.config.DefaultAddressProvider [main] Defined values 172.17.0.1:11211 will be used as memcached addresses
+2020-03-26 08:07:07,356 WARN org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration$JpaWebMvcConfiguration [main] spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2020-03-26 08:07:07,456 INFO org.springframework.web.servlet.handler.AbstractHandlerMethodMapping$MappingRegistry [main] Mapped "{[/fakeSm/startSession],methods=[POST],consumes=[application/x-www-form-urlencoded],produces=[application/json]}" onto public eu.esmo.sessionmng.pojo.SessionMngrResponse eu.esmo.sessionmng.controllers.FakeRestControllers.startSession()
+2020-03-26 08:07:07,457 INFO org.springframework.web.servlet.handler.AbstractHandlerMethodMapping$MappingRegistry [main] Mapped "{[/fakeSm/endSession],methods=[DELETE || GET],produces=[application/json]}" onto public eu.esmo.sessionmng.pojo.SessionMngrResponse eu.esmo.sessionmng.controllers.FakeRestControllers.endSession(java.lang.String)
+2020-03-26 08:07:07,458 INFO org.springframework.web.servlet.handler.AbstractHandlerMethodMapping$MappingRegistry [main] Mapped "{[/fakeSm/updateSessionData],methods=[POST],consumes=[application/json],produces=[application/json]}" onto public eu.esmo.sessionmng.pojo.SessionMngrResponse eu.esmo.sessionmng.controllers.FakeRestControllers.updateSessionData(eu.esmo.sessionmng.pojo.UpdateDataRequest,javax.servlet.http.HttpServletRequest)
+2020-03-26 08:07:07,459 INFO org.springframework.web.servlet.handler.AbstractHandlerMethodMapping$MappingRegistry [main] Mapped "{[/fakeSm/getSessionData],methods=[GET],produces=[application/json]}" onto public eu.esmo.sessionmng.pojo.SessionMngrResponse eu.esmo.sessionmng.controllers.FakeRestControllers.getSessionData(java.lang.String,java.lang.String)
+2020-03-26 08:07:07,460 INFO org.springframework.web.servlet.handler.AbstractHandlerMethodMapping$MappingRegistry [main] Mapped "{[/fakeSm/generateToken],methods=[GET],produces=[application/json]}" onto public eu.esmo.sessionmng.pojo.SessionMngrResponse eu.esmo.sessionmng.controllers.FakeRestControllers.generateToken(java.lang.String,java.lang.String,java.lang.String,java.lang.String)
+2020-03-26 08:07:07,461 INFO org.springframework.web.servlet.handler.AbstractHandlerMethodMapping$MappingRegistry [main] Mapped "{[/fakeSm/validateToken],methods=[GET],produces=[application/json]}" onto public eu.esmo.sessionmng.pojo.SessionMngrResponse eu.esmo.sessionmng.controllers.FakeRestControllers.validateToken(java.lang.String,javax.servlet.http.HttpServletRequest)
+2020-03-26 08:07:07,462 INFO org.springframework.web.servlet.handler.AbstractHandlerMethodMapping$MappingRegistry [main] Mapped "{[/fakeSm/getSession],methods=[GET],produces=[application/json]}" onto public eu.esmo.sessionmng.pojo.SessionMngrResponse eu.esmo.sessionmng.controllers.FakeRestControllers.getSessionFromIdPUUUID(java.lang.String,java.lang.String)
+2020-03-26 08:07:07,462 INFO org.springframework.web.servlet.handler.AbstractHandlerMethodMapping$MappingRegistry [main] Mapped "{[/loglevel/{loglevel}],methods=[POST]}" onto public java.lang.String eu.esmo.sessionmng.controllers.LoggerControllers.loglevel(java.lang.String,java.lang.String) throws java.lang.Exception
+2020-03-26 08:07:07,467 INFO org.springframework.web.servlet.handler.AbstractHandlerMethodMapping$MappingRegistry [main] Mapped "{[/sm/startSession],methods=[POST],consumes=[application/x-www-form-urlencoded],produces=[application/json]}" onto public eu.esmo.sessionmng.pojo.SessionMngrResponse eu.esmo.sessionmng.controllers.RestControllers.startSession()
+2020-03-26 08:07:07,468 INFO org.springframework.web.servlet.handler.AbstractHandlerMethodMapping$MappingRegistry [main] Mapped "{[/sm/endSession],methods=[DELETE || GET],produces=[application/json]}" onto public eu.esmo.sessionmng.pojo.SessionMngrResponse eu.esmo.sessionmng.controllers.RestControllers.endSession(java.lang.String)
+2020-03-26 08:07:07,469 INFO org.springframework.web.servlet.handler.AbstractHandlerMethodMapping$MappingRegistry [main] Mapped "{[/sm/updateSessionData],methods=[POST],consumes=[application/json],produces=[application/json]}" onto public eu.esmo.sessionmng.pojo.SessionMngrResponse eu.esmo.sessionmng.controllers.RestControllers.updateSessionData(eu.esmo.sessionmng.pojo.UpdateDataRequest,javax.servlet.http.HttpServletRequest)
+2020-03-26 08:07:07,470 INFO org.springframework.web.servlet.handler.AbstractHandlerMethodMapping$MappingRegistry [main] Mapped "{[/sm/getSessionData],methods=[GET],produces=[application/json]}" onto public eu.esmo.sessionmng.pojo.SessionMngrResponse eu.esmo.sessionmng.controllers.RestControllers.getSessionData(java.lang.String,java.lang.String)
+2020-03-26 08:07:07,471 INFO org.springframework.web.servlet.handler.AbstractHandlerMethodMapping$MappingRegistry [main] Mapped "{[/sm/generateToken],methods=[GET],produces=[application/json]}" onto public eu.esmo.sessionmng.pojo.SessionMngrResponse eu.esmo.sessionmng.controllers.RestControllers.generateToken(java.lang.String,java.lang.String,java.lang.String,java.lang.String)
+2020-03-26 08:07:07,472 INFO org.springframework.web.servlet.handler.AbstractHandlerMethodMapping$MappingRegistry [main] Mapped "{[/sm/validateToken],methods=[GET],produces=[application/json]}" onto public eu.esmo.sessionmng.pojo.SessionMngrResponse eu.esmo.sessionmng.controllers.RestControllers.validateToken(java.lang.String,javax.servlet.http.HttpServletRequest)
+2020-03-26 08:07:07,473 INFO org.springframework.web.servlet.handler.AbstractHandlerMethodMapping$MappingRegistry [main] Mapped "{[/sm/getSession],methods=[GET],produces=[application/json]}" onto public eu.esmo.sessionmng.pojo.SessionMngrResponse eu.esmo.sessionmng.controllers.RestControllers.getSessionFromIdPUUUID(java.lang.String,java.lang.String)
+2020-03-26 08:07:07,478 INFO org.springframework.web.servlet.handler.AbstractHandlerMethodMapping$MappingRegistry [main] Mapped "{[/swagger-resources/configuration/ui]}" onto public org.springframework.http.ResponseEntity<springfox.documentation.swagger.web.UiConfiguration> springfox.documentation.swagger.web.ApiResourceController.uiConfiguration()
+2020-03-26 08:07:07,479 INFO org.springframework.web.servlet.handler.AbstractHandlerMethodMapping$MappingRegistry [main] Mapped "{[/swagger-resources]}" onto public org.springframework.http.ResponseEntity<java.util.List<springfox.documentation.swagger.web.SwaggerResource>> springfox.documentation.swagger.web.ApiResourceController.swaggerResources()
+2020-03-26 08:07:07,481 INFO org.springframework.web.servlet.handler.AbstractHandlerMethodMapping$MappingRegistry [main] Mapped "{[/swagger-resources/configuration/security]}" onto public org.springframework.http.ResponseEntity<springfox.documentation.swagger.web.SecurityConfiguration> springfox.documentation.swagger.web.ApiResourceController.securityConfiguration()
+2020-03-26 08:07:07,485 INFO org.springframework.web.servlet.handler.AbstractHandlerMethodMapping$MappingRegistry [main] Mapped "{[/error]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.lang.Object>> org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController.error(javax.servlet.http.HttpServletRequest)
+2020-03-26 08:07:07,486 INFO org.springframework.web.servlet.handler.AbstractHandlerMethodMapping$MappingRegistry [main] Mapped "{[/error],produces=[text/html]}" onto public org.springframework.web.servlet.ModelAndView org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController.errorHtml(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)
+2020-03-26 08:07:07,735 INFO springfox.documentation.spring.web.PropertySourcedRequestMappingHandlerMapping [main] Mapped URL path [/v2/api-docs] onto method [public org.springframework.http.ResponseEntity<springfox.documentation.spring.web.json.Json> springfox.documentation.swagger2.web.Swagger2Controller.getDocumentation(java.lang.String,javax.servlet.http.HttpServletRequest)]
+2020-03-26 08:07:07,879 INFO org.springframework.web.servlet.handler.AbstractUrlHandlerMapping [main] Mapped URL path [/**/favicon.ico] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2020-03-26 08:07:08,235 INFO org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter [main] Looking for @ControllerAdvice: org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext@7ac0e420: startup date [Thu Mar 26 08:06:54 EET 2020]; root of context hierarchy
+2020-03-26 08:07:08,355 INFO org.springframework.web.servlet.handler.AbstractUrlHandlerMapping [main] Mapped URL path [/webjars/**] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2020-03-26 08:07:08,356 INFO org.springframework.web.servlet.handler.AbstractUrlHandlerMapping [main] Mapped URL path [/**] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2020-03-26 08:07:08,963 INFO org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration [main] 
+
+Using generated security password: 57bdd359-a02d-462e-9054-ac1b33c5d9df
+
+2020-03-26 08:07:09,358 INFO org.springframework.security.web.DefaultSecurityFilterChain [main] Creating filter chain: Ant [pattern='/sm/**'], [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@5a20f793, org.springframework.security.web.context.SecurityContextPersistenceFilter@77604a86, org.springframework.security.web.header.HeaderWriterFilter@ab2e887, org.springframework.security.web.authentication.logout.LogoutFilter@6672b0ea, eu.esmo.sessionmng.filters.HttpSignatureFilter@211cf27b, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@63fde7ca, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@5b4880b3, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@4e0139, org.springframework.security.web.session.SessionManagementFilter@3a89226e, org.springframework.security.web.access.ExceptionTranslationFilter@629fe84]
+2020-03-26 08:07:09,496 INFO org.springframework.jmx.export.MBeanExporter [main] Registering beans for JMX exposure on startup
+2020-03-26 08:07:09,499 INFO org.springframework.jmx.export.MBeanExporter [main] Bean with name 'dataSource' has been autodetected for JMX exposure
+2020-03-26 08:07:09,507 INFO org.springframework.jmx.export.MBeanExporter [main] Located MBean 'dataSource': registering with JMX server as MBean [com.zaxxer.hikari:name=dataSource,type=HikariDataSource]
+2020-03-26 08:07:09,516 INFO org.springframework.context.support.DefaultLifecycleProcessor$LifecycleGroup [main] Starting beans in phase 2147483647
+2020-03-26 08:07:09,517 INFO springfox.documentation.spring.web.plugins.DocumentationPluginsBootstrapper [main] Context refreshed
+2020-03-26 08:07:09,558 INFO springfox.documentation.spring.web.plugins.DocumentationPluginsBootstrapper [main] Found 1 custom documentation plugin(s)
+2020-03-26 08:07:09,614 INFO springfox.documentation.spring.web.scanners.ApiListingReferenceScanner [main] Scanning for api listing references
+2020-03-26 08:07:09,887 INFO springfox.documentation.spring.web.readers.operation.CachingOperationNameGenerator [main] Generating unique operation named: endSessionUsingDELETE_1
+2020-03-26 08:07:09,889 INFO springfox.documentation.spring.web.readers.operation.CachingOperationNameGenerator [main] Generating unique operation named: endSessionUsingGET_1
+2020-03-26 08:07:09,895 INFO springfox.documentation.spring.web.readers.operation.CachingOperationNameGenerator [main] Generating unique operation named: generateTokenUsingGET_1
+2020-03-26 08:07:09,902 INFO springfox.documentation.spring.web.readers.operation.CachingOperationNameGenerator [main] Generating unique operation named: getSessionDataUsingGET_1
+2020-03-26 08:07:09,906 INFO springfox.documentation.spring.web.readers.operation.CachingOperationNameGenerator [main] Generating unique operation named: getSessionFromIdPUUUIDUsingGET_1
+2020-03-26 08:07:09,918 INFO springfox.documentation.spring.web.readers.operation.CachingOperationNameGenerator [main] Generating unique operation named: startSessionUsingPOST_1
+2020-03-26 08:07:09,927 INFO springfox.documentation.spring.web.readers.operation.CachingOperationNameGenerator [main] Generating unique operation named: updateSessionDataUsingPOST_1
+2020-03-26 08:07:09,934 INFO springfox.documentation.spring.web.readers.operation.CachingOperationNameGenerator [main] Generating unique operation named: validateTokenUsingGET_1
+2020-03-26 08:07:09,988 INFO org.apache.juli.logging.DirectJDKLog [main] Starting ProtocolHandler ["http-nio-8443"]
+2020-03-26 08:07:09,989 INFO org.apache.juli.logging.DirectJDKLog [main] Using a shared selector for servlet write/read
+2020-03-26 08:07:10,016 INFO org.apache.juli.logging.DirectJDKLog [main] Starting ProtocolHandler ["http-nio-8090"]
+2020-03-26 08:07:10,087 INFO org.springframework.boot.web.embedded.tomcat.TomcatWebServer [main] Tomcat started on port(s): 8443 (http) 8090 (http) with context path ''
+2020-03-26 08:07:10,121 INFO org.springframework.boot.StartupInfoLogger [main] Started SessionMngApplication in 17.303 seconds (JVM running for 18.869)
+2020-03-26 08:07:10,229 INFO org.apache.juli.logging.DirectJDKLog [http-nio-8090-exec-1] Initializing Spring FrameworkServlet 'dispatcherServlet'
+2020-03-26 08:07:10,230 INFO org.springframework.web.servlet.FrameworkServlet [http-nio-8090-exec-1] FrameworkServlet 'dispatcherServlet': initialization started
+2020-03-26 08:07:10,271 INFO org.springframework.web.servlet.FrameworkServlet [http-nio-8090-exec-1] FrameworkServlet 'dispatcherServlet': initialization completed in 40 ms
+2020-03-26 08:07:10,323 INFO eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl [http-nio-8090-exec-1] HTTP Signature received: Signature keyId="d9db7614221d9d397f98d44f90eb15db5a4e0d842ffadfd7f1651963ccb22437",algorithm="rsa-sha256",headers="(request-target) date digest host original-date x-request-id",signature="fLqAone4vfpDqw4ONFhwJ8POY/R+cHjq/uCEJxE0ci7GM2dIOxLijWXe2plTqn05sousG2Pjb44dbRUcWmMEdRmUlnvFpzCccm6J+vxA8iX3e/0dpcdKFk0hLimDy2mrSoLPKp0p7HHEC/fVf7gNU06pI6Nyo5kirDvDxCET+dX8wuq1JKgmL0lCAX+v3nNlZQXYy9nA5IBIjjwOusfN5o8GUnXkpuQwJ31sC6Sxe1bOeIsNV6zCGnNbaPUxyUEFD3U9uQ4xS09Nw7A6AC4W01e5a8wqAuB7NKNXeJpjHEj/9p+SL6pvGUpWHn5YzdG/9XDYQR5BpqSaicKoE4TDFw=="
+2020-03-26 08:07:10,335 INFO eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl [http-nio-8090-exec-1] Extracted SHA-256 digest: 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
+2020-03-26 08:07:20,597 INFO eu.esmo.sessionmng.service.impl.MSConfigurationServiceImpl [http-nio-8090-exec-1] found metadata
+2020-03-26 08:07:20,652 INFO eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl [http-nio-8090-exec-1] date:-->Thu, 26 Mar 2020 06:07:03 GMT
+2020-03-26 08:07:20,653 INFO eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl [http-nio-8090-exec-1] authorization:-->keyId="d9db7614221d9d397f98d44f90eb15db5a4e0d842ffadfd7f1651963ccb22437",algorithm="rsa-sha256",headers="(request-target) date digest host original-date x-request-id",signature="fLqAone4vfpDqw4ONFhwJ8POY/R+cHjq/uCEJxE0ci7GM2dIOxLijWXe2plTqn05sousG2Pjb44dbRUcWmMEdRmUlnvFpzCccm6J+vxA8iX3e/0dpcdKFk0hLimDy2mrSoLPKp0p7HHEC/fVf7gNU06pI6Nyo5kirDvDxCET+dX8wuq1JKgmL0lCAX+v3nNlZQXYy9nA5IBIjjwOusfN5o8GUnXkpuQwJ31sC6Sxe1bOeIsNV6zCGnNbaPUxyUEFD3U9uQ4xS09Nw7A6AC4W01e5a8wqAuB7NKNXeJpjHEj/9p+SL6pvGUpWHn5YzdG/9XDYQR5BpqSaicKoE4TDFw=="
+2020-03-26 08:07:20,653 INFO eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl [http-nio-8090-exec-1] x-request-id:-->123
+2020-03-26 08:07:20,654 INFO eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl [http-nio-8090-exec-1] original-date:-->Thu, 26 Mar 2020 06:07:03 GMT
+2020-03-26 08:07:20,654 INFO eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl [http-nio-8090-exec-1] digest:-->SHA-256=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
+2020-03-26 08:07:20,654 INFO eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl [http-nio-8090-exec-1] host:-->localhost
+2020-03-26 08:07:20,654 INFO eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl [http-nio-8090-exec-1] connection:-->close
+2020-03-26 08:07:20,655 INFO eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl [http-nio-8090-exec-1] URI /sm/startSession
+2020-03-26 08:07:20,655 INFO eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl [http-nio-8090-exec-1] Method get
+2020-03-26 08:07:20,655 INFO eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl [http-nio-8090-exec-1] Thu, 26 Mar 2020 06:07:03 GMTOriginal-date
+2020-03-26 08:07:20,658 ERROR eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl [http-nio-8090-exec-1] could not verify signature!! from library method: get uri: /sm/startSession
+2020-03-26 08:07:20,669 ERROR org.apache.juli.logging.DirectJDKLog [http-nio-8090-exec-1] Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Error Validating Http Signature from request] with root cause
+javax.servlet.ServletException: Error Validating Http Signature from request
+	at eu.esmo.sessionmng.filters.HttpSignatureFilter.doFilter(HttpSignatureFilter.java:75)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:334)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:334)
+	at org.springframework.security.web.header.HeaderWriterFilter.doFilterInternal(HeaderWriterFilter.java:66)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:334)
+	at org.springframework.security.web.context.SecurityContextPersistenceFilter.doFilter(SecurityContextPersistenceFilter.java:105)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:334)
+	at org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter.doFilterInternal(WebAsyncManagerIntegrationFilter.java:56)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:334)
+	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:215)
+	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:178)
+	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:357)
+	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:270)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:99)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.HttpPutFormContentFilter.doFilterInternal(HttpPutFormContentFilter.java:109)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.HiddenHttpMethodFilter.doFilterInternal(HiddenHttpMethodFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:200)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:198)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:96)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:493)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:140)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:81)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:87)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:342)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:800)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:66)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:806)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1498)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:49)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	at java.lang.Thread.run(Thread.java:748)
+2020-03-26 08:08:42,491 INFO eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl [http-nio-8090-exec-2] HTTP Signature received: Signature keyId="7a9ba747ab5ac50e640a07d90611ce612b7bde775457f2e57b804517a87c813b",algorithm="rsa-sha256",headers="(request-target) date digest host original-date x-request-id",signature="URYO7GvXB71iP8ZFCShhChdg6OP+f15sCMX48GyA6ZSEKFTvOxsdyc0wiDRQv6PL34iqL8+8SirB5dMcWz+hb09iPmbRpl8+d/H2WQ8MogTpLizVpKr5PXS1yz6V8EfieKfqmNy2Jl4IfgM5LxM3viUTdbYapajCIe1z22igg3a9YW+RySWCfX/xUbn/JlOHgq4FPicAA5VjXU4l8AOguse3sVAIDvJatlCcBwy6KTbFOfaCdJ8uJmEFXaRwGqbrpAvHt5ZuqXRyTyykdvsbpJlPSz1Tgpu+MQPYUYWkS930o3jsWJxm+G9Krxv/VJZL/mKh4mD81AO0YJNJZIEchA=="
+2020-03-26 08:08:42,507 INFO eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl [http-nio-8090-exec-2] Extracted SHA-256 digest: 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
+2020-03-26 08:08:51,352 INFO eu.esmo.sessionmng.service.impl.MSConfigurationServiceImpl [http-nio-8090-exec-2] found metadata
+2020-03-26 08:08:51,403 INFO eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl [http-nio-8090-exec-2] date:-->Thu, 26 Mar 2020 06:08:42 GMT
+2020-03-26 08:08:51,404 INFO eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl [http-nio-8090-exec-2] authorization:-->keyId="7a9ba747ab5ac50e640a07d90611ce612b7bde775457f2e57b804517a87c813b",algorithm="rsa-sha256",headers="(request-target) date digest host original-date x-request-id",signature="URYO7GvXB71iP8ZFCShhChdg6OP+f15sCMX48GyA6ZSEKFTvOxsdyc0wiDRQv6PL34iqL8+8SirB5dMcWz+hb09iPmbRpl8+d/H2WQ8MogTpLizVpKr5PXS1yz6V8EfieKfqmNy2Jl4IfgM5LxM3viUTdbYapajCIe1z22igg3a9YW+RySWCfX/xUbn/JlOHgq4FPicAA5VjXU4l8AOguse3sVAIDvJatlCcBwy6KTbFOfaCdJ8uJmEFXaRwGqbrpAvHt5ZuqXRyTyykdvsbpJlPSz1Tgpu+MQPYUYWkS930o3jsWJxm+G9Krxv/VJZL/mKh4mD81AO0YJNJZIEchA=="
+2020-03-26 08:08:51,405 INFO eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl [http-nio-8090-exec-2] x-request-id:-->123
+2020-03-26 08:08:51,405 INFO eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl [http-nio-8090-exec-2] original-date:-->Thu, 26 Mar 2020 06:08:42 GMT
+2020-03-26 08:08:51,406 INFO eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl [http-nio-8090-exec-2] digest:-->SHA-256=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
+2020-03-26 08:08:51,406 INFO eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl [http-nio-8090-exec-2] host:-->localhost
+2020-03-26 08:08:51,407 INFO eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl [http-nio-8090-exec-2] connection:-->close
+2020-03-26 08:08:51,408 INFO eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl [http-nio-8090-exec-2] URI /sm/startSession
+2020-03-26 08:08:51,408 INFO eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl [http-nio-8090-exec-2] Method get
+2020-03-26 08:08:51,409 INFO eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl [http-nio-8090-exec-2] Thu, 26 Mar 2020 06:08:42 GMTOriginal-date
+2020-03-26 08:08:51,411 ERROR org.apache.juli.logging.DirectJDKLog [http-nio-8090-exec-2] Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception
+java.lang.IllegalStateException: java.security.SignatureException: Signature length not correct: got 256 but was expecting 128
+	at org.tomitribe.auth.signatures.Verifier$Asymmetric.verify(Verifier.java:120)
+	at org.tomitribe.auth.signatures.Verifier.<init>(Verifier.java:67)
+	at org.tomitribe.auth.signatures.Verifier.<init>(Verifier.java:42)
+	at eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl.isSignatureValid(HttpSignatureServiceImpl.java:260)
+	at eu.esmo.sessionmng.service.impl.HttpSignatureServiceImpl.verifySignature(HttpSignatureServiceImpl.java:193)
+	at eu.esmo.sessionmng.filters.HttpSignatureFilter.doFilter(HttpSignatureFilter.java:71)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:334)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:334)
+	at org.springframework.security.web.header.HeaderWriterFilter.doFilterInternal(HeaderWriterFilter.java:66)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:334)
+	at org.springframework.security.web.context.SecurityContextPersistenceFilter.doFilter(SecurityContextPersistenceFilter.java:105)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:334)
+	at org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter.doFilterInternal(WebAsyncManagerIntegrationFilter.java:56)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:334)
+	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:215)
+	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:178)
+	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:357)
+	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:270)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:99)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.HttpPutFormContentFilter.doFilterInternal(HttpPutFormContentFilter.java:109)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.HiddenHttpMethodFilter.doFilterInternal(HiddenHttpMethodFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:200)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:198)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:96)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:493)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:140)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:81)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:87)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:342)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:800)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:66)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:806)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1498)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:49)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	at java.lang.Thread.run(Thread.java:748)
+Caused by: java.security.SignatureException: Signature length not correct: got 256 but was expecting 128
+	at sun.security.rsa.RSASignature.engineVerify(RSASignature.java:189)
+	at java.security.Signature$Delegate.engineVerify(Signature.java:1222)
+	at java.security.Signature.verify(Signature.java:655)
+	at org.tomitribe.auth.signatures.Verifier$Asymmetric.verify(Verifier.java:112)
+	... 54 common frames omitted

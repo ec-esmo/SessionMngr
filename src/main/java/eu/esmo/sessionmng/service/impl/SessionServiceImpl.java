@@ -40,8 +40,8 @@ public class SessionServiceImpl implements SessionService {
 
 //    @Autowired
     private final SessionRepository sessionRepo;
-    private final realAES aesEncrypt;
-    private final String decryptedKey;
+    private realAES aesEncrypt;
+    private String decryptedKey;
 
     private final static Logger LOG = LoggerFactory.getLogger(SessionServiceImpl.class);
 
@@ -52,8 +52,13 @@ public class SessionServiceImpl implements SessionService {
     public SessionServiceImpl(SessionRepository sessionRepo) {
         this.sessionRepo = sessionRepo;
         this.aesEncrypt = new realAES();
-        String ecryptedKey = env.getProperty("encrypted.key");
-        decryptedKey = aesEncrypt.aesDecrypt(ecryptedKey, "SieBcx3RlfgJ3b5e5SkZTrHPkKDFEfYSsJ/N1UbCtFU=");
+        try {
+            String ecryptedKey = env.getProperty("encrypted.key");
+            decryptedKey = aesEncrypt.aesDecrypt(ecryptedKey, "SieBcx3RlfgJ3b5e5SkZTrHPkKDFEfYSsJ/N1UbCtFU=");
+        } catch (Exception e) {
+            LOG.error(e.getLocalizedMessage());
+        }
+
     }
 
     @Override

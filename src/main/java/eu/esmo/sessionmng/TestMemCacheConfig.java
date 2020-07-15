@@ -33,7 +33,7 @@ public class TestMemCacheConfig {
 
     private final static Logger log = LoggerFactory.getLogger(MemCacheConfig.class);
     private String _memcachedHost = "127.0.0.1"; //Machine where memcached is running
-    private int _memcachedPort = 11211;    //Port on which memcached is running
+    private int _memcachedPort = 11111;    //Port on which memcached is running
     public final static String BLACKLIST = "blackList";
 
     @Bean
@@ -52,7 +52,7 @@ public class TestMemCacheConfig {
         cacheList.add(testCache);
 
         SSMCache dummy = createNewCache(_memcachedHost, _memcachedPort,
-                "dummyCache", 0);
+                "sessionCache", 0);
         cacheList.add(dummy);
         //Adding cache list to cache manager
         ssmCacheManager.setCaches(cacheList);

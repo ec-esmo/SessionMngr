@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:mysql://172.17.0.1:3307/sessionMngr?autoReconnect=true
-    username: root
-    password: example
+    url: jdbc:mysql://localhost:3306/sessionMngr?autoReconnect=true
+    username: spring
+    password: password
     platform: mysql
     initialize: true
   jpa:
